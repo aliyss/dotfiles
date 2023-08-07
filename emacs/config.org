@@ -1,0 +1,1965 @@
+#+title: Aliyss' GNU Emacs Config
+#+author: Aliyss Snow
+#+description: Aliyss' personal GNU Emacs configuration file
+#+startup: showeverything
+#+options: toc:2
+
+* TABLE OF CONTENTS                                                     :toc:
+- [[#important-programs][IMPORTANT PROGRAMS]]
+  - [[#package-manager-elpaca][Package Manager (Elpaca)]]
+  - [[#evil-mode][Evil Mode]]
+  - [[#general-keybindings][General Keybindings]]
+- [[#graphical-user-interface-tweaks][GRAPHICAL USER INTERFACE TWEAKS]]
+  - [[#reload-emacs][Reload Emacs]]
+  - [[#disable-menubar-toolbars-and-scrollbars][Disable Menubar, Toolbars and Scrollbars]]
+  - [[#scrolling][Scrolling]]
+  - [[#editor][Editor]]
+  - [[#display-line-numbers-and-truncated-lines][Display Line Numbers and Truncated Lines]]
+  - [[#transparency][Transparency]]
+- [[#themeing][THEMEING]]
+  - [[#themes][Themes]]
+  - [[#all-the-icons][All The Icons]]
+  - [[#frame-border][Frame Border]]
+  - [[#src-blocks][SRC Blocks]]
+  - [[#rainbow-mode][Rainbow Mode]]
+  - [[#rainbow-delimiters][Rainbow Delimiters]]
+- [[#additional-programs][ADDITIONAL PROGRAMS]]
+  - [[#ivy-counsel][IVY (COUNSEL)]]
+  - [[#diminish][Diminish]]
+  - [[#flycheck][FlyCheck]]
+  - [[#projectile][Projectile]]
+  - [[#company][Company]]
+  - [[#consult][Consult]]
+  - [[#which-key][Which-Key]]
+- [[#sudo][SUDO]]
+  - [[#sudo-edit][SUDO EDIT]]
+- [[#terminals][TERMINALS]]
+  - [[#eshell][EShell]]
+  - [[#vterm][VTerm]]
+  - [[#vterm-toggle][Vterm-Toggle]]
+- [[#homescreen][HOMESCREEN]]
+  - [[#dashboard][Dashboard]]
+- [[#launchers][LAUNCHERS]]
+  - [[#app-launcher][App Launcher]]
+- [[#git][Git]]
+  - [[#magit][Magit]]
+- [[#language-support][LANGUAGE SUPPORT]]
+  - [[#lsp][LSP]]
+  - [[#autoformat][Autoformat]]
+  - [[#syntax-highlighting][Syntax Highlighting]]
+  - [[#modes][Modes]]
+  - [[#treesitter][Treesitter]]
+  - [[#rustic][Rustic]]
+  - [[#javascript--typescript][Javascript / Typescript]]
+  - [[#eglot][Eglot]]
+  - [[#tide][Tide]]
+  - [[#eslint][Eslint]]
+- [[#debugger][Debugger]]
+  - [[#node][Node]]
+- [[#windows][WINDOWS]]
+  - [[#treemacs][Treemacs]]
+  - [[#winum][Winum]]
+- [[#buffers][BUFFERS]]
+  - [[#buffer-movement][Buffer Movement]]
+  - [[#buffer-backups][Buffer Backups]]
+  - [[#automatically-update-buffers-when-contents-change-on-disk][Automatically update buffers when contents change on disk]]
+- [[#fonts][FONTS]]
+  - [[#setting-the-font-face][Setting the Font-Face]]
+  - [[#zooming-inout][Zooming In/Out]]
+- [[#org-mode][ORG MODE]]
+  - [[#enabling-table-of-contents][Enabling Table of Contents]]
+  - [[#org-modern-indent][Org Modern Indent]]
+  - [[#org-modern][Org Modern]]
+  - [[#org-mode-functionality][Org-Mode Functionality]]
+  - [[#enabling-org-bullets][Enabling Org Bullets]]
+  - [[#org-roam][Org-Roam]]
+  - [[#org-agenda-files][Org Agenda Files]]
+  - [[#disable-electric-indent][Disable Electric Indent]]
+  - [[#format-emacs-lisp-src-blocks-in-org-files][Format emacs-lisp src blocks in Org Files]]
+  - [[#source-code-block-tag-expansion][Source Code Block Tag Expansion]]
+  - [[#google-calendar-sync][Google Calendar Sync]]
+- [[#never-leaving-emacs][Never leaving Emacs]]
+  - [[#rss-feed][RSS Feed]]
+  - [[#elfeed-youtube][Elfeed YouTube]]
+
+* IMPORTANT PROGRAMS
+:PROPERTIES:
+:DESCRIPTION: Programs to load as soon as emacs launches.
+:END:
+
+** Package Manager (Elpaca)
+:PROPERTIES:
+:SOURCE:   https://github.com/progfolio/elpaca
+:DESCRIPTION: Elpaca is a replacement for the built-in Emacs package manager, package.el. I do not know why I would need a replacement, but following all other configs, this makes sense to have apparently.
+:END:
+
+#+begin_src emacs-lisp
+  (defvar elpaca-installer-version 0.5)
+  (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                                :ref nil
+                                :files (:defaults (:exclude "extensions"))
+                                :build (:not elpaca--activate-package)))
+  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+         (build (expand-file-name "elpaca/" elpaca-builds-directory))
+         (order (cdr elpaca-order))
+         (default-directory repo))
+    (add-to-list 'load-path (if (file-exists-p build) build repo))
+    (unless (file-exists-p repo)
+      (make-directory repo t)
+      (when (< emacs-major-version 28) (require 'subr-x))
+      (condition-case-unless-debug err
+          (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                   ((zerop (call-process "git" nil buffer t "clone"
+                                         (plist-get order :repo) repo)))
+                   ((zerop (call-process "git" nil buffer t "checkout"
+                                         (or (plist-get order :ref) "--"))))
+                   (emacs (concat invocation-directory invocation-name))
+                   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                         "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                   ((require 'elpaca))
+                   ((elpaca-generate-autoloads "elpaca" repo)))
+              (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+            (error "%s" (with-current-buffer buffer (buffer-string))))
+        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+    (unless (require 'elpaca-autoloads nil t)
+      (require 'elpaca)
+      (elpaca-generate-autoloads "elpaca" repo)
+      (load "./elpaca-autoloads")))
+  (add-hook 'after-init-hook #'elpaca-process-queues)
+  (elpaca `(,@elpaca-order))
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; Install use-package support
+  (elpaca elpaca-use-package
+    ;; Enable :elpaca use-package keyword.
+    (elpaca-use-package-mode)
+    ;; Assume :elpaca t unless otherwise specified.
+    (setq elpaca-use-package-by-default t))
+
+  ;; Block until current queue processed.
+  (elpaca-wait)
+
+  ;;When installing a package which modifies a form used at the top-level
+  ;;(e.g. a package which adds a use-package key word),
+  ;;use `elpaca-wait' to block until that package has been installed/configured.
+  ;;For example:
+  ;;(use-package general :demand t)
+  ;;(elpaca-wait)
+#+end_src
+
+** Evil Mode
+:PROPERTIES:
+:SOURCE:   https://github.com/emacs-evil/evil
+:DESCRIPTION: Evil Mode allows me to use vim keybindings within emacs. This is something I really love. I will probably not switch to emacs keybindings, since I don't want to end up with an emacs-pinky.
+:END:
+
+#+begin_src emacs-lisp
+  ;; Expands to: (elpaca evil (use-package evil :demand t))
+  (use-package evil
+    :init      ;; tweak evil's configuration before loading it
+    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+    (setq evil-want-keybinding nil)
+    (setq evil-vsplit-window-right t)
+    (setq evil-split-window-below t)
+    (evil-mode)
+    (evil-set-undo-system 'undo-redo)
+    )
+  (use-package evil-collection
+    :after evil
+    :diminish
+    :config
+    (setq evil-collection-mode-list '(dashboard dired ibuffer))
+    (evil-collection-init))
+  (use-package evil-tutor)
+
+  ;; Company Mode Remap
+  (with-eval-after-load 'evil
+
+    (with-eval-after-load 'company
+      (define-key evil-insert-state-map (kbd "C-n") nil)
+      (define-key evil-insert-state-map (kbd "C-p") nil)
+      (evil-define-key nil company-active-map (kbd "C-n") #'company-select-next)
+      (evil-define-key nil company-active-map (kbd "C-p") #'company-select-previous)))
+
+  (with-eval-after-load 'evil-maps)
+#+end_src
+
+** General Keybindings
+:PROPERTIES:
+:SOURCE:   https://github.com/noctuid/general.el
+:DESCRIPTION: General Keybindings will more or less manage all keybindings, where possible. I'm still figuring things out about overwriting C-bindings. Keybindings are sorted alphabetically and not for functionality to eliminate duplicates.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package general
+    :diminish
+    :config
+    (general-evil-setup)
+
+    ;; set up 'SPC' as the global leader key
+    (general-create-definer dt/leader-keys
+      :states '(normal insert visual emacs)
+      :keymaps 'override
+      :prefix "SPC" ;; set leader
+      :global-prefix "M-SPC") ;; access leader in insert mode
+
+    ;; Top Layer Keybindings
+    (dt/leader-keys
+      "SPC" '(counsel-M-x :wk "Counsel M-x") ;; Double SPC to replace M-x
+      "g c" '(comment-line :wk "Comment lines")) ;; This will be moved to a usable category once I find something fitting.
+
+    ;; Buffer Keybindings
+    (dt/leader-keys
+      "b" '(:ignore t :wk "Buffer")
+      ;; Buffer Navigation
+      "b n" '(next-buffer :wk "Next buffer") ;; Purposely not using vim-keybindings here
+      "b b" '(previous-buffer :wk "Previous buffer") ;; Easier for Navigation purposes
+      "b j" '(ibuffer :wk "Jump to buffer")
+      "b r" '(revert-buffer :wk "Reload buffer")
+      "b i" '(switch-to-buffer :wk "Switch buffer")
+      "b c" '(kill-this-buffer :wk "Close buffer")) ;; Naming this to Close instead of Kill. Hope it is the same.
+
+    ;; Config Keybindings
+    (dt/leader-keys
+      "c" '(:ignore t :wk "Config")
+      "c e" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit Emacs")
+      "c h" '((lambda () (interactive) (find-file "~/.config/hypr/hyprland.conf")) :wk "Edit Hyprland")
+      "c n" '((lambda () (interactive) (find-file "~/.config/flake/configuration.nix")) :wk "Edit Nix")
+      "c r" '(reload-init-file :wk "Reload Config (emacs)"))
+
+    ;; Treeview Keybindings
+    ;; Description: Using 'e' for Explorer
+    (dt/leader-keys
+      "e" '(treemacs :wk "Treemacs"))
+
+    ;; Elisp Keybindings
+    ;; Description: Currently not using them.
+    ;; (dt/leader-keys
+    ;;   "e" '(:ignore t :wk "Evaluate")
+    ;;   "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+    ;;   "e d" '(eval-defun :wk "Evaluate defun containing or after point")
+    ;;   "e e" '(eval-expression :wk "Evaluate and elisp expression")
+    ;;   "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
+    ;;   "e r" '(eval-region :wk "Evaluate elisp in region"))
+
+    ;; File Keybindings
+    (dt/leader-keys
+      "f" '(:ignore t :wk "File / Feed")
+      "f f" '(find-file :wk "Find File")
+      "f e" '(elfeed :wk "Elfeed")
+      "f r" '(counsel-recentf :wk "Recent Files"))
+
+    ;; Elfeed Keybindings
+    (dt/leader-keys elfeed-show-mode-map
+      "f p" '(elfeed-tube-mpv :wk "Elfeed Play"))
+
+    ;; Google Calendar Keybindings
+    ;; Description: Should only show in org files.
+    (dt/leader-keys org-mode-map
+      "g" '(:ignore t :wk "Google Calendar")
+      "g p" '(org-gcal-post-at-point :wk "Post at Point")
+      "g d" '(org-gcal-delete-at-point :wk "Post at Point")
+      "g s" '(org-gcal-sync :wk "Sync")
+      "g b" '(org-gcal-sync-buffer :wk "Sync Buffer")
+      "g f" '(org-gcal-fetch :wk "Fetch"))
+
+    ;; Help Keybindings
+    ;; Description: General help or docs
+    (dt/leader-keys
+      "h" '(:ignore t :wk "Help")
+      "h f" '(describe-function :wk "Describe function")
+      "h v" '(describe-variable :wk "Describe variable"))
+
+    ;; Ivy
+    ;; Description: Honestly no clue if I actually should just remove it... never used.
+    (dt/leader-keys
+      "i" '(:ignore t :wk "Ivy")
+      "i r" '(ivy-resume :wk "Ivy Resume")
+      "i b" '(ivy-switch-buffer-other-window :wk "Switch Buffer Other Window"))
+
+
+    ;; Jump Keybindings
+    ;; Description: Theoretically everything one can jump to. I use this, when I know I want to change to something, but need a second to know where exactly.
+    (dt/leader-keys
+      "j" '(:ignore t :wk "Jump")
+      "j b" '(ibuffer :wk "Jump to Buffer")
+      "j t" '(consult-outline :wk "Jump To Outline"))
+
+    (general-define-key
+     :states '(normal, motion)
+     :keymaps 'org-mode-map
+     "g d" 'org-open-at-point)
+
+    ;; LSP Keybindings
+    ;; Description: Default Keybindings for all languages.
+    (dt/leader-keys
+      "l" '(:ignore t :wk "LSP")
+      "l d" '(lsp-describe-thing-at-point :wk "Describe Entity")
+      "l r" '(lsp-rename :wk "Rename Entity")
+      "l a" '(lsp-execute-code-action :wk "Code Action")
+      "l u" '(lsp-ui-imenu :wk "UI Menu")
+      "l d" '(lsp-find-references :wk "Find References")
+      "l q" '(lsp-workspace-restart :wk "Restart Workspace")
+      "l e" '(flycheck-list-errors :wk "List Errors") ;; FlyCheck, but keeping it under LSP, since it feels correct here.
+      "l c" '(lsp-command-map :wk "LSP Command Map")) ;; Does not work... need to find something else.
+
+    ;; Rust Keybindings
+    ;; Description: Should only show in rust files.
+    (dt/leader-keys rustic-mode-map
+      "l s" '(lsp-rust-analyzer-status :wk "LSP Rust Analyzer Status"))
+
+    ;; Org Keybindings
+    ;; Description: Not yet that fluent with org-mode to change anything from the defaults I used in vim.
+    (dt/leader-keys
+      "m" '(:ignore t :wk "Org")
+      "m a" '(org-agenda :wk "Org agenda")
+      "m e" '(org-export-dispatch :wk "Org export dispatch")
+      "m i" '(org-toggle-item :wk "Org toggle item")
+      "m t" '(org-todo :wk "Org todo")
+      "m B" '(org-babel-tangle :wk "Org babel tangle")
+      "m T" '(org-todo-list :wk "Org todo list")
+      ;; Org Tables
+      "m b" '(:ignore t :wk "Tables")
+      "m b -" '(org-table-insert-hline :wk "Insert hline in table")
+      ;; Org Dates & Deadlines
+      "m d" '(:ignore t :wk "Date/deadline")
+      "m d t" '(org-time-stamp :wk "Org time stamp"))
+
+
+    ;; Org-Roam Keybindings
+    ;; Description: Not yet that fluent with org-mode to change anything from the defaults I used in vim.
+    (dt/leader-keys
+      "r" '(:ignore t :wk "Roam")
+      "r f" '(org-roam-node-find :wk "Node find")
+      "r d" '(:ignore t :wk "Roam Dailies")
+      "r d y" '(org-roam-dailies-goto-yesterday :wk "Go To Yesterday")
+      "r d d" '(org-roam-dailies-goto-today :wk "Go To Today")
+      "r d t" '(org-roam-dailies-goto-tomorrow :wk "Go To Tomorrow")
+      "r d x" '(org-roam-dailies-goto-date :wk "Go To Date")
+      "r i" '(org-roam-node-insert :wk "Node insert")
+      "r c" '(completion-at-point :wk "Completion"))
+
+    ;; Projectile Keybindings
+    (dt/leader-keys
+      "p" '(projectile-command-map :wk "Projectile"))
+
+    ;; Sudo Keybindings
+    (dt/leader-keys
+      "s" '(:ignore t :wk "Sudo")
+      "sf" '(sudo-edit-find-file :wk "Sudo find file")
+      "su" '(sudo-edit :wk "Sudo edit file"))
+
+    ;; Terminal Keybindings
+    (dt/leader-keys
+      "t" '(:ignore t :wk "Terminal")
+      ;; Terminal: EShell
+      "t e" '(:ignore t :wk "EShell")
+      "t e n" '(eshell :wk "Launch EShell")
+      "t e h" '(counsel-esh-history :wk "Show EShell History")
+      ;; Terminal: Terminal
+      "t t" '(vterm-toggle :wk "Toggle Terminal"))
+
+    (dt/leader-keys
+      "v" '(:ignore t :wk "View")
+      "v l" '(display-line-numbers-mode :wk "Toggle line numbers")
+      "v t" '(visual-line-mode :wk "Toggle truncated lines"))
+
+    ;; Window Keybindings
+    (dt/leader-keys
+      "w" '(:ignore t :wk "Window")
+      "w n" '(evil-window-new :wk "New Window")
+      "w c" '(evil-window-delete :wk "Close Window")
+      ;; Window splits
+      "w s" '(evil-window-split :wk "Horizontal Window Split")
+      "w v" '(evil-window-vsplit :wk "Vertical Window Split")
+      ;; Window Motions
+      "w h" '(evil-window-left :wk "Move Window left")
+      "w j" '(evil-window-down :wk "Move Window down")
+      "w k" '(evil-window-up :wk "Move Window up")
+      "w l" '(evil-window-right :wk "Move Window right")
+      "w w" '(evil-window-next :wk "GoTo Next Window")
+      ;; Window Buffer Movements
+      "w b" '(:ignore t :wk "Window Buffer")
+      "w b h" '(buf-move-left :wk "Move Buffer left")
+      "w b j" '(buf-move-down :wk "Move Buffer down")
+      "w b k" '(buf-move-up :wk "Move Buffer up")
+      "w b l" '(buf-move-right :wk "Move Buffer right"))
+    )
+#+end_src
+
+* GRAPHICAL USER INTERFACE TWEAKS
+:PROPERTIES:
+:DESCRIPTION: Makes emacs look a little more like in the screenshots online.
+:END:
+
+** Reload Emacs
+:PROPERTIES:
+:DESCRIPTION: Does what it says.
+:END:
+
+#+begin_src emacs-lisp
+  (defun reload-init-file ()
+    (interactive)
+    (load-file user-init-file)
+    (load-file user-init-file))
+#+end_src
+
+** Disable Menubar, Toolbars and Scrollbars
+:PROPERTIES:
+:DESCRIPTION: Does what it says.
+:END:
+
+#+begin_src emacs-lisp
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (setq use-dialog-box nil)
+#+end_src
+
+** Scrolling
+:PROPERTIES:
+:DESCRIPTION: Does what it says.
+:END:
+
+#+begin_src emacs-lisp
+  (setq scroll-margin 10
+        scroll-step 1
+        scroll-conservatively 101
+        scroll-up-aggressively 0.01
+        scroll-down-aggressively 0.01
+        scroll-preserve-screen-position t
+        auto-window-vscroll nil)
+#+end_src
+
+** Editor
+:PROPERTIES:
+:DESCRIPTION: Does what it says.
+:END:
+
+#+begin_src emacs-lisp
+  ;; Spaces vs Tabs
+  (setq-default indent-tabs-mode nil)
+
+  ;; Highlight current line
+  (add-hook 'prog-mode-hook #'hl-line-mode)
+  (add-hook 'text-mode-hook #'hl-line-mode)
+  (add-hook 'org-mode-hook #'hl-line-mode)
+
+  ;; Automatically create matching parenthesis
+  (add-hook 'prog-mode-hook (electric-pair-mode t))
+  (add-hook 'prog-mode-hook (show-paren-mode t))
+
+  ;; Remove unnecessary whitespace on save
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+end_src
+
+
+** Display Line Numbers and Truncated Lines
+:PROPERTIES:
+:DESCRIPTION: Does what it says.
+:END:
+
+#+begin_src emacs-lisp
+  (global-display-line-numbers-mode 1)
+  (set-default 'truncate-lines t)
+
+  (setq display-line-numbers-type 'relative)
+#+end_src
+
+** Transparency
+:PROPERTIES:
+:DESCRIPTION: Transparency can be changed to fit needs based on OS wallpaper. I usually use 0.9 for light wallpapers.
+:END:
+
+#+begin_src emacs-lisp
+  (set-frame-parameter (selected-frame) 'alpha-background 0.8)
+#+end_src
+
+* THEMEING
+:PROPERTIES:
+:DESCRIPTION: Everything that more or less contributes to how my emacs looks like.
+:END:
+
+** Themes
+*** Doom Theme
+:PROPERTIES:
+:SOURCE:   https://github.com/doomemacs/themes
+:DESCRIPTION: Seems to be some industry standard. Not in use, currently like the EF Themes.
+:END:
+
+#+begin_src emacs-lisp
+  ;; (use-package doom-themes
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+  ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  ;;   (load-theme 'doom-challenger-deep t))
+#+end_src
+
+*** EF Theme
+:PROPERTIES:
+:SOURCE:   https://protesilaos.com/emacs/ef-themes
+:DESCRIPTION: Beautiful Themes with colours I like.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package ef-themes
+    :if (display-graphic-p)
+    :demand t
+    :bind ("C-c m" . ef-themes-toggle)
+
+    :init
+    (setq ef-themes-headings
+          '((0 . (1.9))
+            (1 . (1.3))
+            (2 . (1.2))
+            (3 . (1.1))
+            (4 . (1.0))
+            (5 . (1.0)) ; absence of weight means `bold'
+            (6 . (1.0))
+            (7 . (1.0))
+            (t . (1.0))))
+    (setq ef-themes-to-toggle '(ef-cherie ef-elea-dark))
+
+    :config
+    (load-theme 'ef-elea-dark :no-confirm))
+#+end_src
+
+** All The Icons
+:PROPERTIES:
+:SOURCE:   https://github.com/domtronn/all-the-icons.el#installing-fonts
+:DESCRIPTION: For general icons, might change to nerd-fonts at some point depending on use case.
+:WARNING:  Don't forget to use 'M-x all-the-icons-install-fonts' on first use.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p)
+    :config
+    ;;(setq all-the-icons-scale-factor 1)
+    )
+#+end_src
+
+** Frame Border
+#+begin_src emacs-lisp
+  (modify-all-frames-parameters
+   '((right-divider-width . 0) ;; Changing this value will do border changes.
+     (internal-border-width . 0))) ;; Changing this value will do border changes.
+
+  (dolist (face '(window-divider
+                  window-divider-first-pixel
+                  window-divider-last-pixel))
+    (face-spec-reset-face face)
+    (set-face-foreground face (face-attribute 'default :background)))
+
+  (set-face-background 'fringe (face-attribute 'default :background))
+#+end_src
+
+** SRC Blocks
+:PROPERTIES:
+:DESCRIPTION: If you want transarency around the code blocks.
+:END:
+
+#+begin_src emacs-lisp
+  ;; (custom-set-faces
+  ;;  '(org-block-begin-line
+  ;;    ((t (:background nil :extend t))))
+  ;;  '(org-block-end-line
+  ;;    ((t (:background nil :extend t))))
+  ;;  )
+#+end_src
+
+** Rainbow Mode
+:PROPERTIES:
+:SOURCE:   https://github.com/abo-abo/swiper
+:DESCRIPTION: Gives hex values a coloured background.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :diminish
+    :hook org-mode prog-mode)
+#+end_src
+
+** Rainbow Delimiters
+:PROPERTIES:
+:SOURCE:   https://github.com/Fanael/rainbow-delimiters
+:DESCRIPTION: Coloured Brackets. Absolute life saver, especially when doing stuff in emacs-lisp.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :ensure t
+    )
+  (add-hook 'foo-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+#+end_src
+
+* ADDITIONAL PROGRAMS
+:PROPERTIES:
+:DESCRIPTION: Additional Programs, that were not worth categorizing.
+:END:
+
+** IVY (COUNSEL)
+:PROPERTIES:
+:SOURCE:   https://github.com/abo-abo/swiper
+:DESCRIPTION: Completion mechanism for emacs.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package ivy
+    :custom
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-count-format "(%d/%d) ")
+    (setq enable-recursive-minibuffers t)
+    :diminish
+    :config
+    (ivy-mode))
+
+  (use-package counsel
+    :after ivy
+    :diminish
+    :config (counsel-mode))
+
+  (use-package all-the-icons-ivy-rich
+    :ensure t
+    :init (all-the-icons-ivy-rich-mode 1))
+
+  (use-package ivy-rich
+    :after ivy
+    :ensure t
+    :init (ivy-rich-mode 1) ;; this gets descriptions in M-x.
+    :custom
+    (ivy-virtual-abbreviate 'full
+                            ivy-rich-switch-buffer-align-virtual-buffer t
+                            ivy-rich-path-style 'abbrev)
+    :diminish
+    :config
+    (ivy-set-display-transformer 'ivy-switch-buffer
+                                 'ivy-rich-switch-buffer-transformer))
+#+end_src
+
+** Diminish
+:PROPERTIES:
+:SOURCE:   https://github.com/emacsmirror/diminish
+:DESCRIPTION: Allows hiding tasks in the mode-line. Currently used as :diminish. Will have to move changes here.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package diminish)
+#+end_src
+
+** FlyCheck
+:PROPERTIES:
+:SOURCE:   https://www.flycheck.org/en/latest/
+:DESCRIPTION: Syntax Checker for emacs.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :defer t
+    :diminish
+    :config (global-flycheck-mode)
+    (setq flymake-no-changes-timeout t)
+    (setq flymake-start-syntax-check-on-newline t)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    )
+#+end_src
+
+*** FlyCheck PosFrame
+:PROPERTIES:
+:SOURCE:   https://github.com/alexmurray/flycheck-posframe
+:DESCRIPTION: Adds a pop-up frame that shows up when showing flycheck. This is more out of nostalgia to vim.
+:END:
+
+#+begin_src emacs-lisp
+  ;; (use-package flycheck-posframe
+  ;;   :ensure t
+  ;;   :after flycheck
+  ;;   :config (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode))
+#+end_src
+
+** Projectile
+:PROPERTIES:
+:SOURCE:   https://github.com/bbatsov/projectile
+:DESCRIPTION: Allows for better interaction in projects.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package projectile
+    :diminish
+    :config
+    (projectile-mode 1))
+#+end_src
+
+** Company
+:PROPERTIES:
+:SOURCE:   http://company-mode.github.io/
+:DESCRIPTION: Text completion framework for emacs.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package company
+    :defer 2
+    :ensure t
+    :hook (
+           (emacs-lisp-mode . (lambda ()
+                                (setq-local company-backends '(company-elisp))))
+           (emacs-lisp-mode . company-mode))
+    :diminish
+    :custom
+    (company-begin-commands '(self-insert-command))
+    (company-idle-delay .1)
+    (company-minimum-prefix-length 2)
+    (company-show-numbers t)
+    (company-tooltip-align-annotations 't)
+    (global-company-mode t))
+
+  (use-package company-box
+    :after company
+    :diminish
+    :hook (company-mode . company-box-mode))
+
+#+end_src
+
+** Consult
+:PROPERTIES:
+:SOURCE:   https://github.com/minad/consult
+:DESCRIPTION: Provides search and navigation commands based on the emacs completion function completing-read. No what this means, but I use some stuff from it in my keybindings.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package consult
+    :ensure t
+    )
+#+end_src
+
+** Which-Key
+:PROPERTIES:
+:SOURCE:   https://github.com/justbur/emacs-which-key
+:DESCRIPTION: Shows a list of keybindings, in case I forget them.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :init
+    (which-key-mode 1)
+    :diminish
+    :config
+    (setq which-key-side-window-location 'bottom
+          which-key-sort-order #'which-key-key-order-alpha
+          which-key-sort-uppercase-first nil
+          which-key-add-column-padding 1
+          which-key-max-display-columns nil
+          which-key-min-display-lines 6
+          which-key-side-window-slot -10
+          which-key-side-window-max-height 0.25
+          which-key-idle-delay 0.8
+          which-key-max-description-length 25
+          which-key-allow-imprecise-window-fit nil
+          which-key-separator " → " ))
+#+end_src
+
+* SUDO
+
+** SUDO EDIT
+:PROPERTIES:
+:SOURCE:   https://github.com/nflath/sudo-edit
+:DESCRIPTION: Gives us the ability to open files with sudo privileges.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package sudo-edit)
+#+end_src
+
+* TERMINALS
+:PROPERTIES:
+:DESCRIPTION: Terminal in emacs? Sounds better than emacs in terminal.
+:END:
+
+** EShell
+:PROPERTIES:
+:SOURCE:   https://www.gnu.org/software/emacs/manual/html_mono/eshell.html
+:DESCRIPTION: Apparently the go-to terminal for emacs.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package eshell-syntax-highlighting
+    :after esh-mode
+    :diminish
+    :config
+    (eshell-syntax-highlighting-global-mode +1))
+
+  ;; eshell-syntax-highlighting -- adds fish/zsh-like syntax highlighting.
+  ;; eshell-rc-script -- your profile for eshell; like a bashrc for eshell.
+  ;; eshell-aliases-file -- sets an aliases file for the eshell.
+
+  (setq eshell-rc-script (concat user-emacs-directory "eshell/profile")
+        eshell-aliases-file (concat user-emacs-directory "eshell/aliases")
+        eshell-history-size 5000
+        eshell-buffer-maximum-lines 5000
+        eshell-hist-ignoredups t
+        eshell-scroll-to-bottom-on-input t
+        eshell-destroy-buffer-when-process-dies t
+        eshell-visual-commands'("bash" "fish" "htop" "ssh" "top" "zsh"))
+#+end_src
+
+** VTerm
+:PROPERTIES:
+:SOURCE:   https://github.com/akermu/emacs-libvterm
+:DESCRIPTION: Allows for having the outside terminal inside emacs.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package vterm
+    :diminish
+    :config
+    (setq shell-file-name "/bin/sh"
+          vterm-max-scrollback 5000))
+#+end_src
+
+** Vterm-Toggle
+:PROPERTIES:
+:SOURCE:   https://github.com/jixiuf/vterm-toggle
+:DESCRIPTION: Apparently necessary.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package vterm-toggle
+    :after vterm
+    :diminish
+    :config
+    (setq vterm-toggle-fullscreen-p nil)
+    (setq vterm-toggle-scope 'project)
+    (add-to-list 'display-buffer-alist
+                 '((lambda (buffer-or-name _)
+                     (let ((buffer (get-buffer buffer-or-name)))
+                       (with-current-buffer buffer
+                         (or (equal major-mode 'vterm-mode)
+                             (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
+                   (display-buffer-reuse-window display-buffer-at-bottom)
+                   ;;(display-buffer-reuse-window display-buffer-in-direction)
+                   ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+                   ;;(direction . bottom)
+                   ;;(dedicated . t) ;dedicated is supported in emacs27
+                   (reusable-frames . visible)
+                   (window-height . 0.3))))
+#+end_src
+
+* HOMESCREEN
+:PROPERTIES:
+:DESCRIPTION: Homescreen of emacs.
+:END:
+
+** Dashboard
+:PROPERTIES:
+:SOURCE:   https://github.com/emacs-dashboard/emacs-dashboard
+:DESCRIPTION: Same as alpha in vim.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :init
+    (setq initial-buffer-choice 'dashboard-open)
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-icon-type 'all-the-icons) ;; use `all-the-icons' package
+    (setq dashboard-banner-logo-title "Aliyss' new Operating System (UwU)")
+    ;; (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+    (setq dashboard-startup-banner "~/.config/emacs/images/alice-love.webp")  ;; use custom image as banner
+    (setq dashboard-center-content t) ;; set to 't' for centered content
+    (setq dashboard-items '((recents . 5)
+                            (agenda . 5 )
+                            (bookmarks . 3)
+                            (projects . 3)
+                            (registers . 3)))
+    ;; (dashboard-modify-heading-icons '((recents . "file-text")
+    ;; (bookmarks . "book")))
+    (setq dashboard-footer-messages '("I am not a human, dear reader, but a yeti. A human requires to be, I can only hope not to be another figment of imagination."))
+    (setq dashboard-footer-icon nil)
+    :config
+    (dashboard-setup-startup-hook))
+#+end_src
+
+* LAUNCHERS
+:PROPERTIES:
+:DESCRIPTION: What can emacs not do? Now it's also acts as a launcher.
+:END:
+
+** App Launcher
+:PROPERTIES:
+:SOURCE:   https://github.com/SebastienWae/app-launcher
+:DESCRIPTION: App Launcher for installed apps. Some settings like float may have to be made in the compositor.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package app-launcher
+    :elpaca '(app-launcher :host github :repo "SebastienWae/app-launcher"))
+
+  (defun emacs-run-launcher ()
+    "Create and select a frame called emacs-run-launcher which consists only of a minibuffer and has specific dimensions. Runs app-launcher-run-app on that frame, which is an emacs command that prompts you to select an app and open it in a dmenu like behaviour. Delete the frame after that command has exited"
+    (interactive)
+    (with-selected-frame
+        (make-frame '((name . "emacs-run-launcher")
+                      (minibuffer . only)
+                      (fullscreen . 0) ; no fullscreen
+                      (undecorated . nil) ; remove title bar
+                      ;;(auto-raise . t) ; focus on this frame
+                      ;;(tool-bar-lines . 0)
+                      ;;(menu-bar-lines . 0)
+                      (internal-border-width . 10)
+                      (width . 100)
+                      (height . 11)))
+      (unwind-protect
+          (app-launcher-run-app)
+        (delete-frame))))
+#+end_src
+
+* Git
+:PROPERTIES:
+:DESCRIPTION: Everything that has to do with git.
+:END:
+
+** Magit
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure t)
+#+end_src
+
+* LANGUAGE SUPPORT
+:PROPERTIES:
+:DESCRIPTION: Everything that has to do with programming and language servers etc.
+:END:
+
+** LSP
+:PROPERTIES:
+:SOURCE:   https://github.com/emacs-lsp/lsp-mode
+:DESCRIPTION: Language Server Protocol Mode... We know what this is.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :commands lsp
+    :custom
+    (lsp-eldoc-render-all t)
+    ;; enable / disable the hints as you prefer:
+    (lsp-rust-analyzer-server-display-inlay-hints t)
+    ;; what to use when checking on-save. "check" is default, I prefer clippy
+    (lsp-rust-analyzer-cargo-watch-command "clippy")
+    (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+    (lsp-rust-analyzer-display-chaining-hints t)
+    (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
+    (lsp-rust-analyzer-display-closure-return-type-hints t)
+    (lsp-rust-analyzer-display-parameter-hints t)
+    (lsp-rust-analyzer-display-reborrow-hints t)
+    :config
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+    (add-hook 'typescript-mode-hook 'lsp-deferred)
+    (add-hook 'javascript-mode-hook 'lsp-deferred)
+    (add-hook 'json-mode-hook 'lsp-deferred)
+    (add-hook 'tsx-ts-mode-hook 'lsp-deferred)
+    (setq lsp-auto-guess-root t)
+    (setq lsp-log-io nil)
+    (setq lsp-restart 'auto-restart)
+    (setq lsp-enable-symbol-highlighting t)
+    (setq lsp-enable-on-type-formatting t)
+    (setq lsp-signature-auto-activate t)
+    (setq lsp-signature-render-documentation nil)
+    (setq lsp-eldoc-hook nil)
+    (setq lsp-modeline-code-actions-enable t)
+    (setq lsp-modeline-diagnostics-enable t)
+    (setq lsp-headerline-breadcrumb-enable t)
+    (setq lsp-semantic-tokens-enable nil)
+    (setq lsp-enable-folding t)
+    (setq lsp-enable-imenu nil)
+    (setq lsp-enable-snippet t)
+    (setq read-process-output-max (* 1024 1024)) ;; 1MB
+    (setq lsp-idle-delay 0.2))
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode
+    :config
+    (setq lsp-ui-doc-enable nil)
+    (setq lsp-ui-doc-header t)
+    (setq lsp-ui-doc-include-signature t)
+    (setq lsp-ui-doc-border (face-foreground 'default))
+    (setq lsp-ui-sideline-show-code-actions t)
+    (setq lsp-ui-sideline-delay 0.05))
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; eldoc multiline is default enabled, can be disabled if necessary.
+  (setq eldoc-echo-area-use-multiline-p nil)
+#+end_src
+
+** Autoformat
+
+#+begin_src emacs-lisp
+  (use-package apheleia
+    :ensure t
+    :config
+    (apheleia-global-mode +1))
+
+(add-hook 'nix-mode-hook 'nixpkgs-fmt-on-save-mode)
+#+end_src
+
+#+RESULTS:
+| nixpkgs-fmt-on-save-mode | eglot-ensure |
+
+** Syntax Highlighting
+
+#+begin_src emacs-lisp
+  (setq font-lock-maximum-decoration t)
+  (setq auto-mode-alist (append '((".*\\.conf$" . conf-desktop-mode)) auto-mode-alist))
+  (setq auto-mode-alist (append '((".*\\.env$" . dotenv-mode)) auto-mode-alist))
+#+end_src
+
+** Modes
+:PROPERTIES:
+:DESCRIPTION: Some modes can just be enabled. Others like rust are added separately.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package haskell-mode)
+  (use-package lua-mode)
+  (use-package json-mode)
+  (use-package web-mode)
+  (use-package dotenv-mode
+    :elpaca '(dotenv-mode :host github :repo "preetpalS/emacs-dotenv-mode")
+    :ensure t
+    )
+  (use-package nix-mode
+    :mode "\\.nix\\'")
+
+  (use-package coverlay
+    :ensure t
+    )
+
+  (use-package origami
+    :ensure t)
+
+  ;; (use-package tsx-mode
+  ;; :elpaca '(tsx-mode :host github :protocol ssh :repo "orzechowskid/tsx-mode.el" :branch "emacs29")
+  ;; :ensure t
+  ;; )
+#+end_src
+
+** Treesitter
+
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :ensure t
+    :config
+    ;; activate tree-sitter on any buffer containing code for which it has a parser available
+    (global-tree-sitter-mode)
+    ;; you can easily see the difference tree-sitter-hl-mode makes for python, ts or tsx
+    ;; by switching on and off
+    (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+  (use-package tree-sitter-langs
+    :ensure t
+    :after tree-sitter)
+#+end_src
+
+** Rustic
+:PROPERTIES:
+:SOURCE:   https://github.com/brotzeit/rustic
+:DESCRIPTION: Alternative to rust-mode. Works better.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package rustic
+    :ensure t
+    :config
+    ;; uncomment for less flashiness
+    ;; (setq lsp-eldoc-hook nil)
+    ;; (setq lsp-enable-symbol-highlighting nil)
+    ;; (setq lsp-signature-auto-activate nil)
+
+    ;; comment to disable rustfmt on save
+    (setq rustic-format-on-save t))
+#+end_src
+
+** Javascript / Typescript
+
+#+begin_src emacs-lisp
+  (use-package add-node-modules-path
+    :ensure t
+    :hook ((typescript-mode . add-node-modules-path)))
+
+
+
+  (use-package typescript-mode
+    :after tree-sitter
+    :config
+    ;; we choose this instead of tsx-mode so that eglot can automatically figure out language for server
+    ;; see https://github.com/joaotavora/eglot/issues/624 and https://github.com/joaotavora/eglot#handling-quirky-servers
+    (define-derived-mode typescriptreact-mode typescript-mode
+      "TypeScript TSX")
+
+    ;; use our derived mode for tsx files
+    (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+    ;; by default, typescript-mode is mapped to the treesitter typescript parser
+    ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+    (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))
+
+
+  ;; https://github.com/orzechowskid/tsi.el/
+  ;; great tree-sitter-based indentation for typescript/tsx, css, json
+  (use-package tsi
+    :after tree-sitter
+    :elpaca '(tsi :host github :repo "orzechowskid/tsi.el")
+    ;; define autoload definitions which when actually invoked will cause package to be loaded
+    :commands (tsi-typescript-mode tsi-json-mode tsi-css-mode)
+    :init
+    (add-hook 'typescript-mode-hook (lambda () (tsi-typescript-mode 1)))
+    (add-hook 'json-mode-hook (lambda () (tsi-json-mode 1)))
+    (add-hook 'css-mode-hook (lambda () (tsi-css-mode 1)))
+    (add-hook 'scss-mode-hook (lambda () (tsi-scss-mode 1))))
+#+end_src
+
+** Eglot
+
+#+begin_src emacs-lisp
+
+  (use-package eglot
+    :ensure t
+    :config
+    ;; Ensure `nil` is in your PATH.
+    (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
+    :hook
+    (nix-mode . eglot-ensure)
+    )
+#+end_src
+
+** Tide
+#+begin_src emacs-lisp
+
+  ;; (use-package tide
+  ;;   :ensure t
+  ;;   :after (typescript-mode company flycheck)
+  ;;   :hook ((typescript-mode . tide-setup)
+  ;;          (typescript-mode . tide-hl-identifier-mode)
+  ;;          (before-save . tide-format-before-save))
+  ;;   :config
+  ;;   (flycheck-add-next-checker 'typescript-tide 'javascript-eslint)
+  ;;   (setq tide-completion-enable-autoimport-suggestions t
+  ;;         tide-save-buffer-after-code-edit nil
+  ;;         tide-completion-show-source t
+  ;;         tide-hl-identifier-mode t
+  ;;         tide-hl-identifier-idle-time 1.5
+  ;;         tide-recenter-after-jump t
+
+  ;;         web-mode-enable-auto-quoting nil
+  ;;         web-mode-markup-indent-offset 2
+  ;;         web-mode-code-indent-offset 2
+  ;;         web-mode-attr-indent-offset 2
+  ;;         web-mode-attr-value-indent-offset 2
+
+  ;;         )
+  ;;   )
+
+  ;; ;; hooks
+  ;; (add-hook 'before-save-hook 'tide-format-before-save)
+
+  ;; (add-hook 'web-mode-hook 'company-mode)
+  ;; (add-hook 'web-mode-hook 'prettier-js-mode)
+  ;; (add-hook 'web-mode-hook #'turn-on-smartparens-mode t)
+#+end_src
+
+** Eslint
+
+#+begin_src emacs-lisp
+  (setq flycheck-javascript-eslint-executable "eslint_d")
+  (setq eslintd-fix-executable "/usr/local/bin/eslint_d")
+  (add-hook 'typescript-tsx-mode-hook 'eslintd-fix-mode)
+  (add-hook 'typescript-mode-hook 'eslintd-fix-mode)
+  (add-hook 'web-mode-hook 'eslintd-fix-mode)
+#+end_src
+
+* Debugger
+
+** Node
+#+begin_src emacs-lisp
+  (defun my-setup-dap-node ()
+    "Require dap-node feature and run dap-node-setup if VSCode module isn't already installed"
+    (require 'dap-node)
+    (unless (file-exists-p dap-node-debug-path) (dap-node-setup)))
+
+  (add-hook 'typescript-mode-hook 'my-setup-dap-node)
+  (add-hook 'javascript-mode-hook 'my-setup-dap-node)
+#+end_src
+
+* WINDOWS
+:PROPERTIES:
+:DESCRIPTION: Everything relating to windows or window management.
+:END:
+
+** Treemacs
+:PROPERTIES:
+:SOURCE:   https://github.com/Alexander-Miller/treemacs
+:DESCRIPTION: Essentially a treeview for emacs. However this one seems to be a bit different, as it is more global than local.
+:END:
+
+#+begin_src emacs-lisp
+    (use-package treemacs
+      :ensure t
+      :defer t
+      :init
+      :config
+      (progn
+        (setq treemacs-collapse-dirs                 (if (executable-find "python3") 3 0)
+              treemacs-deferred-git-apply-delay      0.5
+              treemacs-display-in-side-window        t
+              treemacs-eldoc-display                 t
+              treemacs-file-event-delay              5000
+              treemacs-file-follow-delay             0.2
+              treemacs-follow-after-init             t
+              treemacs-git-command-pipe              ""
+              treemacs-goto-tag-strategy             'refetch-index
+              treemacs-indentation                   2
+              treemacs-indentation-string            " "
+              treemacs-is-never-other-window         nil
+              treemacs-max-git-entries               5000
+              treemacs-missing-project-action        'ask
+              treemacs-no-png-images                 nil
+              treemacs-no-delete-other-windows       t
+              treemacs-project-follow-cleanup        nil
+              treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+              treemacs-recenter-distance             0.1
+              treemacs-recenter-after-file-follow    nil
+              treemacs-recenter-after-tag-follow     nil
+              treemacs-recenter-after-project-jump   'always
+              treemacs-recenter-after-project-expand 'on-distance
+              treemacs-show-cursor                   nil
+              treemacs-show-hidden-files             t
+              treemacs-silent-filewatch              nil
+              treemacs-silent-refresh                nil
+              treemacs-default-visit-action          'treemacs-visit-node-close-treemacs
+              treemacs-sorting                       'alphabetic-desc
+              treemacs-space-between-root-nodes      t
+              treemacs-tag-follow-cleanup            t
+              treemacs-tag-follow-delay              1.5
+              treemacs-width                         30)
+        (treemacs-resize-icons 11)
+
+        (treemacs-follow-mode t)
+        (treemacs-filewatch-mode t)
+        (treemacs-fringe-indicator-mode t)
+
+        (pcase (cons (not (null (executable-find "git")))
+                     (not (null (executable-find "python3"))))
+          (`(t . t)
+           (treemacs-git-mode 'deferred))
+          (`(t . _)
+           (treemacs-git-mode 'simple))))
+      )
+
+    (use-package treemacs-evil
+      :after treemacs evil
+      :ensure t)
+
+    (use-package treemacs-all-the-icons
+      :after treemacs all-the-icons
+      :ensure t
+      :config
+      (treemacs-load-theme "all-the-icons")
+      )
+
+    (with-eval-after-load 'treemacs
+      (define-key evil-treemacs-state-map (kbd "SPC e") 'treemacs)
+      (define-key evil-treemacs-state-map (kbd "l") #'treemacs-TAB-action))
+
+    (use-package treemacs-projectile
+      :ensure t
+      :after (treemacs projectile)
+      )
+
+    (use-package treemacs-magit
+      :ensure t
+      :after (treemacs magit)
+      )
+
+  (add-hook 'projectile-after-switch-project-hook 'treemacs-display-current-project-exclusively)
+#+end_src
+
+** Winum
+:PROPERTIES:
+:SOURCE:   https://github.com/deb0ch/emacs-winum
+:DESCRIPTION: Allows to navigate windows easier with numbers.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package winum
+    :ensure t
+    :config
+    (winum-mode)
+    )
+#+end_src
+
+* BUFFERS
+:PROPERTIES:
+:DESCRIPTION: Everything relating to buffers or buffer management.
+:END:
+
+** Buffer Movement
+:PROPERTIES:
+:SOURCE:   https://www.emacswiki.org/emacs/buffer-move.el
+:DESCRIPTION: Functions to ease buffer movement.
+:END:
+
+#+begin_src emacs-lisp
+  (require 'windmove)
+#+end_src
+
+*** Buffer Move Up
+#+begin_src emacs-lisp
+                                                                        ;;;###autoload
+  (defun buf-move-up ()
+    "Swap the current buffer and the buffer above the split.
+                                                                           If there is no split, ie now window above the current one, an
+                                                                           error is signaled."
+    ;;  "Switches between the current buffer, and the buffer above the
+    ;;  split, if possible."
+    (interactive)
+    (let* ((other-win (windmove-find-other-window 'up))
+           (buf-this-buf (window-buffer (selected-window))))
+      (if (null other-win)
+          (error "No window above this one")
+        ;; swap top with this one
+        (set-window-buffer (selected-window) (window-buffer other-win))
+        ;; move this one to top
+        (set-window-buffer other-win buf-this-buf)
+        (select-window other-win))))
+#+end_src
+
+*** Buffer Move Down
+#+begin_src emacs-lisp
+                                                                        ;;;###autoload
+  (defun buf-move-down ()
+    "Swap the current buffer and the buffer under the split.
+                                                                           If there is no split, ie now window under the current one, an
+                                                                           error is signaled."
+    (interactive)
+    (let* ((other-win (windmove-find-other-window 'down))
+           (buf-this-buf (window-buffer (selected-window))))
+      (if (or (null other-win)
+              (string-match "^ \\*Minibuf" (buffer-name (window-buffer other-win))))
+          (error "No window under this one")
+        ;; swap top with this one
+        (set-window-buffer (selected-window) (window-buffer other-win))
+        ;; move this one to top
+        (set-window-buffer other-win buf-this-buf)
+        (select-window other-win))))
+#+end_src
+
+*** Buffer Move Left
+#+begin_src emacs-lisp
+                                                                        ;;;###autoload
+  (defun buf-move-left ()
+    "Swap the current buffer and the buffer on the left of the split.
+                                                                           If there is no split, ie now window on the left of the current
+                                                                           one, an error is signaled."
+    (interactive)
+    (let* ((other-win (windmove-find-other-window 'left))
+           (buf-this-buf (window-buffer (selected-window))))
+      (if (null other-win)
+          (error "No left split")
+        ;; swap top with this one
+        (set-window-buffer (selected-window) (window-buffer other-win))
+        ;; move this one to top
+        (set-window-buffer other-win buf-this-buf)
+        (select-window other-win))))
+#+end_src
+
+*** Buffer Move Right
+#+begin_src emacs-lisp
+                                                                        ;;;###autoload
+  (defun buf-move-right ()
+    "Swap the current buffer and the buffer on the right of the split.
+                                                                           If there is no split, ie now window on the right of the current
+                                                                           one, an error is signaled."
+    (interactive)
+    (let* ((other-win (windmove-find-other-window 'right))
+           (buf-this-buf (window-buffer (selected-window))))
+      (if (null other-win)
+          (error "No right split")
+        ;; swap top with this one
+        (set-window-buffer (selected-window) (window-buffer other-win))
+        ;; move this one to top
+        (set-window-buffer other-win buf-this-buf)
+        (select-window other-win))))
+#+end_src
+
+** Buffer Backups
+:PROPERTIES:
+:SOURCE:   https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files
+:DESCRIPTION: Backups are nice. Not so nice if they are in the .git directory I'm actually working in.
+:END:
+
+#+begin_src emacs-lisp
+  (defvar --backup-directory (concat user-emacs-directory "backups"))
+  (if (not (file-exists-p --backup-directory))
+      (make-directory --backup-directory t))
+  (setq backup-directory-alist `(("." . ,--backup-directory)))
+  (setq make-backup-files t               ; backup of a file the first time it is saved.
+        backup-by-copying t               ; don't clobber symlinks
+        version-control t                 ; version numbers for backup files
+        delete-old-versions t             ; delete excess backup files silently
+        delete-by-moving-to-trash t
+        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+        auto-save-default t               ; auto-save every buffer that visits a file
+        auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+        auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+        )
+#+end_src
+
+** Automatically update buffers when contents change on disk
+:PROPERTIES:
+:DESCRIPTION: So I don't have issues with changes from outside.
+:END:
+
+#+begin_src emacs-lisp
+  (global-auto-revert-mode 1)
+#+end_src
+
+* FONTS
+:PROPERTIES:
+:DESCRIPTION: Defining the various fonts Emacs should use.
+:END:
+
+** Setting the Font-Face
+:PROPERTIES:
+:DESCRIPTION: Mainly JetBrains Mono. I just like the font.
+:END:
+
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil
+                      :font "JetBrainsMonoNerdFont"
+                      :height 180
+                      :weight 'regular)
+  (set-face-attribute 'variable-pitch nil
+                      :font "JetBrainsMonoNerdFont"
+                      :height 200
+                      :weight 'regular)
+  (set-face-attribute 'fixed-pitch nil
+                      :font "JetBrainsMonoNerdFont"
+                      :height 180
+                      :weight 'regular)
+  ;; Makes commented text and keywords italics.
+  ;; This is working in emacsclient but not emacs.
+  ;; Your font must have an italic face available.
+  (set-face-attribute 'font-lock-comment-face nil
+                      :weight 'light
+                      :slant 'italic)
+  (set-face-attribute 'font-lock-keyword-face nil
+                      :slant 'italic)
+
+  ;; This sets the default font on all graphical frames created after restarting Emacs.
+  ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
+  ;; are not right unless I also add this method of setting the default font.
+  (add-to-list 'default-frame-alist '(font . "JetBrainsMonoNerdFont-18"))
+
+  ;; Uncomment the following line if line spacing needs adjusting.
+  ;; (setq-default line-spacing 0.12)
+#+end_src
+
+** Zooming In/Out
+:PROPERTIES:
+:DESCRIPTION: Zooming in and out can be eased up a bit.
+:END:
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-+") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease)
+  (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
+  (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+
+  ;; (defadvice text-scale-increase (around all-buffers (arg) activate)
+  ;;   (dolist (buffer (buffer-list))
+  ;;     (with-current-buffer buffer
+  ;;       ad-do-it)))
+#+end_src
+
+* ORG MODE
+:PROPERTIES:
+:DESCRIPTION: Org Mode stuff for emacs. I dunno, I'm not a genius just yet.
+:END:
+
+** Enabling Table of Contents
+:PROPERTIES:
+:SOURCE:   https://github.com/snosov1/toc-org
+:DESCRIPTION: Adds Table of Contents at the start of an org file.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :commands toc-org-enable
+    :init (add-hook 'org-mode-hook 'toc-org-enable))
+#+end_src
+
+** Org Modern Indent
+:PROPERTIES:
+:SOURCE:   https://github.com/jdtsmith/org-modern-indent
+:DESCRIPTION: Compatibility between modern and indent.
+:END:
+
+#+begin_src emacs-lisp
+  (setq org-startup-indented t)
+
+  (use-package org-modern-indent
+    :elpaca '(org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
+    :config ; add late to hook
+    (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+#+end_src
+
+** Org Modern
+:PROPERTIES:
+:SOURCE:   https://github.com/minad/org-modern
+:DESCRIPTION: Make emacs org mode look nicer.
+:END:
+
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :ensure t
+    :custom
+    (org-modern-hide-stars nil)		; adds extra indentation
+    (org-modern-table nil)
+    (org-modern-tag nil)
+    (org-hide-emphasis-markers t)
+    (org-modern-block-name nil)
+    ;; (org-modern-block-fringe 10)
+    (org-pretty-entities t)
+    (org-modern-list
+     '(;; (?- . "-")
+       (?* . "•")
+       (?+ . "‣")))
+    :hook
+    (org-mode . org-modern-mode)
+    (org-agenda-finalize . org-modern-agenda))
+#+end_src
+
+** Org-Mode Functionality
+:PROPERTIES:
+:SOURCE:   https://orgmode.org
+:DESCRIPTION: Stuff I like having enabled in org-mode.
+:END:
+
+#+begin_src emacs-lisp
+  (setq org-log-done 'time)
+  (setq org-log-done 'note)
+#+end_src
+
+
+** Enabling Org Bullets
+:PROPERTIES:
+:SOURCE:   https://github.com/sabof/org-bullets
+:DESCRIPTION: Attractive bullets rather than asterisks.
+:END:
+
+#+begin_src emacs-lisp
+  (add-hook 'org-mode-hook 'org-indent-mode)
+  (use-package org-bullets)
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+end_src
+
+** Org-Roam
+
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :ensure t
+    :custom
+    (org-roam-directory "~/Projects/life/loewe")
+    (org-roam-completion-everywhere t)
+    :config (org-roam-db-autosync-mode)
+  )
+#+end_src
+
+** Org Agenda Files
+
+#+begin_src emacs-lisp
+
+  (defun org-get-agenda-files-recursively (dir)
+    "Get org agenda files from root DIR."
+    (directory-files-recursively dir "\.org$"))
+
+  (defun org-set-agenda-files-recursively (dir)
+    "Set org-agenda files from root DIR."
+    (setq org-agenda-files
+          (org-get-agenda-files-recursively dir)))
+
+  (defun org-add-agenda-files-recursively (dir)
+    "Add org-agenda files from root DIR."
+    (nconc org-agenda-files
+           (org-get-agenda-files-recursively dir)))
+
+  (org-add-agenda-files-recursively "~/Projects/life/loewe/daily")
+
+(defun org-agenda-current-buffer ()
+   (interactive)
+   (let ((org-agenda-files (list (buffer-file-name (current-buffer)))))
+      (org-agenda)))
+
+(define-key global-map (kbd "C-c a") #'org-agenda-current-buffer)
+#+end_src
+
+#+RESULTS:
+: org-agenda-current-buffer
+
+** Disable Electric Indent
+:PROPERTIES:
+:DESCRIPTION: I dunno why emacs-lisp acts better when this is disabled.
+:END:
+
+#+begin_src emacs-lisp
+  (electric-indent-mode -1)
+#+end_src
+
+** Format emacs-lisp src blocks in Org Files
+:PROPERTIES:
+:SOURCE:   https://www.reddit.com/r/emacs/comments/9tp79o/comment/e90g7km/
+:DESCRIPTION: Got this from reddit... Should format elisp blocks in org-files.
+:END:
+
+#+begin_src emacs-lisp
+  (defun edit-src-block (src fn language)
+    "Replace SRC org-element's value property with the result of FN.
+                                                                           FN is a function that operates on org-element's value and returns a string.
+                                                                           LANGUAGE is a string referring to one of orb-babel's supported languages.
+                                                                           (https://orgmode.org/manual/Languages.html#Languages)"
+    (let ((src-language (org-element-property :language src))
+          (value (org-element-property :value src)))
+      (when (string= src-language language)
+        (let ((copy (org-element-copy src)))
+          (org-element-put-property copy :value
+                                    (funcall fn value))
+          (org-element-set-element src copy)))))
+
+  (defun format-elisp-string (string)
+    "Indents elisp buffer string and reformats dangling parens."
+    (with-temp-buffer
+      (let ((inhibit-message t))
+        (emacs-lisp-mode)
+        (insert
+         (replace-regexp-in-string "[[:space:]]*
+                                                                                                                                              [[:space:]]*)" ")" string))
+        (indent-region (point-min) (point-max))
+        (buffer-substring (point-min) (point-max)))))
+
+  (defun format-elisp-src-blocks ()
+    "Format Elisp src blocks in the current org buffer"
+    (interactive)
+    (save-mark-and-excursion
+      (let ((AST (org-element-parse-buffer)))
+        (org-element-map AST 'src-block
+          (lambda (element)
+            (edit-src-block element #'format-elisp-string "emacs-lisp")))
+        (delete-region (point-min) (point-max))
+        (insert (org-element-interpret-data AST)))))
+#+end_src
+
+** Source Code Block Tag Expansion
+:PROPERTIES:
+:SOURCE:   https://orgmode.org/manual/Structure-Templates.html
+:DESCRIPTION: Org-tempo allows for '<s' followed by TAB to expand to a begin _src tag.  Other expansions available include:
+:END:
+
+| Typing the below + TAB | Expands to ...                          |
+|------------------------+-----------------------------------------|
+| <a                     | '#+BEGIN_EXPORT ascii' … '#+END_EXPORT  |
+| <c                     | '#+BEGIN_CENTER' … '#+END_CENTER'       |
+| <C                     | '#+BEGIN_COMMENT' … '#+END_COMMENT'     |
+| <e                     | '#+BEGIN_EXAMPLE' … '#+END_EXAMPLE'     |
+| <E                     | '#+BEGIN_EXPORT' … '#+END_EXPORT'       |
+| <h                     | '#+BEGIN_EXPORT html' … '#+END_EXPORT'  |
+| <l                     | '#+BEGIN_EXPORT latex' … '#+END_EXPORT' |
+| <q                     | '#+BEGIN_QUOTE' … '#+END_QUOTE'         |
+| <s                     | '#+BEGIN_SRC' … '#+END_SRC'             |
+| <v                     | '#+BEGIN_VERSE' … '#+END_VERSE'         |
+
+#+begin_src emacs-lisp
+  (require 'org-tempo)
+#+end_src
+
+** Google Calendar Sync
+
+*** Dependencies
+
+#+begin_src emacs-lisp
+  (use-package request
+    :ensure t)
+
+  (use-package alert
+    :ensure t)
+
+  (use-package persist
+    :ensure t)
+
+  (use-package aio
+    :ensure t)
+
+  (use-package oauth2-auto
+    :elpaca '(oauth2-auto :host github :repo "telotortium/emacs-oauth2-auto")
+    :ensure t)
+
+  (use-package f)
+#+end_src
+
+*** GCal Sync
+
+#+begin_src emacs-lisp
+  ;;  (fset 'epg-wait-for-status 'ignore)
+
+  (setq epg-pinentry-mode 'loopback)
+  (require 'epa-file)
+  (epa-file-enable)
+
+  (setq plstore-cache-passphrase-for-symmetric-encryption t)
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; Stores google calendar events to my org `work-calendar' file. Sync by running `M-x org-gcal-sync'.
+
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+  (use-package org-gcal
+    :elpaca '(org-gcal :host github :repo "kidd/org-gcal.el")
+    :init
+    (setq org-gcal-client-id (f-read-text (expand-file-name ".local/org-gcal/org-gcal-client-id" user-emacs-directory))
+          org-gcal-client-secret (f-read-text (expand-file-name ".local/org-gcal/org-gcal-client-secret" user-emacs-directory))
+          org-gcal-dir (expand-file-name ".local/org-gcal/" user-emacs-directory))
+
+    :config
+    (setq org-gcal-down-days 30
+          org-gcal-up-days 30
+          org-gcal-remove-api-cancelled-events t)
+    ;; https://github.com/kidd/org-gcal.el/issues/107
+    (setq org-id-locations-file (expand-file-name ".local/.org-id-locations" user-emacs-directory))
+
+    (let (
+          (loewe-calendar (expand-file-name "calendars/loewe.org" "~/Projects/life/aliyss"))
+          (aliyss-calendar (expand-file-name "calendars/aliyss.org" "~/Projects/life/aliyss"))
+          (isaac-calendar (expand-file-name "calendars/isaac.org" "~/Projects/life/aliyss"))
+          (stain-calendar (expand-file-name "calendars/stain.org" "~/Projects/life/aliyss"))
+          (yara-calendar (expand-file-name "calendars/yara.org" "~/Projects/life/aliyss"))
+          )
+      (setq org-gcal-file-alist `(
+                                  ("mangoworksbeta@gmail.com" . ,loewe-calendar)
+                                  ("rja6hrp0cq6ppil2s5uimi9loo@group.calendar.google.com" . ,aliyss-calendar)
+                                  ("ubmtok4i1c0ksdj4niqh3dhb8g@group.calendar.google.com" . ,isaac-calendar)
+                                  ("9pv4iijeg3nrkv3ranfm7hcd1k@group.calendar.google.com" . ,stain-calendar)
+                                  ("osct11ibk37vj954qa9q8rlo1o@group.calendar.google.com" . ,yara-calendar)
+                                  ))
+      (add-to-list 'org-agenda-files loewe-calendar)
+      (add-to-list 'org-agenda-files aliyss-calendar)
+      (add-to-list 'org-agenda-files isaac-calendar)
+      (add-to-list 'org-agenda-files stain-calendar)
+      (add-to-list 'org-agenda-files yara-calendar)
+      ))
+
+  (defun aliyss/refresh-work-calendar ()
+    "Fetch Google calendar events and add the proper file tag(s)."
+    (interactive)
+    (org-gcal-fetch))
+
+  (defvar aliyss--timer:update-work-calendar nil)
+
+  (defun aliyss/start-work-calendar-update-timer ()
+    (interactive)
+    (setq aliyss--timer:update-work-calendar
+          (run-at-time t (* 30 60) #'aliyss/refresh-work-calendar)))
+
+  (defun aliyss/stop-work-calendar-timer ()
+    (interactive)
+    (cancel-timer aliyss--timer:update-work-calendar))
+#+end_src
+
+* Never leaving Emacs
+
+** RSS Feed
+
+#+begin_src emacs-lisp
+  (use-package elfeed)
+
+  (setq elfeed-feeds '(
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCEKJKJ3FO-9SFv5x5BzyxhQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCTH6s1SMIQicvyd8OLBYMtQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC51WtMXgM71IkLnTc4O63_g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCtEwVJZABCd0tels2KIpKGQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCov_51F0betb6hJ6Gumxg3Q" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCNJ1Ymd5yFuUPtn21xtRbbw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCN__G2hSqRKuqedN3M0JCDg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCeh-pJYRZTBJDXMNZeWSUVA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCrxUQQiGK_XarxsiYsL7P4g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCLtOpyx344v-l0kreCSUEFg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC4NNPgQ9sOkBjw6GlkgCylg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1OR9yjgsvoFK3xxhCs-19Q" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSPLhwvj0gBufjDRzSQb3GQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCb5QRUn5w8_g0j8QVaWzcjQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCwkDQ8tE_3UhB8LcnvUv0Fw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCdp4_l1vPmpN-gDbUwhaRUQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCngn7SVujlvskHRvRKc1cTw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8JOgFXp-I3YV6dsKqqQdUw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVJ65ACOGn5FCitRoD9qXEw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6LEH0rS9V0BF5aNhVYdykQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCjREVt2ZJU8ql-NC9Gu-TJw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCaSCt8s_4nfkRglWCvNSDrg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCrsLPlwxUInDoNubOP85EWQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC9P0bchnch7IqfrbTib4nrA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC4QZ_LsYcvcq7qOsOhpAX4A" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHzK6q9IjJgo1w51nuwPtcA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCltwa_Ol4wfxWE5AGr7UJQg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCL9Y2MYhBUT0rgOi1q6JeCQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3KV2kFy2YhjYvverIy2WnA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmfp0LHfhwW1Trw-maUiWsw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWQaM7SpSECp9FELz-cHzuQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCUFFHXvzAMRSD8Bq4bJppxQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCDq5v10l4wkV5-ZBIJJFbzQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCxddeIv7GdHNcVPZI9JvGXQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVLw9wKPHxdBbboXEduN5jA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWEVAMMyXF2NP5txDESGemg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCcddcRNcQfVwCMmvV2QWf8Q" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC_wIxplYNdht7HTw-wGUcpg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1MohIlyjb5npB1rKhD-Y3A" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCEaEuLUvy4Y1DqpxiDvnxeQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7M-Wz4zK8oikt6ATcoTwBA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCHDxYLv8iovIbhrfl16CNyg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPUe9uOcp1UMpVi6Vll60Jw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCV4k4vV6Od6XPAqfcsHwfmw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCRrI36DlobH2OgknMjC3Rfw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWo4IA01TXzBeGJJKWHOG9g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCii9ezsUa_mBiSdw0PtSOaw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCqjVP9gAanUGFgTA5BRDvyA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmEzz-dPBVrsy4ZluSsYHDg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCJLZe_NoiG0hT7QCX_9vmqw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCeTfBygNb1TahcNpZyELO8g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfIi1OrrUajcVWA2hq7FxvA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCYwVxWpjeKFWwu8TML-Te9A" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC_hukbByJP7OZ3Xm2tszacQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCuK9ofevgGxPVl57p_fSpuA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCCuoqzrsHlwv1YyPKLuMDUQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx0L2ZdYfiq-tsAXb8IXpQg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCa8W2_uf81Ew6gYuw0VPSeA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCm8EsftbfNzSiRHzc7I59KQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7Lo7dT0Y6yz5ndQGGP7H3A" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCx8C_9jxBi7g5PsGmoo6R9A" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCD4XIm3ZFhT72WjqhIXMN9w" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCCZ40QwZtFs_7h5MZ0ZTTwg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCBC04kJUBrs8FgNKP7rQ10Q" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSp-OaMpsO8K0KkOqyBl7_w" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCZRoNJu1OszFqABP8AuJIuw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6biysICWOJ-C3P4Tyeggzg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCEBtnFwHUmcZ2ajvAoLl7Wg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCZiotb1j89oPlg0FyQ3r40g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCEHp_b02I0GvTYCBPX_0w1g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCXx0JWOKERPZdzczPfY-huA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UChpleBmo18P08aKCIgti38g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCIGRhqYssT6IGPYOnZBFYKw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCj8orMezFWVcoN-4S545Wtw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC_OttpBEWWzSUlZbk5qmhSA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCoOss5XiPpnLHGmLrBvNkJg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCZdrTo_md37z3iogKYrVgCw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmFeOdJI3IXgTBDzqBLD8qg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCBs2Y3i14e1NWQxOGliatmg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSdma21fnJzgmPodhC9SJ3g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSillZr7X-5u-j_-ps_ijqA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC5_Y-BKzq1uW_2rexWkUzlA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCUMwY9iS8oMyWDYIe6_RmoA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMp-0bU-PA7BNNR-zIvEydA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCuUHDELv0TZM7VeDchmZrFQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVHxJghKAB_kA_5LMM8MD3w" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC3AwZ0mkVtOxm9xVpC9vJyA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCq4xfqZCp6yt0Q_GcHY9AZg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCir93b_ftqInEaDpsWYbo_g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCqJ5EkPzmVHTTrrHtmgWeeg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCi8C7TNs2ohrc6hnRQ5Sn2w" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC0zkY5mBfyov8wPGR981hbw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC1rFmaGLYr0Ve_Y_soxZNWQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCXIa1dlKtpeCEBHObZFQgsA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCfHmyqCntYHQ81ZukNu66rg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCK8XIGR5kRidIw2fWqwyHRA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCct9aR7HC79Cv2g-9oDOTLw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCah7IyEzRnRdttwDGDdy_gw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCiSAjbPtn733_ZBSQ-6T4wQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCGrJIWs0kYoqtwFgP6-SEQQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmU0pxYK_ZwjZ_QihFUeH8A" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCDAjO0-hd_RS8ZYJ4W-Iq5Q" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCWvq4kcdNI1r1jZKFw9TiUA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmtyQOKKmrMVaKuRXz02jbQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCDzVUXiTr3hClI-zzCWbYzg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCuD-OWq0lLKLGkuWuNs35sA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbvjXcT9ojfSrA8QrOKeY_w" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC7cmH--tFhYduIshTKzQUJQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCtUbO6rBht0daVIOGML3c8w" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCB6dvaWu0N8uVq2yKsZ5s5g" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCMpdK0UaW9K2WGkL6z2sSWg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCIjUIjWig0r5DIixQrt6A3A" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCqMYm98sWtbzN8FnHT2mCOg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCl_dlV_7ofr4qeP1drJQ-qg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCeeFfhMcJa1kjtfZAGskOCA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkSMDOtrKr43OGSSmKnx6tQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCBmhDcQmctiuAwyqOuX7cag" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCRG_N2uO405WO4P3Ruef9NA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCxNlX8AUIh2nlLf4IL1DWzg" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCkS_HP3m9NXOgswVAKbMeJQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbRP3c757lWg9M-U7TyEkXA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC8ENHE5xdFSwx71u3fDH5Xw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCUyeluBRhGPCW4rPe_UvBZQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCJ-vHE5CrGaL_ITEg-n3OeA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVk4b-svNJoeytrrlOixebQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCCVclxslsRWT3LHFu8mQhNA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCaXh9z3or5QbM0HPGen2Quw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCBa659QWEk1AI4Tg--mrJ2A" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCbAn7pVK2VIyo-UysfWGdZQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6-JmqeHcRIdA3ErhyUXlfA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCZ4oRX0e157gHeJHp0XOULA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCSIvk78tK2TiviLQn4fSHaw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCRzS48bskynAxoI38BFypfQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCt3JiNkefsfbA2N4SgEkoiQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6nSFpj9HTCZ5t-N3Rm3-HA" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVWhVAZwCdQsPZL-mDLcxPQ" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCs76MNovGkuNYNZCmrxcb3Q" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCuOuOjhkq6A2jh9oJxvrkMw" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UC0i9_dNHK8VoAqD69v_b3og" youtube author)
+                       ("https://www.youtube.com/feeds/videos.xml?channel_id=UCuNlrb3G0BLLDbwhz7EqF8w" youtube author)
+                       )
+        )
+#+end_src
+
+** Elfeed YouTube
+#+begin_src emacs-lisp
+
+  (use-package elfeed-tube
+    :ensure t ;; or :straight t
+    :after elfeed
+    :demand t
+    :config
+    ;; (setq elfeed-tube-auto-save-p nil) ; default value
+    ;; (setq elfeed-tube-auto-fetch-p t)  ; default value
+    (elfeed-tube-setup)
+
+    :bind (:map elfeed-show-mode-map
+                ("F" . elfeed-tube-fetch)
+                ([remap save-buffer] . elfeed-tube-save)
+                :map elfeed-search-mode-map
+                ("F" . elfeed-tube-fetch)
+                ([remap save-buffer] . elfeed-tube-save)))
+
+  (use-package elfeed-tube-mpv
+    :ensure t ;; or :straight t
+    :bind (:map elfeed-show-mode-map
+                ("C-c C-f" . elfeed-tube-mpv-follow-mode)
+                ("C-c C-w" . elfeed-tube-mpv-where)))
+#+end_src

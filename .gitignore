@@ -1,0 +1,47 @@
+# ALIYSS' gitignore
+# Can't share everything :')
+
+# Ignore all files
+/*
+/*/
+
+# Except the following
+
+# General
+!/.gitignore
+!/README.md
+!/README.org
+
+# Emacs
+!/emacs/
+/emacs/*
+/emacs/*/
+
+!/emacs/init.el
+!/emacs/early-init.el
+!/emacs/config.org
+!/emacs/eshell/
+!/emacs/eshell/*
+!/emacs/eshell/*/
+!/emacs/images/
+!/emacs/images/*
+!/emacs/images/*/
+
+# Flake
+!/flake/
+
+# Foot
+!/foot/
+
+# Hyprland
+!/hypr/
+/hypr/device_settings.conf
+
+# Mako
+!/mako/
+
+# Tridactyl
+!/tridactyl/
+
+# Keymappings
+!/xkb/
