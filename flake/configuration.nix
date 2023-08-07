@@ -88,9 +88,12 @@
     ## Vim: for quick configurations in case graphics dies
     vim
     ## Emacs: for everything else
-    ((emacsPackagesFor emacs29-pgtk).emacsWithPackages (epkgs: [ epkgs.vterm ]))
+    ((emacsPackagesFor emacs29-pgtk).emacsWithPackages
+      (epkgs: [ epkgs.vterm epkgs.lsp-tailwindcss ]))
     ### Emacs: Additional Packages, compatibility with config.org file
     youtube-dl
+    #### required to install some language servers
+    unzip
     gcc
     mpv
 
@@ -101,6 +104,10 @@
     nodePackages.typescript
     nodePackages.typescript-language-server
     nodePackages.eslint
+    nodePackages.tailwindcss
+    nodePackages."@tailwindcss/language-server"
+    rustywind
+    tailwindcss
     nodePackages.prettier
     ## Typescript
     typescript
