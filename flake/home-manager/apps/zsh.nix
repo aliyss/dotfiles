@@ -9,6 +9,11 @@
       plugins = [ "docker-compose" "docker" "git" ];
       theme = "dst";
     };
+    shellAliases = {
+      update-system =
+        "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta";
+      update-home = "home-manager switch --flake ~/.config/flake#aliyss";
+    };
     initExtra = ''
       bindkey '^f' autosuggest-accept
     '';

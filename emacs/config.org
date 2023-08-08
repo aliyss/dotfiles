@@ -724,7 +724,6 @@
     :after company
     :diminish
     :hook (company-mode . company-box-mode))
-
 #+end_src
 
 ** Consult
@@ -962,11 +961,12 @@
     (lsp-rust-analyzer-display-reborrow-hints t)
     :config
     (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+    (add-hook 'tsx-ts-mode-hook 'lsp-deferred)
+    (add-hook 'tsi-typescript-mode-hook 'lsp-deferred)
+    (add-hook 'ts-ls-mode-hook 'lsp-deferred)
     (add-hook 'typescript-mode-hook 'lsp-deferred)
     (add-hook 'javascript-mode-hook 'lsp-deferred)
     (add-hook 'json-mode-hook 'lsp-deferred)
-    (add-hook 'tsx-ts-mode-hook 'lsp-deferred)
-    (add-hook 'tsi-typescript-mode-hook 'lsp-deferred)
     (setq lsp-auto-guess-root t)
     (setq lsp-log-io nil)
     (setq lsp-restart 'auto-restart)
@@ -1010,10 +1010,10 @@
     :config
     (apheleia-global-mode +1))
 
-(add-hook 'nix-mode-hook 'nixpkgs-fmt-on-save-mode)
+  (add-hook 'nix-mode-hook 'nixpkgs-fmt-on-save-mode)
 #+end_src
 
-#+RESULTS:
+#+results:
 | nixpkgs-fmt-on-save-mode | eglot-ensure |
 
 ** Syntax Highlighting
@@ -1050,7 +1050,11 @@
     :ensure t)
 
   (use-package lsp-tailwindcss
-    :ensure t)
+    :init
+    (setq lsp-tailwindcss-add-on-mode t)
+  )
+
+(add-hook 'before-save-hook 'lsp-tailwindcss-rustywind-before-save)
 
   ;; (use-package tsx-mode
   ;; :elpaca '(tsx-mode :host github :protocol ssh :repo "orzechowskid/tsx-mode.el" :branch "emacs29")
@@ -1100,8 +1104,6 @@
   (use-package add-node-modules-path
     :ensure t
     :hook ((typescript-mode . add-node-modules-path)))
-
-
 
   (use-package typescript-mode
     :after tree-sitter
@@ -1216,83 +1218,83 @@
 :END:
 
 #+begin_src emacs-lisp
-    (use-package treemacs
-      :ensure t
-      :defer t
-      :init
-      :config
-      (progn
-        (setq treemacs-collapse-dirs                 (if (executable-find "python3") 3 0)
-              treemacs-deferred-git-apply-delay      0.5
-              treemacs-display-in-side-window        t
-              treemacs-eldoc-display                 t
-              treemacs-file-event-delay              5000
-              treemacs-file-follow-delay             0.2
-              treemacs-follow-after-init             t
-              treemacs-git-command-pipe              ""
-              treemacs-goto-tag-strategy             'refetch-index
-              treemacs-indentation                   2
-              treemacs-indentation-string            " "
-              treemacs-is-never-other-window         nil
-              treemacs-max-git-entries               5000
-              treemacs-missing-project-action        'ask
-              treemacs-no-png-images                 nil
-              treemacs-no-delete-other-windows       t
-              treemacs-project-follow-cleanup        nil
-              treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-              treemacs-recenter-distance             0.1
-              treemacs-recenter-after-file-follow    nil
-              treemacs-recenter-after-tag-follow     nil
-              treemacs-recenter-after-project-jump   'always
-              treemacs-recenter-after-project-expand 'on-distance
-              treemacs-show-cursor                   nil
-              treemacs-show-hidden-files             t
-              treemacs-silent-filewatch              nil
-              treemacs-silent-refresh                nil
-              treemacs-default-visit-action          'treemacs-visit-node-close-treemacs
-              treemacs-sorting                       'alphabetic-desc
-              treemacs-space-between-root-nodes      t
-              treemacs-tag-follow-cleanup            t
-              treemacs-tag-follow-delay              1.5
-              treemacs-width                         30)
-        (treemacs-resize-icons 11)
+  (use-package treemacs
+    :ensure t
+    :defer t
+    :init
+    :config
+    (progn
+      (setq treemacs-collapse-dirs                 (if (executable-find "python3") 3 0)
+            treemacs-deferred-git-apply-delay      0.5
+            treemacs-display-in-side-window        t
+            treemacs-eldoc-display                 t
+            treemacs-file-event-delay              5000
+            treemacs-file-follow-delay             0.2
+            treemacs-follow-after-init             t
+            treemacs-git-command-pipe              ""
+            treemacs-goto-tag-strategy             'refetch-index
+            treemacs-indentation                   2
+            treemacs-indentation-string            " "
+            treemacs-is-never-other-window         nil
+            treemacs-max-git-entries               5000
+            treemacs-missing-project-action        'ask
+            treemacs-no-png-images                 nil
+            treemacs-no-delete-other-windows       t
+            treemacs-project-follow-cleanup        nil
+            treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+            treemacs-recenter-distance             0.1
+            treemacs-recenter-after-file-follow    nil
+            treemacs-recenter-after-tag-follow     nil
+            treemacs-recenter-after-project-jump   'always
+            treemacs-recenter-after-project-expand 'on-distance
+            treemacs-show-cursor                   nil
+            treemacs-show-hidden-files             t
+            treemacs-silent-filewatch              nil
+            treemacs-silent-refresh                nil
+            treemacs-default-visit-action          'treemacs-visit-node-close-treemacs
+            treemacs-sorting                       'alphabetic-asc
+            treemacs-space-between-root-nodes      t
+            treemacs-tag-follow-cleanup            t
+            treemacs-tag-follow-delay              1.5
+            treemacs-width                         30)
+      (treemacs-resize-icons 11)
 
-        (treemacs-follow-mode t)
-        (treemacs-filewatch-mode t)
-        (treemacs-fringe-indicator-mode t)
+      (treemacs-follow-mode t)
+      (treemacs-filewatch-mode t)
+      (treemacs-fringe-indicator-mode t)
 
-        (pcase (cons (not (null (executable-find "git")))
-                     (not (null (executable-find "python3"))))
-          (`(t . t)
-           (treemacs-git-mode 'deferred))
-          (`(t . _)
-           (treemacs-git-mode 'simple))))
-      )
+      (pcase (cons (not (null (executable-find "git")))
+                   (not (null (executable-find "python3"))))
+        (`(t . t)
+         (treemacs-git-mode 'deferred))
+        (`(t . _)
+         (treemacs-git-mode 'simple))))
+    )
 
-    (use-package treemacs-evil
-      :after treemacs evil
-      :ensure t)
+  (use-package treemacs-evil
+    :after treemacs evil
+    :ensure t)
 
-    (use-package treemacs-all-the-icons
-      :after treemacs all-the-icons
-      :ensure t
-      :config
-      (treemacs-load-theme "all-the-icons")
-      )
+  (use-package treemacs-all-the-icons
+    :after treemacs all-the-icons
+    :ensure t
+    :config
+    (treemacs-load-theme "all-the-icons")
+    )
 
-    (with-eval-after-load 'treemacs
-      (define-key evil-treemacs-state-map (kbd "SPC e") 'treemacs)
-      (define-key evil-treemacs-state-map (kbd "l") #'treemacs-TAB-action))
+  (with-eval-after-load 'treemacs
+    (define-key evil-treemacs-state-map (kbd "SPC e") 'treemacs)
+    (define-key evil-treemacs-state-map (kbd "l") #'treemacs-TAB-action))
 
-    (use-package treemacs-projectile
-      :ensure t
-      :after (treemacs projectile)
-      )
+  (use-package treemacs-projectile
+    :ensure t
+    :after (treemacs projectile)
+    )
 
-    (use-package treemacs-magit
-      :ensure t
-      :after (treemacs magit)
-      )
+  (use-package treemacs-magit
+    :ensure t
+    :after (treemacs magit)
+    )
 
   (add-hook 'projectile-after-switch-project-hook 'treemacs-display-current-project-exclusively)
 #+end_src
@@ -1328,11 +1330,11 @@
 
 *** Buffer Move Up
 #+begin_src emacs-lisp
-                                                                        ;;;###autoload
+                                                                          ;;;###autoload
   (defun buf-move-up ()
     "Swap the current buffer and the buffer above the split.
-                                                                           If there is no split, ie now window above the current one, an
-                                                                           error is signaled."
+                                                                             If there is no split, ie now window above the current one, an
+                                                                             error is signaled."
     ;;  "Switches between the current buffer, and the buffer above the
     ;;  split, if possible."
     (interactive)
@@ -1349,11 +1351,11 @@
 
 *** Buffer Move Down
 #+begin_src emacs-lisp
-                                                                        ;;;###autoload
+                                                                          ;;;###autoload
   (defun buf-move-down ()
     "Swap the current buffer and the buffer under the split.
-                                                                           If there is no split, ie now window under the current one, an
-                                                                           error is signaled."
+                                                                             If there is no split, ie now window under the current one, an
+                                                                             error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'down))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1369,11 +1371,11 @@
 
 *** Buffer Move Left
 #+begin_src emacs-lisp
-                                                                        ;;;###autoload
+                                                                          ;;;###autoload
   (defun buf-move-left ()
     "Swap the current buffer and the buffer on the left of the split.
-                                                                           If there is no split, ie now window on the left of the current
-                                                                           one, an error is signaled."
+                                                                             If there is no split, ie now window on the left of the current
+                                                                             one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'left))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1388,11 +1390,11 @@
 
 *** Buffer Move Right
 #+begin_src emacs-lisp
-                                                                        ;;;###autoload
+                                                                          ;;;###autoload
   (defun buf-move-right ()
     "Swap the current buffer and the buffer on the right of the split.
-                                                                           If there is no split, ie now window on the right of the current
-                                                                           one, an error is signaled."
+                                                                             If there is no split, ie now window on the right of the current
+                                                                             one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'right))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1587,7 +1589,7 @@
     (org-roam-directory "~/Projects/life/loewe")
     (org-roam-completion-everywhere t)
     :config (org-roam-db-autosync-mode)
-  )
+    )
 #+end_src
 
 ** Org Agenda Files
@@ -1610,15 +1612,15 @@
 
   (org-add-agenda-files-recursively "~/Projects/life/loewe/daily")
 
-(defun org-agenda-current-buffer ()
-   (interactive)
-   (let ((org-agenda-files (list (buffer-file-name (current-buffer)))))
+  (defun org-agenda-current-buffer ()
+    (interactive)
+    (let ((org-agenda-files (list (buffer-file-name (current-buffer)))))
       (org-agenda)))
 
-(define-key global-map (kbd "C-c a") #'org-agenda-current-buffer)
+  (define-key global-map (kbd "C-c a") #'org-agenda-current-buffer)
 #+end_src
 
-#+RESULTS:
+#+results:
 : org-agenda-current-buffer
 
 ** Disable Electric Indent
@@ -1639,9 +1641,9 @@
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                                                                           FN is a function that operates on org-element's value and returns a string.
-                                                                           LANGUAGE is a string referring to one of orb-babel's supported languages.
-                                                                           (https://orgmode.org/manual/Languages.html#Languages)"
+                                                                             FN is a function that operates on org-element's value and returns a string.
+                                                                             LANGUAGE is a string referring to one of orb-babel's supported languages.
+                                                                             (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -1657,7 +1659,7 @@
         (emacs-lisp-mode)
         (insert
          (replace-regexp-in-string "[[:space:]]*
-                                                                                                                                              [[:space:]]*)" ")" string))
+                                                                                                                                                [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 
