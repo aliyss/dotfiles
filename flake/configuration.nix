@@ -63,6 +63,7 @@
       layout = "us";
       xkbVariant = "colemak_dh_iso";
     };
+    emacs.enable = true;
   };
 
   # DEFAULT USER ACCOUNT

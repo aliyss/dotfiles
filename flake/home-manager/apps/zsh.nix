@@ -1,3 +1,5 @@
+{ pkgs, ... }:
+
 {
   programs.zsh = {
     enable = true;
@@ -15,7 +17,8 @@
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
     };
     initExtra = ''
-      bindkey '^f' autosuggest-accept
+      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh;
+      bindkey '^f' autosuggest-accept;
     '';
   };
 
