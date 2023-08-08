@@ -37,9 +37,6 @@
 !/hypr/
 /hypr/device_settings.conf
 
-# Mako
-!/mako/
-
 # Tridactyl
 !/tridactyl/
 
