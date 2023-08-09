@@ -1,0 +1,55 @@
+* Table of Contents                                                     :toc:
+- [[#installation][Installation]]
+  - [[#setup][Setup]]
+  - [[#install][Install]]
+- [[#configuration][Configuration]]
+  - [[#flake][Flake]]
+  - [[#hyprland][Hyprland]]
+  - [[#foot][Foot]]
+  - [[#emacs][Emacs]]
+  - [[#tridactyl][Tridactyl]]
+  - [[#other][Other]]
+
+* Installation
+
+** Setup
+
+#+begin_src bash
+  # Clone folder into .config directory
+  git clone https://github.com/aliyss/dotfiles temp
+  mkdir -p ~/.config
+  mv -v temp/* ~/.config
+
+  # Only use the following if you're aliyss
+  mv -v temp/.git ~/.config/.git
+  mv -v temp/.gitignore ~/.config/.gitignore
+
+  # Cleanup
+  rm -rf temp
+#+end_src
+
+** Install
+
+#+begin_src bash
+  # Update System
+  sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta
+
+  # Update Home
+  home-manager switch --flake ~/.config/flake#aliyss"
+#+end_src
+
+* Configuration
+
+** Flake
+
+** Hyprland
+
+** Foot
+
+** Emacs
+
+** Tridactyl
+
+** Other
+
+*** Keyboard Layout
