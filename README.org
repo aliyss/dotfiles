@@ -48,7 +48,15 @@ I'm using NixOS to manage most of my stuff. There are other configurations store
 *Configuration (System):* [[/flake/configuration.nix][configuration.nix]]
 *Configuration (Home):* [[/flake/home-manager/home.nix][home.nix]]
 
-Using Flakes to load specific configurations to NixOS. See "Install" for more information.
+*** Updating System
+#+begin_src bash
+  update-system
+#+end_src
+
+*** Updating Home
+#+begin_src bash
+  update-home
+#+end_src
 
 ** Hyprland
 *Configuration:* [[/hypr/hyprland.conf][hyprland.conf]]
