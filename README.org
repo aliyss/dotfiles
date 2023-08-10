@@ -1,5 +1,6 @@
 * Table of Contents                                                     :toc:
 - [[#installation][Installation]]
+  - [[#operating-system][Operating System]]
   - [[#setup][Setup]]
   - [[#install][Install]]
 - [[#configuration][Configuration]]
@@ -11,6 +12,9 @@
   - [[#other][Other]]
 
 * Installation
+
+** Operating System
+I'm using NixOS to manage most of my stuff. There are other configurations stored within here as well.
 
 ** Setup
 
@@ -35,21 +39,47 @@
   sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta
 
   # Update Home
-  home-manager switch --flake ~/.config/flake#aliyss"
+  home-manager switch --flake ~/.config/flake#aliyss
 #+end_src
 
 * Configuration
 
 ** Flake
+*Configuration (System):* [[/flake/configuration.nix][configuration.nix]]
+*Configuration (Home):* [[/flake/home-manager/home.nix][home.nix]]
+
+Using Flakes to load specific configurations to NixOS. See "Install" for more information.
 
 ** Hyprland
+*Configuration:* [[/hypr/hyprland.conf][hyprland.conf]]
+
+Using Hyprland because it just does most of what I like and the Animations are just perfect.
 
 ** Foot
+*Configuration:* [[/foot/foot.ini][foot.ini]]
+
+Foot has some good transparency. I tried other Terminals like Alacritty and Kitty, but they are not quite my cup of tea.
 
 ** Emacs
+*Configuration:* [[/emacs/config.org][config.org]]
+
+I switched from NeoVim to Emacs. No regrets. Stuck in the same configuration hell.
+
+*** Known Issues
+Need to trigger ~SPC-e~ twice to correctly toggle _treemacs_.
 
 ** Tridactyl
+*Configuration (CSS):* [[/tridactyl/aliyss.css][aliyss.css]]
+
+*** Installation
+Run following command in Tridactyl:
+#+begin_src bash
+:colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/main/tridactyl/aliyss.css aliyss
+#+end_src
 
 ** Other
 
 *** Keyboard Layout
+*Configuration (ga):* [[/xkb/symbols/ga][ga]]
+
+Keyboard Layout is a custom layout I designed. It's based on Colemak DHM, but follows the CH (Swiss) Keyboard Layout closely. Special Characters stay the same.
