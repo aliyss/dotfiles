@@ -17,21 +17,20 @@
       #     set -g @catppuccin_date_time "%H:%M"
       #   '';
       # }
-      {
-        plugin = tmuxPlugins.resurrect;
-        extraConfig = ''
-          set -g @resurrect-capture-pane-contents 'on'
-        '';
-
-      }
-      {
-        plugin = tmuxPlugins.continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-          set -g @continuum-boot 'on'
-          set -g @continuum-save-interval '10'
-        '';
-      }
+      # {
+      #   plugin = tmuxPlugins.resurrect;
+      #   extraConfig = ''
+      #     set -g @resurrect-capture-pane-contents 'on'
+      #   '';
+      # }
+      # {
+      #   plugin = tmuxPlugins.continuum;
+      #   extraConfig = ''
+      #     set -g @continuum-restore 'on'
+      #     set -g @continuum-boot 'on'
+      #     set -g @continuum-save-interval '10'
+      #   '';
+      # }
       { plugin = tmuxPlugins.sensible; }
       { plugin = tmuxPlugins.vim-tmux-navigator; }
       { plugin = tmuxPlugins.cpu; }
