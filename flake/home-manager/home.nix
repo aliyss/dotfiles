@@ -1,7 +1,8 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ ./apps/spicetify.nix ./apps/zsh.nix ./services/mako.nix ];
+  imports =
+    [ ./apps/tmux.nix ./apps/spicetify.nix ./apps/zsh.nix ./services/mako.nix ];
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -39,6 +40,7 @@
 
     atool
     httpie
+    tmux
     stremio
   ];
 

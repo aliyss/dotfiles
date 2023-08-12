@@ -8,7 +8,7 @@
     syntaxHighlighting = { enable = true; };
     oh-my-zsh = {
       enable = true;
-      plugins = [ "docker-compose" "docker" "git" ];
+      plugins = [ "docker-compose" "docker" "git" "tmux" ];
       theme = "dst";
     };
     shellAliases = {
@@ -16,6 +16,7 @@
         "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta";
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
     };
+    sessionVariables = { ZSH_TMUX_AUTOSTART = "true"; };
     initExtra = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh;
       bindkey '^f' autosuggest-accept;
