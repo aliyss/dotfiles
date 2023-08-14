@@ -48,8 +48,8 @@ I'm using NixOS to manage most of my stuff. There are other configurations store
 * Configuration
 
 ** Flake
-*Configuration (System):* [[/flake/configuration.nix][configuration.nix]]
-*Configuration (Home):* [[/flake/home-manager/home.nix][home.nix]]
+*Configuration (System):* [[./flake/configuration.nix][configuration.nix]]
+*Configuration (Home):* [[./flake/home-manager/home.nix][home.nix]]
 
 *** Updating System
 #+begin_src bash
@@ -62,7 +62,7 @@ I'm using NixOS to manage most of my stuff. There are other configurations store
 #+end_src
 
 ** Hyprland
-*Configuration:* [[/hypr/hyprland.conf][hyprland.conf]]
+*Configuration:* [[./hypr/hyprland.conf][hyprland.conf]]
 
 Using Hyprland because it just does most of what I like and the Animations are just perfect.
 
@@ -72,7 +72,7 @@ Using Hyprland because it just does most of what I like and the Animations are j
 - ~SUPER-E~ Editor (emacs)
 
 ** Foot
-*Configuration:* [[/foot/foot.ini][foot.ini]]
+*Configuration:* [[./foot/foot.ini][foot.ini]]
 
 Foot has some good transparency. I tried other Terminals like Alacritty and Kitty, but they are not quite my cup of tea.
 
@@ -80,7 +80,7 @@ Foot has some good transparency. I tried other Terminals like Alacritty and Kitt
 Styling is mostly ok, since most of it is managed via ZSH. Just added the bit of transparency.
 
 ** ZSH
-*Configuration:* [[/flake/home-manager/apps/zsh.nix][zsh.nix]]
+*Configuration:* [[./flake/home-manager/apps/zsh.nix][zsh.nix]]
 
 *** Styling
 Need to add additional styling for what information to hide and what to show. Since some information can be offloaded to tmux.
@@ -98,7 +98,7 @@ Need to add additional styling for bars, so I can differentiate between the curr
 Need to configure Ressurect & Continuum, so I can restart from where I left off.
 
 ** Emacs
-*Configuration:* [[/emacs/config.org][config.org]]
+*Configuration:* [[./emacs/config.org][config.org]]
 
 I switched from NeoVim to Emacs. No regrets. Stuck in the same configuration hell.
 
@@ -117,7 +117,7 @@ Install the lsp-servers you need with ~M-x lsp-server-install~.
 - Need to trigger ~SPC-e~ twice to correctly toggle _treemacs_.
 
 ** Spotify
-*Configuration:* [[/flake/home-manager/apps/spicetify.nix][spicetify.nix]]
+*Configuration:* [[./flake/home-manager/apps/spicetify.nix][spicetify.nix]]
 
 *** TODO Styling
 Activated Style: spotify-tui
@@ -125,7 +125,7 @@ Activated Style: spotify-tui
 Need to style it so it has the same background like all the other applications.
 
 ** Tridactyl
-*Configuration (CSS):* [[/tridactyl/aliyss.css][aliyss.css]]
+*Configuration (CSS):* [[./tridactyl/aliyss.css][aliyss.css]]
 
 *** Installation
 Run following command in Tridactyl:
@@ -139,6 +139,6 @@ Need to add additional styling for Tridactyl and somehow export the configuratio
 ** Other
 
 *** Keyboard Layout
-*Configuration (ga):* [[/xkb/symbols/ga][ga]]
+*Configuration (ga):* [[./xkb/symbols/ga][ga]]
 
 Keyboard Layout is a custom layout I designed. It's based on Colemak DHM, but follows the CH (Swiss) Keyboard Layout closely. Special Characters stay the same.
