@@ -123,8 +123,10 @@ Install the lsp-servers you need with ~M-x lsp-server-install~.
 ** Spotify
 *Configuration:* [[./flake/home-manager/apps/spicetify.nix][spicetify.nix]]
 
+[[./images/spotify.png]]
+
 *** TODO Styling
-Activated Style: spotify-tui
+Activated Style: [[https://github.com/spicetify/spicetify-themes/tree/master/text][text]]
 
 Need to style it so it has the same background like all the other applications.
 
