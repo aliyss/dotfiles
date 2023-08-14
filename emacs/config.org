@@ -33,6 +33,7 @@
   - [[#which-key][Which-Key]]
 - [[#sudo][SUDO]]
   - [[#sudo-edit][SUDO EDIT]]
+- [[#ssh][SSH]]
 - [[#terminals][TERMINALS]]
   - [[#eshell][EShell]]
   - [[#vterm][VTerm]]
@@ -60,6 +61,7 @@
   - [[#treemacs][Treemacs]]
   - [[#winum][Winum]]
 - [[#buffers][BUFFERS]]
+  - [[#buffer-ignore][Buffer Ignore]]
   - [[#buffer-movement][Buffer Movement]]
   - [[#buffer-backups][Buffer Backups]]
   - [[#automatically-update-buffers-when-contents-change-on-disk][Automatically update buffers when contents change on disk]]
@@ -77,8 +79,8 @@
   - [[#disable-electric-indent][Disable Electric Indent]]
   - [[#format-emacs-lisp-src-blocks-in-org-files][Format emacs-lisp src blocks in Org Files]]
   - [[#source-code-block-tag-expansion][Source Code Block Tag Expansion]]
-  - [[#google-calendar-sync][Google Calendar Sync]]
 - [[#never-leaving-emacs][Never leaving Emacs]]
+  - [[#google-calendar-sync][Google Calendar Sync]]
   - [[#rss-feed][RSS Feed]]
   - [[#elfeed-youtube][Elfeed YouTube]]
 
@@ -216,11 +218,10 @@
     (dt/leader-keys
       "b" '(:ignore t :wk "Buffer")
       ;; Buffer Navigation
-      "b n" '(next-buffer :wk "Next buffer") ;; Purposely not using vim-keybindings here
-      "b b" '(previous-buffer :wk "Previous buffer") ;; Easier for Navigation purposes
-      "b j" '(ibuffer :wk "Jump to buffer")
+      "b n" '(my-next-buffer :wk "Next buffer") ;; Purposely not using vim-keybindings here
+      "b b" '(my-previous-buffer :wk "Previous buffer") ;; Easier for Navigation purposes
       "b r" '(revert-buffer :wk "Reload buffer")
-      "b i" '(switch-to-buffer :wk "Switch buffer")
+      "b j" '(switch-to-buffer :wk "Switch buffer")
       "b c" '(kill-this-buffer :wk "Close buffer")) ;; Naming this to Close instead of Kill. Hope it is the same.
 
     ;; Config Keybindings
@@ -286,7 +287,7 @@
     ;; Description: Theoretically everything one can jump to. I use this, when I know I want to change to something, but need a second to know where exactly.
     (dt/leader-keys
       "j" '(:ignore t :wk "Jump")
-      "j b" '(ibuffer :wk "Jump to Buffer")
+      "j b" '(switch-to-buffer :wk "Jump to Buffer")
       "j t" '(consult-outline :wk "Jump To Outline"))
 
     (general-define-key
@@ -298,11 +299,12 @@
     ;; Description: Default Keybindings for all languages.
     (dt/leader-keys
       "l" '(:ignore t :wk "LSP")
-      "l d" '(lsp-describe-thing-at-point :wk "Describe Entity")
+      "l i" '(lsp-describe-thing-at-point :wk "Describe Entity")
       "l r" '(lsp-rename :wk "Rename Entity")
       "l a" '(lsp-execute-code-action :wk "Code Action")
       "l u" '(lsp-ui-imenu :wk "UI Menu")
-      "l d" '(lsp-find-references :wk "Find References")
+      "l d" '(lsp-ui-peek-find-definitions :wk "Find Definitions")
+      "l r" '(lsp-ui-peek-find-references :wk "Find References")
       "l q" '(lsp-workspace-restart :wk "Restart Workspace")
       "l e" '(flycheck-list-errors :wk "List Errors") ;; FlyCheck, but keeping it under LSP, since it feels correct here.
       "l c" '(lsp-command-map :wk "LSP Command Map")) ;; Does not work... need to find something else.
@@ -479,6 +481,7 @@
 
 #+begin_src emacs-lisp
   (set-frame-parameter (selected-frame) 'alpha-background 0.8)
+  (set-background-color "black")
 #+end_src
 
 * THEMEING
@@ -528,7 +531,10 @@
     (setq ef-themes-to-toggle '(ef-cherie ef-elea-dark))
 
     :config
-    (load-theme 'ef-elea-dark :no-confirm))
+    (load-theme 'ef-elea-dark :no-confirm)
+  (set-background-color "black")
+)
+
 #+end_src
 
 ** All The Icons
@@ -641,9 +647,15 @@
                             ivy-rich-path-style 'abbrev)
     :diminish
     :config
-    (ivy-set-display-transformer 'ivy-switch-buffer
-                                 'ivy-rich-switch-buffer-transformer))
+    ;;     (ivy-set-display-transformer 'ivy-switch-buffer
+    ;;                                  'ivy-rich-switch-buffer-transformer)
+    )
 
+  (with-eval-after-load 'ivy
+    (add-to-list 'ivy-ignore-buffers "\\*Async-native-compile-log\\*")
+    (add-to-list 'ivy-ignore-buffers "\\*Ibuffer\\*")
+    (add-to-list 'ivy-ignore-buffers "\\*Command Line\\*")
+    (add-to-list 'ivy-ignore-buffers "\\*Messages\\*"))
 
   (use-package ivy-posframe
     :after ivy
@@ -794,6 +806,21 @@
 
 #+begin_src emacs-lisp
   (use-package sudo-edit)
+#+end_src
+
+* SSH
+
+#+begin_src emacs-lisp
+  (defun connect-remote ()
+    (interactive)
+    (dired "/ssh:aliyss@192.168.1.4:/"))
+
+   (use-package ssh)
+      (add-hook 'ssh-mode-hook
+                (lambda ()
+                  (setq ssh-directory-tracking-mode t)
+                  (shell-dirtrack-mode t)
+                  (setq dirtrackp nil)))
 #+end_src
 
 * TERMINALS
@@ -1000,7 +1027,7 @@
     (setq lsp-headerline-breadcrumb-enable t)
     (setq lsp-semantic-tokens-enable nil)
     (setq lsp-enable-folding t)
-    (setq lsp-enable-imenu nil)
+    (setq lsp-enable-imenu t)
     (setq lsp-enable-snippet t)
     (setq read-process-output-max (* 1024 1024)) ;; 1MB
     (setq lsp-idle-delay 0.2))
@@ -1009,17 +1036,31 @@
     :ensure t
     :commands lsp-ui-mode
     :config
-    (setq lsp-ui-doc-enable nil)
+    (setq lsp-ui-doc-enable t)
     (setq lsp-ui-doc-header t)
     (setq lsp-ui-doc-include-signature t)
-    (setq lsp-ui-doc-border (face-foreground 'default))
     (setq lsp-ui-sideline-show-code-actions t)
+    (setq lsp-ui-peek-expand-function (lambda (xs) (mapcar #'car xs)))
+
+    ;; (setq lsp-ui-sideline-show-code-diagnostics t)
     (setq lsp-ui-sideline-delay 0.05))
 #+end_src
 
 #+begin_src emacs-lisp
   ;; eldoc multiline is default enabled, can be disabled if necessary.
-  (setq eldoc-echo-area-use-multiline-p nil)
+  (setq eldoc-echo-area-use-multiline-p t)
+#+end_src
+
+*** LSP Performance
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold 100000000)
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+#+end_src
+
+*** LSP Location Exclusions
+
+#+begin_src emacs-lisp
 #+end_src
 
 ** Autoformat
@@ -1266,7 +1307,7 @@
             treemacs-recenter-after-project-expand 'on-distance
             treemacs-show-cursor                   nil
             treemacs-show-hidden-files             t
-            treemacs-silent-filewatch              nil
+            treemacs-silent-filewatch              t
             treemacs-silent-refresh                nil
             treemacs-default-visit-action          'treemacs-visit-node-close-treemacs
             treemacs-sorting                       'alphabetic-asc
@@ -1335,6 +1376,39 @@
 :DESCRIPTION: Everything relating to buffers or buffer management.
 :END:
 
+** Buffer Ignore
+#+begin_src emacs-lisp
+
+
+(defcustom my-skippable-buffers '("*Messages*" "*Async-native-compile-log*")
+  "Buffer names ignored by `my-next-buffer' and `my-previous-buffer'."
+  :type '(repeat string))
+
+(defun my-change-buffer (change-buffer)
+  "Call CHANGE-BUFFER until current buffer is not in `my-skippable-buffers'."
+  (let ((initial (current-buffer)))
+    (funcall change-buffer)
+    (let ((first-change (current-buffer)))
+      (catch 'loop
+        (while (member (buffer-name) my-skippable-buffers)
+          (funcall change-buffer)
+          (when (eq (current-buffer) first-change)
+            (switch-to-buffer initial)
+            (throw 'loop t)))))))
+
+(defun my-next-buffer ()
+  "Variant of `next-buffer' that skips `my-skippable-buffers'."
+  (interactive)
+  (my-change-buffer 'next-buffer))
+
+(defun my-previous-buffer ()
+  "Variant of `previous-buffer' that skips `my-skippable-buffers'."
+  (interactive)
+  (my-change-buffer 'previous-buffer))
+
+
+#+end_src
+
 ** Buffer Movement
 :PROPERTIES:
 :SOURCE:   https://www.emacswiki.org/emacs/buffer-move.el
@@ -1347,11 +1421,11 @@
 
 *** Buffer Move Up
 #+begin_src emacs-lisp
-                                                                                  ;;;###autoload
+                                                                                          ;;;###autoload
   (defun buf-move-up ()
     "Swap the current buffer and the buffer above the split.
-                                                                                     If there is no split, ie now window above the current one, an
-                                                                                     error is signaled."
+                                                                                             If there is no split, ie now window above the current one, an
+                                                                                             error is signaled."
     ;;  "Switches between the current buffer, and the buffer above the
     ;;  split, if possible."
     (interactive)
@@ -1368,11 +1442,11 @@
 
 *** Buffer Move Down
 #+begin_src emacs-lisp
-                                                                                  ;;;###autoload
+                                                                                          ;;;###autoload
   (defun buf-move-down ()
     "Swap the current buffer and the buffer under the split.
-                                                                                     If there is no split, ie now window under the current one, an
-                                                                                     error is signaled."
+                                                                                             If there is no split, ie now window under the current one, an
+                                                                                             error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'down))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1388,11 +1462,11 @@
 
 *** Buffer Move Left
 #+begin_src emacs-lisp
-                                                                                  ;;;###autoload
+                                                                                          ;;;###autoload
   (defun buf-move-left ()
     "Swap the current buffer and the buffer on the left of the split.
-                                                                                     If there is no split, ie now window on the left of the current
-                                                                                     one, an error is signaled."
+                                                                                             If there is no split, ie now window on the left of the current
+                                                                                             one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'left))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1407,11 +1481,11 @@
 
 *** Buffer Move Right
 #+begin_src emacs-lisp
-                                                                                  ;;;###autoload
+                                                                                          ;;;###autoload
   (defun buf-move-right ()
     "Swap the current buffer and the buffer on the right of the split.
-                                                                                     If there is no split, ie now window on the right of the current
-                                                                                     one, an error is signaled."
+                                                                                             If there is no split, ie now window on the right of the current
+                                                                                             one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'right))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1660,9 +1734,9 @@
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                                                                                     FN is a function that operates on org-element's value and returns a string.
-                                                                                     LANGUAGE is a string referring to one of orb-babel's supported languages.
-                                                                                     (https://orgmode.org/manual/Languages.html#Languages)"
+                                                                                             FN is a function that operates on org-element's value and returns a string.
+                                                                                             LANGUAGE is a string referring to one of orb-babel's supported languages.
+                                                                                             (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -1678,7 +1752,7 @@
         (emacs-lisp-mode)
         (insert
          (replace-regexp-in-string "[[:space:]]*
-                                                                                                                                                        [[:space:]]*)" ")" string))
+                                                                                                                                                                [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 
@@ -1716,6 +1790,8 @@
 #+begin_src emacs-lisp
   (require 'org-tempo)
 #+end_src
+
+* Never leaving Emacs
 
 ** Google Calendar Sync
 
@@ -1809,8 +1885,6 @@
     (interactive)
     (cancel-timer aliyss--timer:update-work-calendar))
 #+end_src
-
-* Never leaving Emacs
 
 ** RSS Feed
 

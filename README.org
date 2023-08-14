@@ -7,7 +7,10 @@
   - [[#flake][Flake]]
   - [[#hyprland][Hyprland]]
   - [[#foot][Foot]]
+  - [[#zsh][ZSH]]
+  - [[#tmux][Tmux]]
   - [[#emacs][Emacs]]
+  - [[#spotify][Spotify]]
   - [[#tridactyl][Tridactyl]]
   - [[#other][Other]]
 
@@ -63,18 +66,63 @@ I'm using NixOS to manage most of my stuff. There are other configurations store
 
 Using Hyprland because it just does most of what I like and the Animations are just perfect.
 
+*** Important Keybindings
+- ~SUPER-RET~ Terminal (foot)
+- ~SUPER-C~ Browser (firefox)
+- ~SUPER-E~ Editor (emacs)
+
 ** Foot
 *Configuration:* [[/foot/foot.ini][foot.ini]]
 
 Foot has some good transparency. I tried other Terminals like Alacritty and Kitty, but they are not quite my cup of tea.
+
+*** Styling
+Styling is mostly ok, since most of it is managed via ZSH. Just added the bit of transparency.
+
+** ZSH
+*Configuration:* [[/flake/home-manager/apps/zsh.nix][zsh.nix]]
+
+*** Styling
+Need to add additional styling for what information to hide and what to show. Since some information can be offloaded to tmux.
+
+*** TODO SSH
+Unknown if SSH into the PC actually works from within another emacs client on another PC.
+
+** Tmux
+*Configuration:* [[./flake/home-manager/apps/tmux.nix][tmux.nix]]
+
+*** TODO Styling
+Need to add additional styling for bars, so I can differentiate between the current and the ssh terminal.
+
+*** TODO Ressurect & Continuum
+Need to configure Ressurect & Continuum, so I can restart from where I left off.
 
 ** Emacs
 *Configuration:* [[/emacs/config.org][config.org]]
 
 I switched from NeoVim to Emacs. No regrets. Stuck in the same configuration hell.
 
-*** Known Issues
-Need to trigger ~SPC-e~ twice to correctly toggle _treemacs_.
+*** Installation
+**** Configure Org-Gcal
+1. Make sure you are using GnuPG 2.4.0 since 2.4.1 has [[https://github.com/kidd/org-gcal.el/issues/236#issuecomment-1646443501][issues]].
+2. Create Configuration Files:
+   - [[~/.config/emacs/.local/org-gcal/org-gcal-client-id]]
+   - [[~/.config/emacs/.local/org-gcal/org-gcal-client-secret]]
+3. Fill data after following the [[https://github.com/kidd/org-gcal.el#installation][Org-Gcal Installation]].
+
+**** Install LSP Modes
+Install the lsp-servers you need with ~M-x lsp-server-install~.
+
+*** TODO Known Issues
+- Need to trigger ~SPC-e~ twice to correctly toggle _treemacs_.
+
+** Spotify
+*Configuration:* [[/flake/home-manager/apps/spicetify.nix][spicetify.nix]]
+
+*** TODO Styling
+Activated Style: spotify-tui
+
+Need to style it so it has the same background like all the other applications.
 
 ** Tridactyl
 *Configuration (CSS):* [[/tridactyl/aliyss.css][aliyss.css]]
@@ -84,6 +132,9 @@ Run following command in Tridactyl:
 #+begin_src bash
 :colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/main/tridactyl/aliyss.css aliyss
 #+end_src
+
+*** TODO Styling
+Need to add additional styling for Tridactyl and somehow export the configuration so I can load off that again.
 
 ** Other
 
