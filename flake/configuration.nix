@@ -130,6 +130,10 @@
     # Wallpaper for Hyprland
     swww
 
+    # Screenshots
+    grim
+    slurp
+
     # Git
     git
     ## Github CLI for git
@@ -161,7 +165,7 @@
     enable = true;
     shellAliases = {
       ll = "ls -l";
-      update = "sudo nixos-rebuild switch";
+      screenshot = ''grim -g "$(slurp -d)"'';
     };
     ohMyZsh = {
       enable = true;

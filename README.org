@@ -82,6 +82,8 @@ Styling is mostly ok, since most of it is managed via ZSH. Just added the bit of
 ** ZSH
 *Configuration:* [[./flake/home-manager/apps/zsh.nix][zsh.nix]]
 
+[[./images/zsh.png]]
+
 *** Styling
 Need to add additional styling for what information to hide and what to show. Since some information can be offloaded to tmux.
 
@@ -101,6 +103,8 @@ Need to configure Ressurect & Continuum, so I can restart from where I left off.
 *Configuration:* [[./emacs/config.org][config.org]]
 
 I switched from NeoVim to Emacs. No regrets. Stuck in the same configuration hell.
+
+[[./images/emacs.png]]
 
 *** Installation
 **** Configure Org-Gcal
@@ -126,6 +130,8 @@ Need to style it so it has the same background like all the other applications.
 
 ** Tridactyl
 *Configuration (CSS):* [[./tridactyl/aliyss.css][aliyss.css]]
+
+[[./images/tridactyl.png]]
 
 *** Installation
 Run following command in Tridactyl:
