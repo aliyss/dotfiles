@@ -532,9 +532,8 @@
 
     :config
     (load-theme 'ef-elea-dark :no-confirm)
-  (set-background-color "black")
-)
-
+    (set-background-color "black")
+    )
 #+end_src
 
 ** All The Icons
@@ -727,6 +726,18 @@
     (projectile-mode 1))
 #+end_src
 
+*** Projectile FlyCheck
+:PROPERTIES:
+:SOURCE:   https://github.com/nbfalcon/flycheck-projectile
+:DESCRIPTION: Adds the possibility to check all errors over a project
+:END:
+
+#+begin_src emacs-lisp
+  (use-package flycheck-projectile
+    :elpaca '(flycheck-projectile :host github :repo "nbfalcon/flycheck-projectile")
+    )
+#+end_src
+
 ** Company
 :PROPERTIES:
 :SOURCE:   http://company-mode.github.io/
@@ -788,7 +799,7 @@
           which-key-min-display-lines 6
           which-key-side-window-slot -10
           which-key-side-window-max-height 0.25
-          which-key-idle-delay 0.2
+          which-key-idle-delay 0.8
           which-key-max-description-length 25
           which-key-allow-imprecise-window-fit nil
           which-key-allow-evil-operators t
@@ -815,12 +826,12 @@
     (interactive)
     (dired "/ssh:aliyss@192.168.1.4:/"))
 
-   (use-package ssh)
-      (add-hook 'ssh-mode-hook
-                (lambda ()
-                  (setq ssh-directory-tracking-mode t)
-                  (shell-dirtrack-mode t)
-                  (setq dirtrackp nil)))
+  (use-package ssh)
+  (add-hook 'ssh-mode-hook
+            (lambda ()
+              (setq ssh-directory-tracking-mode t)
+              (shell-dirtrack-mode t)
+              (setq dirtrackp nil)))
 #+end_src
 
 * TERMINALS
@@ -1081,6 +1092,7 @@
   (setq auto-mode-alist (append '((".*\\.conf$" . conf-desktop-mode)) auto-mode-alist))
   (setq auto-mode-alist (append '((".*\\.env$" . dotenv-mode)) auto-mode-alist))
   (setq auto-mode-alist (append '((".*\\.cjs$" . js-mode)) auto-mode-alist))
+  (setq auto-mode-alist (append '((".*\\.html$" . web-mode)) auto-mode-alist))
 #+end_src
 
 ** Modes
@@ -1244,11 +1256,25 @@
 ** Eslint
 
 #+begin_src emacs-lisp
-  (setq flycheck-javascript-eslint-executable "eslint_d")
-  (setq eslintd-fix-executable "/usr/local/bin/eslint_d")
-  (add-hook 'typescript-tsx-mode-hook 'eslintd-fix-mode)
-  (add-hook 'typescript-mode-hook 'eslintd-fix-mode)
-  (add-hook 'web-mode-hook 'eslintd-fix-mode)
+    (setq flycheck-javascript-eslint-executable "eslint_d")
+    (setq eslintd-fix-executable "/usr/local/bin/eslint_d")
+    (add-hook 'typescript-tsx-mode-hook 'eslintd-fix-mode)
+    (add-hook 'typescript-mode-hook 'eslintd-fix-mode)
+    (add-hook 'web-mode-hook 'eslintd-fix-mode)
+
+  ;; (use-package flymake-json)
+ ;; use local eslint from node_modules before global
+;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
+(defun my/use-eslint-from-node-modules ()
+  (let* ((root (locate-dominating-file
+                (or (buffer-file-name) default-directory)
+                "node_modules"))
+         (eslint (and root
+                      (expand-file-name "node_modules/eslint/bin/eslint.js"
+                                        root))))
+    (when (and eslint (file-executable-p eslint))
+      (setq-local flycheck-javascript-eslint-executable eslint))))
+(add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)   (add-hook 'json-mode-hook 'flymake-json-mode)
 #+end_src
 
 * Debugger
@@ -1329,6 +1355,8 @@
          (treemacs-git-mode 'simple))))
     )
 
+
+
   (use-package treemacs-evil
     :after treemacs evil
     :ensure t)
@@ -1379,34 +1407,31 @@
 ** Buffer Ignore
 #+begin_src emacs-lisp
 
+  (defcustom my-skippable-buffers '("*Messages*" "*scratch*" "*Help*" "*Async-native-compile-log*" "*lsp-log*" "*ts-ls*" "*ts-ls::stderr*" "*eslint*" "*eslint::stderr*" "*tailwindcss*" "*tailwindcss::stderr*")
+    "Buffer names ignored by `my-next-buffer' and `my-previous-buffer'."
+    :type '(repeat string))
 
-(defcustom my-skippable-buffers '("*Messages*" "*Async-native-compile-log*")
-  "Buffer names ignored by `my-next-buffer' and `my-previous-buffer'."
-  :type '(repeat string))
+  (defun my-change-buffer (change-buffer)
+    "Call CHANGE-BUFFER until current buffer is not in `my-skippable-buffers'."
+    (let ((initial (current-buffer)))
+      (funcall change-buffer)
+      (let ((first-change (current-buffer)))
+        (catch 'loop
+          (while (member (buffer-name) my-skippable-buffers)
+            (funcall change-buffer)
+            (when (eq (current-buffer) first-change)
+              (switch-to-buffer initial)
+              (throw 'loop t)))))))
 
-(defun my-change-buffer (change-buffer)
-  "Call CHANGE-BUFFER until current buffer is not in `my-skippable-buffers'."
-  (let ((initial (current-buffer)))
-    (funcall change-buffer)
-    (let ((first-change (current-buffer)))
-      (catch 'loop
-        (while (member (buffer-name) my-skippable-buffers)
-          (funcall change-buffer)
-          (when (eq (current-buffer) first-change)
-            (switch-to-buffer initial)
-            (throw 'loop t)))))))
+  (defun my-next-buffer ()
+    "Variant of `next-buffer' that skips `my-skippable-buffers'."
+    (interactive)
+    (my-change-buffer 'next-buffer))
 
-(defun my-next-buffer ()
-  "Variant of `next-buffer' that skips `my-skippable-buffers'."
-  (interactive)
-  (my-change-buffer 'next-buffer))
-
-(defun my-previous-buffer ()
-  "Variant of `previous-buffer' that skips `my-skippable-buffers'."
-  (interactive)
-  (my-change-buffer 'previous-buffer))
-
-
+  (defun my-previous-buffer ()
+    "Variant of `previous-buffer' that skips `my-skippable-buffers'."
+    (interactive)
+    (my-change-buffer 'previous-buffer))
 #+end_src
 
 ** Buffer Movement
@@ -1421,11 +1446,11 @@
 
 *** Buffer Move Up
 #+begin_src emacs-lisp
-                                                                                          ;;;###autoload
+                                                                                                  ;;;###autoload
   (defun buf-move-up ()
     "Swap the current buffer and the buffer above the split.
-                                                                                             If there is no split, ie now window above the current one, an
-                                                                                             error is signaled."
+                                                                                                     If there is no split, ie now window above the current one, an
+                                                                                                     error is signaled."
     ;;  "Switches between the current buffer, and the buffer above the
     ;;  split, if possible."
     (interactive)
@@ -1442,11 +1467,11 @@
 
 *** Buffer Move Down
 #+begin_src emacs-lisp
-                                                                                          ;;;###autoload
+                                                                                                  ;;;###autoload
   (defun buf-move-down ()
     "Swap the current buffer and the buffer under the split.
-                                                                                             If there is no split, ie now window under the current one, an
-                                                                                             error is signaled."
+                                                                                                     If there is no split, ie now window under the current one, an
+                                                                                                     error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'down))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1462,11 +1487,11 @@
 
 *** Buffer Move Left
 #+begin_src emacs-lisp
-                                                                                          ;;;###autoload
+                                                                                                  ;;;###autoload
   (defun buf-move-left ()
     "Swap the current buffer and the buffer on the left of the split.
-                                                                                             If there is no split, ie now window on the left of the current
-                                                                                             one, an error is signaled."
+                                                                                                     If there is no split, ie now window on the left of the current
+                                                                                                     one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'left))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1481,11 +1506,11 @@
 
 *** Buffer Move Right
 #+begin_src emacs-lisp
-                                                                                          ;;;###autoload
+                                                                                                  ;;;###autoload
   (defun buf-move-right ()
     "Swap the current buffer and the buffer on the right of the split.
-                                                                                             If there is no split, ie now window on the right of the current
-                                                                                             one, an error is signaled."
+                                                                                                     If there is no split, ie now window on the right of the current
+                                                                                                     one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'right))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1658,6 +1683,7 @@
 #+begin_src emacs-lisp
   (setq org-log-done 'time)
   (setq org-log-done 'note)
+  (setq org-list-allow-alphabetical t)
 #+end_src
 
 
@@ -1703,7 +1729,7 @@
     (nconc org-agenda-files
            (org-get-agenda-files-recursively dir)))
 
-  (org-add-agenda-files-recursively "~/Projects/life/loewe/daily")
+  (org-set-agenda-files-recursively "~/Projects/life/loewe/daily")
 
   (defun org-agenda-current-buffer ()
     (interactive)
@@ -1734,9 +1760,9 @@
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                                                                                             FN is a function that operates on org-element's value and returns a string.
-                                                                                             LANGUAGE is a string referring to one of orb-babel's supported languages.
-                                                                                             (https://orgmode.org/manual/Languages.html#Languages)"
+                                                                                                     FN is a function that operates on org-element's value and returns a string.
+                                                                                                     LANGUAGE is a string referring to one of orb-babel's supported languages.
+                                                                                                     (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -1752,7 +1778,7 @@
         (emacs-lisp-mode)
         (insert
          (replace-regexp-in-string "[[:space:]]*
-                                                                                                                                                                [[:space:]]*)" ")" string))
+                                                                                                                                                                        [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 
@@ -1817,7 +1843,7 @@
   (use-package f)
 #+end_src
 
-*** GCal Sync
+*** Org-GCal Sync
 
 #+begin_src emacs-lisp
   ;;  (fset 'epg-wait-for-status 'ignore)
@@ -1867,6 +1893,24 @@
       (add-to-list 'org-agenda-files isaac-calendar)
       (add-to-list 'org-agenda-files stain-calendar)
       (add-to-list 'org-agenda-files yara-calendar)
+
+      (add-to-list 'my-skippable-buffers "loewe.org")
+      (add-to-list 'my-skippable-buffers "aliyss.org")
+      (add-to-list 'my-skippable-buffers "isaac.org")
+      (add-to-list 'my-skippable-buffers "stain.org")
+      (add-to-list 'my-skippable-buffers "yara.org")
+
+      (add-to-list 'recentf-exclude "loewe.org")
+      (add-to-list 'recentf-exclude "aliyss.org")
+      (add-to-list 'recentf-exclude "isaac.org")
+      (add-to-list 'recentf-exclude "stain.org")
+      (add-to-list 'recentf-exclude "yara.org")
+
+      (add-to-list 'ivy-ignore-buffers "loewe.org")
+      (add-to-list 'ivy-ignore-buffers "aliyss.org")
+      (add-to-list 'ivy-ignore-buffers "isaac.org")
+      (add-to-list 'ivy-ignore-buffers "stain.org")
+      (add-to-list 'ivy-ignore-buffers "yara.org")
       ))
 
   (defun aliyss/refresh-work-calendar ()

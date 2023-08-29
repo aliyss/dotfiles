@@ -13,6 +13,7 @@
   # BOOTLOADER
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
 
   # HOSTNAME
   networking.hostName = "aliyss-bequitta";
@@ -64,6 +65,10 @@
       xkbVariant = "colemak_dh_iso";
     };
     emacs.enable = true;
+    #   hardware.openrgb = {
+    #     enable = true;
+    #     package = pkgs.openrgb-with-all-plugins;
+    #   };
   };
 
   # DEFAULT USER ACCOUNT
@@ -105,7 +110,9 @@
     nodePackages.typescript
     nodePackages.typescript-language-server
     nodePackages.eslint
+    nodePackages.jsonlint
     nodePackages.tailwindcss
+    nodePackages.vercel
     nodePackages."@tailwindcss/language-server"
     rustywind
     tailwindcss
@@ -156,7 +163,7 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    nvidiaPatches = true;
+    enableNvidiaPatches = true;
   };
 
   # SHELL CONFIGURATION

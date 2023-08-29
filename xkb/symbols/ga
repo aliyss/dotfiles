@@ -17,7 +17,7 @@ xkb_symbols "basic" {
     key <AE10> { [          0,      equal                           ] };
     key <AE11> { [ apostrophe,   question,   dead_acute             ] };
     key <AE12> { [ dead_circumflex, dead_grave, dead_tilde          ] };
-    
+
     key <AD01>	{ [         q,          Q,           at,  Greek_OMEGA ]	};
     key <AD02>	{ [         w,          W,        U017F,      section ]	};
     key <AD03>	{ [         f,          F,      dstroke,  ordfeminine ]	};
@@ -30,7 +30,7 @@ xkb_symbols "basic" {
     key <AD10> { [ odiaeresis,     eacute                           ] };
     key <AD11> { [ udiaeresis,     egrave,  bracketleft             ] };
     key <AD12> { [ dead_diaeresis, exclam, bracketright             ] };
-    
+
     key <AC01>	{ [         a,          A,           ae,           AE ]	};
     key <AC02>	{ [         r,          R,    paragraph,   registered ]	};
     key <AC03>	{ [         s,          S,       ssharp,        U1E9E ]	};
@@ -43,7 +43,7 @@ xkb_symbols "basic" {
     key <AC10>  { [         o,          O,           oe,           OE ] };
     key <AC11>  { [ adiaeresis,     agrave,    braceleft              ] };
     key <BKSL> { [     dollar,   sterling,   braceright             ] };
-    
+
     key <LSGT>  { [       less,    greater,    backslash, brokenbar  ] };
     key <AB01>	{ [         z,          Z, guillemotleft,        less ]	};
     key <AB02>	{ [         x,          X, guillemotright,    greater ]	};
@@ -55,8 +55,10 @@ xkb_symbols "basic" {
     key <AB08>  { [      comma,  semicolon                           ] };
     key <AB09>  { [     period,      colon                           ] };
     key <AB10>  { [      minus, underscore                           ] };
-    
-    
+
+    key <CAPS> { [Escape] };
+    key <ESC> { [Caps_Lock] };
+
     include "level3(ralt_switch)"
 };
 
