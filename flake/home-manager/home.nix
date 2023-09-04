@@ -1,8 +1,13 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
-  imports =
-    [ ./apps/tmux.nix ./apps/spicetify.nix ./apps/zsh.nix ./services/mako.nix ];
+  imports = [
+    ./apps/wayland.nix
+    ./apps/tmux.nix
+    ./apps/spicetify.nix
+    ./apps/zsh.nix
+    ./services/mako.nix
+  ];
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.

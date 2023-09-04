@@ -5,7 +5,7 @@
     enable = true;
     enableCompletion = true;
     enableAutosuggestions = true;
-    syntaxHighlighting = { enable = true; };
+    syntaxHighlighting = { enable = false; };
     oh-my-zsh = {
       enable = true;
       plugins = [ "docker-compose" "docker" "git" "tmux" ];

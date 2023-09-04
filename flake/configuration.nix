@@ -49,7 +49,9 @@
   # SERVICES
   services = {
     # Sound
+    pipewire.enable = true;
     pipewire.pulse.enable = true;
+    pipewire.wireplumber.enable = true;
     # Bluetooth
     blueman.enable = true;
     # Display
@@ -210,7 +212,7 @@
     opengl.enable = true;
     nvidia.modesetting.enable = true;
     # Sound
-    pulseaudio.enable = true;
+    pulseaudio.enable = false;
     pulseaudio.support32Bit = true;
     # Bluetooth
     bluetooth.enable = true;
@@ -231,8 +233,5 @@
   ];
 
   # FLAKE
-  nix = {
-    package = pkgs.nixFlakes;
-    extraOptions = "experimental-features = nix-command flakes";
-  };
+  nix = { settings.experimental-features = [ "nix-command" "flakes" ]; };
 }

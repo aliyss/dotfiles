@@ -87,9 +87,6 @@ Styling is mostly ok, since most of it is managed via ZSH. Just added the bit of
 *** Styling
 Need to add additional styling for what information to hide and what to show. Since some information can be offloaded to tmux.
 
-*** TODO SSH
-Unknown if SSH into the PC actually works from within another emacs client on another PC.
-
 ** Tmux
 *Configuration:* [[./flake/home-manager/apps/tmux.nix][tmux.nix]]
 
@@ -116,9 +113,6 @@ I switched from NeoVim to Emacs. No regrets. Stuck in the same configuration hel
 
 **** Install LSP Modes
 Install the lsp-servers you need with ~M-x lsp-server-install~.
-
-*** TODO Known Issues
-- Need to trigger ~SPC-e~ twice to correctly toggle _treemacs_.
 
 ** Spotify
 *Configuration:* [[./flake/home-manager/apps/spicetify.nix][spicetify.nix]]
