@@ -3,8 +3,8 @@
 {
   programs.firefox = {
     enable = true;
-    package = pkgs.firefox-unwrapped.override {
-      cfg = { enableTridactylNative = true; };
-    };
+    package =
+      pkgs.firefox-beta.override { cfg = { enableTridactylNative = true; }; };
+    forceWayland = true;
   };
 }
