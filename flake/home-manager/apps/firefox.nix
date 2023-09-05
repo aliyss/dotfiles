@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, nur, ... }:
 
 {
   programs.firefox = {
@@ -7,8 +7,7 @@
       pkgs.firefox-beta.override { cfg = { enableTridactylNative = true; }; };
     profiles = {
       default = {
-        extensions = with pkgs.nur.repos.rycee.firefox-addons;
-          [ privacy-badger ];
+        extensions = with nur.repos.rycee.firefox-addons; [ privacy-badger ];
       };
     };
   };
