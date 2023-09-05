@@ -21,6 +21,9 @@
 
       lib = nixpkgs.lib;
     in {
+
+      home-manager.useGlobalPackages = true;
+
       # NIXOS CONFIGURATIONS
       nixosConfigurations = {
         # Desktop
