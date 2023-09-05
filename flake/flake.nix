@@ -22,14 +22,12 @@
       lib = nixpkgs.lib;
     in {
 
-      home-manager.useGlobalPackages = true;
-
       # NIXOS CONFIGURATIONS
       nixosConfigurations = {
         # Desktop
         aliyss-bequitta = lib.nixosSystem {
           specialArgs = { inherit system; };
-          modules = [ ./configuration.nix ];
+          modules = [ ./configuration.nix nur.nixosModules.nur ];
         };
         # Laptop: Not yet merged
         aliyss-blade = lib.nixosSystem {
