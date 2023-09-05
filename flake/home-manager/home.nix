@@ -6,6 +6,7 @@
     ./apps/tmux.nix
     ./apps/spicetify.nix
     ./apps/zsh.nix
+    ./apps/firefox.nix
     ./services/mako.nix
   ];
 
@@ -47,6 +48,7 @@
     httpie
     tmux
     stremio
+    tridactyl-native
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
