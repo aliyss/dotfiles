@@ -5,6 +5,11 @@
     enable = true;
     package =
       pkgs.firefox-beta.override { cfg = { enableTridactylNative = true; }; };
-    forceWayland = true;
+    profiles = {
+      default = {
+        extensions = with pkgs.nur.repos.rycee.firefox-addons;
+          [ privacy-badger ];
+      };
+    };
   };
 }

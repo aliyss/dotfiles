@@ -73,6 +73,13 @@
     #   };
   };
 
+  nixpkgs.config.packageOverrides = pkgs: {
+    nur = import (builtins.fetchTarball
+      "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+        inherit pkgs;
+      };
+  };
+
   # DEFAULT USER ACCOUNT
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aliyss = {
