@@ -42,6 +42,7 @@
 
 # Tridactyl
 !/tridactyl/
+/tridactyl/tridactylrc
 
 # Keymappings
 !/xkb/

@@ -26,11 +26,11 @@
   xdg.configFile."tridactyl/tridactylrc".text = ''
     colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/master/tridactyl/aliyss.css aliyss
 
-    set newtab www.google.com
+    set newtab about:newtab
     set smoothscroll true
     set editorcmd emacsclient -a \"\" -c -e '(progn (find-file "%f") (forward-line (1- %l)) (forward-char %c))'
 
-    unbind b
+    unbind --mode=normal b
     bind bb tabprev
     bind bn tabnext
     bind bc tabclose
@@ -40,11 +40,61 @@
     unbind --mode=normal t
     bind tt back
     bind tn forward
+    bind td tabdetach
     bind be fillcmdline tabclose
     bind bj fillcmdline taball
 
+    unbind --mode=normal w
+    bind ww fillcmdline winopen
+    bind wm fillcmdline winmerge
+    bind wc winclose
+    bind we fillcmdline winclose
+
     bind e fillcmdline open
   '';
+
+  home.file.".mozilla/managed-storage/uBlock0@raymondhill.net.json".text =
+    builtins.toJSON {
+      name = "uBlock0@raymondhill.net";
+      description = "_";
+      type = "storage";
+      data = {
+        adminSettings = {
+          userFilters = ''
+            www.youtube.com###cinematics > div > canvas
+          '';
+        };
+        userSettings = [
+          [ "advancedUserEnabled" "true" ]
+          [ "autoUpdate" "true" ]
+          [ "colorBlindFriendly" "true" ]
+          [ "contextMenuEnabled" "true" ]
+          [ "dynamicFilteringEnabled" "false" ]
+        ];
+        toOverwrite = {
+          filterLists = [
+            "user-filters"
+            "ublock-filters"
+            "ublock-badware"
+            "ublock-privacy"
+            "ublock-quick-fixes"
+            "ublock-abuse"
+            "ublock-unbreak"
+            "easylist"
+            "easyprivacy"
+            "urlhaus-1"
+            "plowe-0"
+            "adguard-cookiemonster"
+            "ublock-cookies-adguard"
+            "fanboy-cookiemonster"
+            "ublock-cookies-easylist"
+            "https://raw.githubusercontent.com/liamengland1/miscfilters/master/antipaywall.txt"
+            "https://gitlab.com/magnolia1234/bypass-paywalls-clean-filters/-/raw/main/bpc-paywall-filter.txt"
+            "https://raw.githubusercontent.com/gijsdev/ublock-hide-yt-shorts/master/list.txt"
+          ];
+        };
+      };
+    };
 
   programs.firefox = {
     enable = true;
