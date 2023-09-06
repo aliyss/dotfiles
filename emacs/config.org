@@ -484,6 +484,9 @@
   (set-background-color "black")
 #+end_src
 
+#+RESULTS:
+: pgtk
+
 * THEMEING
 :PROPERTIES:
 :DESCRIPTION: Everything that more or less contributes to how my emacs looks like.
@@ -540,12 +543,20 @@
                                                  (unless my:theme-window-loaded
                                                    (if my:theme-terminal-loaded
                                                      (enable-theme my:theme)
-                                                     (load-theme my:theme t))
+                                                     (load-theme my:theme t)
+  (set-frame-parameter (selected-frame) 'alpha-background 0.8)
+  (set-background-color "black")
+                                                       (set-background-color "black")
+)
                                                    (setq my:theme-window-loaded t))
                                                (unless my:theme-terminal-loaded
                                                  (if my:theme-window-loaded
                                                    (enable-theme my:theme)
-                                                   (load-theme my:theme t))
+                                                   (load-theme my:theme t)
+  (set-frame-parameter (selected-frame) 'alpha-background 0.8)
+  (set-background-color "black")
+                                                       (set-background-color "black")
+)
                                                  (setq my:theme-terminal-loaded t)))))
 
     (progn
@@ -554,8 +565,6 @@
           (setq my:theme-window-loaded t)
         (setq my:theme-terminal-loaded t))))
 
-      (load-theme my:theme t)
-                                                       (set-background-color "black")
     )
 
 

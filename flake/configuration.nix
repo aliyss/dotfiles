@@ -66,11 +66,6 @@
       layout = "us";
       xkbVariant = "colemak_dh_iso";
     };
-    emacs = {
-      enable = true;
-      defaultEditor = true;
-      package = pkgs.emacs29-pgtk;
-    };
     #   hardware.openrgb = {
     #     enable = true;
     #     package = pkgs.openrgb-with-all-plugins;

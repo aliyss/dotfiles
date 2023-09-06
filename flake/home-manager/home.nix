@@ -7,6 +7,7 @@
     ./apps/spicetify.nix
     ./apps/zsh.nix
     ./apps/firefox.nix
+    ./services/emacs.nix
     ./services/mako.nix
   ];
 
@@ -76,10 +77,7 @@
   #  /etc/profiles/per-user/aliyss/etc/profile.d/hm-session-vars.sh
   #
   # if you don't want to manage your shell through Home Manager.
-  home.sessionVariables = {
-    EDITOR = "${pkgs.emacs}/bin/emacsclient <extra-arguments>";
-    LSP_USE_PLISTS = "true";
-  };
+  home.sessionVariables = { LSP_USE_PLISTS = "true"; };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
