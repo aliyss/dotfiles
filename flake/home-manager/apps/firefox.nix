@@ -197,6 +197,31 @@
             visibility: collapse;
           }
 
+          #nav-bar {
+            /* customize this value. */
+            --navbar-margin: -44px;
+
+            margin-top: var(--navbar-margin);
+            margin-bottom: 0;
+            z-index: -100;
+            transition: all 0.3s ease !important;
+            opacity: 0;
+            background-color: rgba(0,0,0,1) !important;
+          }
+
+          #navigator-toolbox:focus-within > #nav-bar,
+          #navigator-toolbox:hover > #nav-bar
+          {
+            margin-top: 0;
+            margin-bottom: var(--navbar-margin);
+            z-index: 100;
+            opacity: 1;
+          }
+
+          #TabsToolbar {
+            visibility: collapse;
+          }
+
           #titlebar {
             display: none;
           }
