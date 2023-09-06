@@ -173,6 +173,8 @@
   };
 
   # SHELL CONFIGURATION
+  ## ssh
+  programs.ssh.askPassword = "";
   ## zsh
   programs.zsh = {
     enable = true;
