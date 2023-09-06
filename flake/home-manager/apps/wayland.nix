@@ -6,7 +6,7 @@ let
   waylandOverlay = (import "${
       builtins.fetchTarball {
         url = url;
-        sha256 = "1lds2rnk7zz1gadvq1b1b84an580yd4p7a0g0mnrsrkf71b9vqry";
+        sha256 = "0x1ccmjqhsl6mhr2867aw7pszqzkw1v5d4dlh4zn0iqajh8l9rr6";
       }
     }/overlay.nix");
 in {
