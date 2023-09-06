@@ -9,6 +9,10 @@
     };
     spicetify-nix.url = "github:the-argus/spicetify-nix";
     nur.url = "github:nix-community/nur";
+    tridactyl-native-messenger = {
+      url = "github:tridactyl/native_messenger";
+      flake = false;
+    };
   };
 
   outputs = { nixpkgs, nur, home-manager, ... }@inputs:
@@ -27,7 +31,7 @@
         # Desktop
         aliyss-bequitta = lib.nixosSystem {
           specialArgs = { inherit system; };
-          modules = [ ./configuration.nix nur.nixosModules.nur ];
+          modules = [ ./configuration.nix ];
         };
         # Laptop: Not yet merged
         aliyss-blade = lib.nixosSystem {
@@ -40,7 +44,7 @@
         # Aliyss' User Profile
         aliyss = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          modules = [ ./home-manager/home.nix ];
+          modules = [ ./home-manager/home.nix nur.nixosModules.nur ];
           extraSpecialArgs = inputs;
         };
       };

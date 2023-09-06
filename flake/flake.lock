@@ -90,7 +90,8 @@
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nur": "nur",
-        "spicetify-nix": "spicetify-nix"
+        "spicetify-nix": "spicetify-nix",
+        "tridactyl-native-messenger": "tridactyl-native-messenger"
       }
     },
     "spicetify-nix": {
@@ -124,6 +125,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tridactyl-native-messenger": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1686927800,
+        "narHash": "sha256-kbSbsZ25gSrts9WISyA94rqXIH2s7IGvjx5fN3n0Oso=",
+        "owner": "tridactyl",
+        "repo": "native_messenger",
+        "rev": "6e0d2cd3bc7dab02e8e87aaaa60b52c20131db42",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tridactyl",
+        "repo": "native_messenger",
         "type": "github"
       }
     }

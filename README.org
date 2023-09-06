@@ -132,7 +132,7 @@ Need to style it so it has the same background like all the other applications.
 *** Installation
 Run following command in Tridactyl:
 #+begin_src bash
-:colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/main/tridactyl/aliyss.css aliyss
+:colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/master/tridactyl/aliyss.css aliyss
 #+end_src
 
 *** TODO Styling
