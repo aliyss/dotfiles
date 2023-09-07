@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, tridactyl-native-messenger, ... }:
 
 {
   home.file.".mozilla/native-messaging-hosts/tridactyl.json".text = let
