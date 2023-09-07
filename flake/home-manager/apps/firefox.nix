@@ -1,9 +1,9 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, config, lib, ... }@args:
 
 let
   buildFirefoxXpiAddon =
     config.nur.repos.rycee.firefox-addons.buildFirefoxXpiAddon;
-  defaultProfile = import ./firefox/profiles/default.nix;
+  defaultProfile = import ./firefox/profiles/default.nix args;
 in {
 
   imports =
