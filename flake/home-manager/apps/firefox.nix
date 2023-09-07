@@ -1,100 +1,11 @@
-{ pkgs, config, tridactyl-native-messenger, ... }:
+{ pkgs, config, lib, tridactyl-native-messenger, ... }:
 
-{
-  home.file.".mozilla/native-messaging-hosts/tridactyl.json".text = let
-    tridactyl = with pkgs.nimPackages;
-      buildNimPackage {
-        pname = "tridactyl_native";
-        version = "dev";
-        nimBinOnly = true;
-        src = tridactyl-native-messenger;
-        buildInputs = [ tempfile regex unicodedb ];
-      };
-  in builtins.toJSON {
-    name = "tridactyl";
-    description = "Tridactyl native command handler";
-    path = "${tridactyl}/bin/native_main";
-    type = "stdio";
+let
+  buildFirefoxXpiAddon =
+    config.nur.repos.rycee.firefox-addons.buildFirefoxXpiAddon;
+in {
 
-    allowed_extensions = [
-      "tridactyl.vim@cmcaine.co.uk"
-      "tridactyl.vim.betas@cmcaine.co.uk"
-      "tridactyl.vim.betas.nonewtab@cmcaine.co.uk"
-    ];
-  };
-
-  xdg.configFile."tridactyl/tridactylrc".text = ''
-    colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/master/tridactyl/aliyss.css aliyss
-
-    set newtab about:newtab
-    set smoothscroll true
-    set editorcmd emacsclient -a \"\" -c -e '(progn (find-file "%f") (forward-line (1- %l)) (forward-char %c))'
-
-    unbind --mode=normal b
-    bind bb tabprev
-    bind bn tabnext
-    bind bc tabclose
-    bind be fillcmdline tabclose
-    bind bj fillcmdline taball
-
-    unbind --mode=normal t
-    bind tt back
-    bind tn forward
-    bind td tabdetach
-    bind be fillcmdline tabclose
-    bind bj fillcmdline taball
-
-    unbind --mode=normal w
-    bind ww fillcmdline winopen
-    bind wm fillcmdline winmerge
-    bind wc winclose
-    bind we fillcmdline winclose
-
-    bind e fillcmdline open
-  '';
-
-  home.file.".mozilla/managed-storage/uBlock0@raymondhill.net.json".text =
-    builtins.toJSON {
-      name = "uBlock0@raymondhill.net";
-      description = "_";
-      type = "storage";
-      data = {
-        adminSettings = {
-          userFilters = ''
-            www.youtube.com###cinematics > div > canvas
-          '';
-        };
-        userSettings = [
-          [ "advancedUserEnabled" "true" ]
-          [ "autoUpdate" "true" ]
-          [ "colorBlindFriendly" "true" ]
-          [ "contextMenuEnabled" "true" ]
-          [ "dynamicFilteringEnabled" "false" ]
-        ];
-        toOverwrite = {
-          filterLists = [
-            "user-filters"
-            "ublock-filters"
-            "ublock-badware"
-            "ublock-privacy"
-            "ublock-quick-fixes"
-            "ublock-abuse"
-            "ublock-unbreak"
-            "easylist"
-            "easyprivacy"
-            "urlhaus-1"
-            "plowe-0"
-            "adguard-cookiemonster"
-            "ublock-cookies-adguard"
-            "fanboy-cookiemonster"
-            "ublock-cookies-easylist"
-            "https://raw.githubusercontent.com/liamengland1/miscfilters/master/antipaywall.txt"
-            "https://gitlab.com/magnolia1234/bypass-paywalls-clean-filters/-/raw/main/bpc-paywall-filter.txt"
-            "https://raw.githubusercontent.com/gijsdev/ublock-hide-yt-shorts/master/list.txt"
-          ];
-        };
-      };
-    };
+  imports = [ ./firefox/extensions/tridactyl ./firefox/extensions/ublock ];
 
   programs.firefox = {
     enable = true;
@@ -140,6 +51,21 @@
           bitwarden
           darkreader
           tridactyl
+          (buildFirefoxXpiAddon {
+            pname = "mal-sync";
+            version = "0.9.5";
+            addonId = "{c84d89d9-a826-4015-957b-affebd9eb603}";
+            url =
+              "https://addons.mozilla.org/firefox/downloads/file/4132587/mal_sync-0.9.5.xpi";
+            sha256 = "L/2PR7qI3g4Vx+10hV14ZpIYtIQtCgK6OU9IFJEI+ng=";
+            meta = with lib; {
+              homepage = "https://github.com/MALSync/MALSync";
+              description =
+                "Integrates MyAnimeList/AniList/Kitsu/Simkl into various sites, with auto episode tracking.";
+              license = licenses.gpl3;
+              platforms = platforms.all;
+            };
+          })
         ];
         search = {
           force = true;
