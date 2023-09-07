@@ -3,24 +3,76 @@
 let
   extensions = {
     "ublock-origin" = {
-      name = "ublock-origin";
-      permissions = [ "activeTab" ];
+      permissions = [
+        "dns"
+        "menus"
+        "privacy"
+        "storage"
+        "tabs"
+        "unlimitedStorage"
+        "webNavigation"
+        "webRequest"
+        "webRequestBlocking"
+        "<all_urls>"
+        "http://*/*"
+        "https://*/*"
+        "file://*/*"
+        "https://easylist.to/*"
+        "https://*.fanboy.co.nz/*"
+        "https://filterlists.com/*"
+        "https://forums.lanik.us/*"
+        "https://github.com/*"
+        "https://*.github.io/*"
+        "https://*.letsblock.it/*"
+      ];
     };
     "bitwarden" = {
-      name = "bitwarden";
-      permissions = [ "activeTab" ];
+      permissions = [
+        "tabs"
+        "contextMenus"
+        "storage"
+        "unlimitedStorage"
+        "clipboardRead"
+        "clipboardWrite"
+        "idle"
+        "http://*/*"
+        "https://*/*"
+        "webRequest"
+        "webRequestBlocking"
+        "file:///*"
+      ];
     };
     "darkreader" = {
-      name = "darkreader";
-      permissions = [ "activeTab" ];
+      permissions =
+        [ "alarms" "contextMenus" "storage" "tabs" "theme" "<all_urls>" ];
     };
     "tridactyl" = {
-      name = "tridactyl";
-      permissions = [ "activeTab" ];
-    };
-    "mal-sync" = {
-      name = "mal-sync";
-      permissions = [ "activeTab" ];
+      permissions = [
+        "activeTab"
+        "bookmarks"
+        "browsingData"
+        "contextMenus"
+        "contextualIdentities"
+        "cookies"
+        "clipboardWrite"
+        "clipboardRead"
+        "downloads"
+        "find"
+        "history"
+        "search"
+        "sessions"
+        "storage"
+        "tabHide"
+        "tabs"
+        "topSites"
+        "management"
+        "nativeMessaging"
+        "webNavigation"
+        "webRequest"
+        "webRequestBlocking"
+        "proxy"
+        "<all_urls>"
+      ];
     };
   };
 in {
@@ -28,10 +80,10 @@ in {
   assertions = lib.mapAttrsToList (k: v:
     let
       unaccepted = lib.subtractLists v.permissions
-        config.nur.repos.rycee.firefox-addons.${v.name}.meta.mozPermissions;
+        config.nur.repos.rycee.firefox-addons.${k}.meta.mozPermissions;
     in {
       assertion = unaccepted == [ ];
-      message = "Extension ${v.name} has unaccepted permissions: ${
+      message = "Extension ${k} has unaccepted permissions: ${
           builtins.toJSON unaccepted
         }";
     }) extensions;

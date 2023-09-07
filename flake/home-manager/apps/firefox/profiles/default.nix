@@ -4,18 +4,40 @@ let customExtensions = import ../extensions/custom.nix args;
 in {
   isDefault = true;
   settings = {
+    "trailhead.firstrun.didSeeAboutWelcome" = true;
+
+    "app.update.auto" = false;
+
+    "browser.aboutConfig.showWarning" = false;
+    "browser.warnOnQuit" = true;
+    "browser.toolbars.bookmarks.visibility" = false;
+    "browser.startup.page" = 3;
+
+    "devtools.chrome.enabled" = true;
+    "devtools.debugger.remote-enabled" = true;
+
+    "gfx.webrender.all" = true;
+    "gfx.webrender.enabled" = true;
+
     "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
     "svg.context-properties.content.enabled" = true;
     "layers.acceleration.force-enabled" = true;
-    "gfx.webrender.all" = true;
-    "gfx.webrender.enabled" = true;
     "layout.css.backdrop-filter.enabled" = true;
     "layout.css.has-selector.enabled" = true;
-    "browser.startup.page" = 3;
+    "layout.css.color-mix.enabled" = true;
+
+    "extensions.pocket.enabled" = false;
+
     "general.smoothScroll" = true;
-    "devtools.chrome.enabled" = true;
-    "devtools.debugger.remote-enabled" = true;
     "findbar.highlightAll" = true;
+
+    "dom.forms.autocomplete.formautofill" = false;
+    "extensions.formautofill.creditCards.enabled" = false;
+    "dom.payments.defaults.saveAddress" = false;
+
+    "media.ffmpeg.vaapi.enabled" = true;
+
+    "cookiebanners.ui.desktop.enabled" = true;
   };
   extensions = with config.nur.repos.rycee.firefox-addons;
     [ ublock-origin bitwarden darkreader tridactyl ] ++ customExtensions;
@@ -41,65 +63,13 @@ in {
           "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
         definedAliases = [ "@np" ];
       };
-      "NixOS Wiki" = {
-        urls =
-          [{ template = "https://nixos.wiki/index.php?search={searchTerms}"; }];
-        iconUpdateURL = "https://nixos.wiki/favicon.png";
-        updateInterval = 24 * 60 * 60 * 1000;
-        definedAliases = [ "@nw" ];
-      };
-      "Wikipedia (en)".metaData.alias = "@wiki";
+      "Wikipedia (en)".metaData.hidden = true;
       "DuckDuckGo".metaData.hidden = true;
       "Amazon.com".metaData.hidden = true;
       "Bing".metaData.hidden = true;
       "eBay".metaData.hidden = true;
     };
   };
-  userChrome = ''
-    @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
-
-    #TabsToolbar {
-      visibility: collapse;
-    }
-
-    #nav-bar {
-      /* customize this value. */
-      --navbar-margin: -44px;
-
-      margin-top: var(--navbar-margin);
-      margin-bottom: 0;
-      z-index: -100;
-      transition: all 0.3s ease !important;
-      opacity: 0;
-      background-color: rgba(0,0,0,1) !important;
-    }
-
-    #navigator-toolbox:focus-within > #nav-bar,
-    #navigator-toolbox:hover > #nav-bar
-    {
-      margin-top: 0;
-      margin-bottom: var(--navbar-margin);
-      z-index: 100;
-      opacity: 1;
-    }
-
-    #TabsToolbar {
-      visibility: collapse;
-    }
-
-    #titlebar {
-      display: none;
-    }
-
-    #sidebar-header {
-      display: none;
-    }
-  '';
-  userContent = ''
-    @-moz-document url(about:home), url(about:newtab) {
-        body {
-          --newtab-background-color: black !important;
-        }
-    }
-  '';
+  userChrome = (builtins.readFile ./userChrome.css);
+  userContent = (builtins.readFile ./userContent.css);
 }

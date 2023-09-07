@@ -6,8 +6,11 @@ let
   defaultProfile = import ./firefox/profiles/default.nix args;
 in {
 
-  imports =
-    [ ./firefox/extensions/tridactyl.nix ./firefox/extensions/ublock.nix ];
+  imports = [
+    ./firefox/extensions/tridactyl.nix
+    ./firefox/extensions/ublock.nix
+    ./firefox/extensions/permissions.nix
+  ];
 
   programs.firefox = {
     enable = true;
