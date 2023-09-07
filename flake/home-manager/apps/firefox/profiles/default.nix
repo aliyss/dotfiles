@@ -1,6 +1,6 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, config, lib, ... }@args:
 
-let customExtensions = import ../extensions/custom.nix;
+let customExtensions = import ../extensions/custom.nix args;
 in {
   isDefault = true;
   settings = {
