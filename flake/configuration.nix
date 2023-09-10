@@ -8,6 +8,7 @@
   imports = [
     # Untouched hardware configuration file
     ./hardware-configuration.nix
+    ./languages/rust.nix
   ];
 
   # BOOTLOADER
@@ -120,10 +121,6 @@
     nodePackages.prettier
     ## Typescript
     typescript
-    ## Rust
-    rustup
-    rust-analyzer
-    rustfmt
     ## Configuration Files
     nil
     ## Nix

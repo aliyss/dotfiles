@@ -35,3 +35,7 @@
 #sidebar-header {
   display: none;
 }
+
+#statuspanel #statuspanel-label {
+  display: block !important;
+}
