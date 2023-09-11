@@ -33,6 +33,9 @@ in {
         };
         OfferToSaveLoginsDefault = false;
       };
+      extraPrefsFiles = (args.extraPrefsFiles or [ ]) ++ [
+        # make sure that autoplay is enabled by default for the audio test
+      ];
     };
     profiles = { default = defaultProfile; };
   };

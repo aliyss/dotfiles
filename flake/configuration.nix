@@ -8,7 +8,6 @@
   imports = [
     # Untouched hardware configuration file
     ./hardware-configuration.nix
-    ./languages/rust.nix
   ];
 
   # BOOTLOADER
@@ -121,6 +120,12 @@
     nodePackages.prettier
     ## Typescript
     typescript
+    ## Rust
+    rustc
+    cargo
+    rustfmt
+    rust-analyzer
+    clippy
     ## Configuration Files
     nil
     ## Nix
@@ -229,6 +234,8 @@
     dina-font
     proggyfonts
   ];
+
+  environment.variables = { RUST_BACKTRACE = "1"; };
 
   # FLAKE
   nix = { settings.experimental-features = [ "nix-command" "flakes" ]; };

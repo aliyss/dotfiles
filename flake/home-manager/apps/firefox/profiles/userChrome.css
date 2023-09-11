@@ -1,8 +1,16 @@
-@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
-
 #TabsToolbar {
   visibility: collapse;
 }
+
+/* #main-window { */
+/*   background: transparent !important; */
+/*   -moz-appearance: none !important; */
+/* } */
+
+/* #tabbrowser-tabpanels { */
+/*   background: transparent !important; */
+/*   -moz-appearance: none !important; */
+/* } */
 
 #nav-bar {
   /* customize this value. */

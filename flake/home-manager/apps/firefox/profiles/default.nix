@@ -24,6 +24,8 @@ in {
     "layers.acceleration.force-enabled" = true;
     "layout.css.backdrop-filter.enabled" = true;
     "layout.css.has-selector.enabled" = true;
+    "layout.css.moz-document.content.enabled" = true;
+    "layout.css.moz-document.url-prefix-hack.enabled" = true;
     "layout.css.color-mix.enabled" = true;
 
     "extensions.pocket.enabled" = false;

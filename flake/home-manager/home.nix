@@ -43,6 +43,10 @@
     tridactyl-native
   ];
 
+  home.activation.chsh = lib.hm.dag.entryAfter [ "writeBoundary" ] (''
+    cp ${config.xdg.configHome}/flakes/home-manager/apps/firefox/config.js ${pkgs.firefox}/lib/firefox/aliyss.js
+  '');
+
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {

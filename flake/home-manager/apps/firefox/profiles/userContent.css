@@ -1,5 +1,0 @@
-@-moz-document url(about:home), url(about:newtab) {
-  body {
-    --newtab-background-color: black !important;
-  }
-}
