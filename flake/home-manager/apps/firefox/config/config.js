@@ -9,8 +9,9 @@
 	Paste this entire script into the command line at the bottom of the Browser Console (Windows: Ctrl+Shift+j)
 	Then press Enter to run the script.
 */
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-(function () {
+(async function () {
     // Define an array of key change objects (so far, only one)
     var myKeyChanges = [
         {
