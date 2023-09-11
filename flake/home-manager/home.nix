@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
-{
+let firefox-patched = pkgs.callPackage ./apps/firefox/firefox-patched.nix { };
+in {
   imports = [
     ./apps/wayland.nix
     ./apps/tmux.nix
@@ -36,16 +37,13 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
 
+    firefox-patched
     atool
     httpie
     tmux
     stremio
     tridactyl-native
   ];
-
-  home.activation.chsh = lib.hm.dag.entryAfter [ "writeBoundary" ] (''
-    cp ${config.xdg.configHome}/flakes/home-manager/apps/firefox/config.js ${pkgs.firefox}/lib/firefox/aliyss.js
-  '');
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.

@@ -126,6 +126,9 @@
     rustfmt
     rust-analyzer
     clippy
+    ## Python
+    python3
+    (pkgs.python3.withPackages (ps: with ps; [ python-openstackclient ]))
     ## Configuration Files
     nil
     ## Nix
