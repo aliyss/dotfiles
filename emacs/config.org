@@ -68,6 +68,8 @@
 - [[#fonts][FONTS]]
   - [[#setting-the-font-face][Setting the Font-Face]]
   - [[#zooming-inout][Zooming In/Out]]
+- [[#pdf-mode][PDF MODE]]
+  - [[#enabling-pdf][Enabling Pdf]]
 - [[#org-mode][ORG MODE]]
   - [[#enabling-table-of-contents][Enabling Table of Contents]]
   - [[#org-modern-indent][Org Modern Indent]]
@@ -1481,11 +1483,11 @@
 
 *** Buffer Move Up
 #+begin_src emacs-lisp
-                                                                                                      ;;;###autoload
+                                                                                                        ;;;###autoload
   (defun buf-move-up ()
     "Swap the current buffer and the buffer above the split.
-                                                                                                         If there is no split, ie now window above the current one, an
-                                                                                                         error is signaled."
+                                                                                                           If there is no split, ie now window above the current one, an
+                                                                                                           error is signaled."
     ;;  "Switches between the current buffer, and the buffer above the
     ;;  split, if possible."
     (interactive)
@@ -1502,11 +1504,11 @@
 
 *** Buffer Move Down
 #+begin_src emacs-lisp
-                                                                                                      ;;;###autoload
+                                                                                                        ;;;###autoload
   (defun buf-move-down ()
     "Swap the current buffer and the buffer under the split.
-                                                                                                         If there is no split, ie now window under the current one, an
-                                                                                                         error is signaled."
+                                                                                                           If there is no split, ie now window under the current one, an
+                                                                                                           error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'down))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1522,11 +1524,11 @@
 
 *** Buffer Move Left
 #+begin_src emacs-lisp
-                                                                                                      ;;;###autoload
+                                                                                                        ;;;###autoload
   (defun buf-move-left ()
     "Swap the current buffer and the buffer on the left of the split.
-                                                                                                         If there is no split, ie now window on the left of the current
-                                                                                                         one, an error is signaled."
+                                                                                                           If there is no split, ie now window on the left of the current
+                                                                                                           one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'left))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1543,8 +1545,8 @@
 #+begin_src emacs-lisp
   (defun buf-move-right ()
     "Swap the current buffer and the buffer on the right of the split.
-       If there is no split, ie now window on the right of the current
-       one, an error is signaled."
+         If there is no split, ie now window on the right of the current
+         one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'right))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1643,6 +1645,14 @@
   ;;   (dolist (buffer (buffer-list))
   ;;     (with-current-buffer buffer
   ;;       ad-do-it)))
+#+end_src
+
+* PDF MODE
+
+** Enabling Pdf
+#+begin_src emacs-lisp
+  (use-package pdf-tools)
+  (setq auto-mode-alist (append '((".*\\.pdf$" . pdf-view-mode)) auto-mode-alist))
 #+end_src
 
 * ORG MODE
@@ -1795,9 +1805,9 @@
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                                                                                                         FN is a function that operates on org-element's value and returns a string.
-                                                                                                         LANGUAGE is a string referring to one of orb-babel's supported languages.
-                                                                                                         (https://orgmode.org/manual/Languages.html#Languages)"
+                                                                                                           FN is a function that operates on org-element's value and returns a string.
+                                                                                                           LANGUAGE is a string referring to one of orb-babel's supported languages.
+                                                                                                           (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -1813,7 +1823,7 @@
         (emacs-lisp-mode)
         (insert
          (replace-regexp-in-string "[[:space:]]*
-                                                                                                                                                                            [[:space:]]*)" ")" string))
+                                                                                                                                                                              [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 
