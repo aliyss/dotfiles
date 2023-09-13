@@ -7,6 +7,7 @@ in {
     ./apps/tmux.nix
     ./apps/spicetify.nix
     ./apps/zsh.nix
+    ./apps/emacs.nix
     ./apps/firefox.nix
     ./services/emacs.nix
     ./services/mako.nix
