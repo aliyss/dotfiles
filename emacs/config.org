@@ -1057,6 +1057,7 @@
     ;; :config
     (add-hook 'lsp-mode-hook 'lsp-ui-mode)
     (add-hook 'tsx-ts-mode-hook 'lsp-deferred)
+    (add-hook 'typescript-tsx-mode-hook 'lsp-deferred)
     (add-hook 'tsi-typescript-mode-hook 'lsp-deferred)
     (add-hook 'ts-ls-mode-hook 'lsp-deferred)
     (add-hook 'typescript-mode-hook 'lsp-deferred)
@@ -1221,7 +1222,7 @@
       "TypeScript TSX")
 
     ;; use our derived mode for tsx files
-    (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+    (setq auto-mode-alist (append '((".*\\.tsx?" . typescriptreact-mode)) auto-mode-alist))
     ;; by default, typescript-mode is mapped to the treesitter typescript parser
     ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
     (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx)))

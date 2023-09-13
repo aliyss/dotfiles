@@ -7,11 +7,11 @@ let
   defaultConfigJS =
     "/home/aliyss/.config/flake/home-manager/apps/firefox/config";
 
-  firefox-patched = (import ./firefox/firefox-patched.nix);
+  # firefox-patched = (import ./firefox/firefox-patched.nix);
 
-  firefox-wayland = pkgs.wrapFirefox (firefox-patched) { };
+  # firefox-wayland = pkgs.wrapFirefox (pkgs.firefox-wayland) { };
 
-  defaultFirefox = firefox-wayland.override {
+  defaultFirefox = pkgs.firefox-wayland.override {
     cfg = {
       enableGnomeExtensions = true;
       enableTridactylNative = true;
