@@ -9,10 +9,34 @@
 	Paste this entire script into the command line at the bottom of the Browser Console (Windows: Ctrl+Shift+j)
 	Then press Enter to run the script.
 */
-const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
+console.log("here");
 
 (async function () {
     // Define an array of key change objects (so far, only one)
+    console.log("here");
     var myKeyChanges = [
         {
             id: "context-copylink",
@@ -55,6 +79,7 @@ const delay = (ms) => new Promise((res) => setTimeout(res, ms));
                 )
             ) {
                 if (window._gBrowser) {
+                    alert("hell");
                     for (var i = 0; i < myKeyChanges.length; i++) {
                         var menuitem = window.document.getElementById(
                             myKeyChanges[i].id,

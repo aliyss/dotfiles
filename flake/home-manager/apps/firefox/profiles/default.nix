@@ -40,8 +40,9 @@ in {
     "media.ffmpeg.vaapi.enabled" = true;
 
     "cookiebanners.ui.desktop.enabled" = true;
-    "autoadmin.global_config_url" =
-      "file:///home/aliyss/.config/flake/home-manager/apps/firefox/config/config.js";
+    "general.config.filename" = "config.js";
+    "general.config.obscure_value" = 0;
+    "general.config.sandbox_enabled" = false;
   };
   extensions = with config.nur.repos.rycee.firefox-addons;
     [ ublock-origin bitwarden darkreader tridactyl ] ++ customExtensions;

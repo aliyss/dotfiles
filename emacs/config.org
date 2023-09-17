@@ -18,7 +18,7 @@
   - [[#transparency][Transparency]]
 - [[#themeing][THEMEING]]
   - [[#themes][Themes]]
-  - [[#all-the-icons][All The Icons]]
+  - [[#all-the-icon][All The Icon]]
   - [[#frame-border][Frame Border]]
   - [[#src-blocks][SRC Blocks]]
   - [[#rainbow-mode][Rainbow Mode]]
@@ -475,7 +475,7 @@
 #+begin_src emacs-lisp
   (global-display-line-numbers-mode 1)
   (set-default 'truncate-lines nil)
-  (set-default 'word-wrap nil)
+  (set-default 'word-wrap t)
   (add-hook 'org-mode-hook #'visual-line-mode)
 
   (setq display-line-numbers-type 'relative)
@@ -573,7 +573,7 @@
     )
 #+end_src
 
-** All The Icons
+** All The Icon
 :PROPERTIES:
 :SOURCE:   https://github.com/domtronn/all-the-icons.el#installing-fonts
 :DESCRIPTION: For general icons, might change to nerd-fonts at some point depending on use case.
@@ -1056,13 +1056,13 @@
     (lsp-rust-analyzer-display-reborrow-hints t)
     ;; :config
     (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-    (add-hook 'tsx-ts-mode-hook 'lsp-deferred)
-    (add-hook 'typescript-tsx-mode-hook 'lsp-deferred)
-    (add-hook 'tsi-typescript-mode-hook 'lsp-deferred)
-    (add-hook 'ts-ls-mode-hook 'lsp-deferred)
-    (add-hook 'typescript-mode-hook 'lsp-deferred)
+    (add-hook 'typescript-mode-hook #'lsp)
     (add-hook 'javascript-mode-hook 'lsp-deferred)
     (add-hook 'json-mode-hook 'lsp-deferred)
+    (add-hook 'typescriptreact-mode-hook 'lsp-deferred)
+    (add-hook 'tsx-ts-mode-hook 'lsp-deferred)
+    (add-hook 'tsi-typescript-mode-hook 'lsp-deferred)
+    (add-hook 'ts-ls-mode-hook 'lsp-deferred)
     (setq lsp-auto-guess-root t)
     (setq lsp-log-io nil)
     (setq lsp-restart 'auto-restart)
@@ -1158,16 +1158,12 @@
     :ensure t)
 
   (use-package lsp-tailwindcss
+    :ensure t
     :init
     (setq lsp-tailwindcss-add-on-mode t)
     )
 
   (add-hook 'before-save-hook 'lsp-tailwindcss-rustywind-before-save)
-
-  ;; (use-package tsx-mode
-  ;; :elpaca '(tsx-mode :host github :protocol ssh :repo "orzechowskid/tsx-mode.el" :branch "emacs29")
-  ;; :ensure t
-  ;; )
 #+end_src
 
 ** Treesitter
@@ -1245,14 +1241,15 @@
 ** Eglot
 
 #+begin_src emacs-lisp
-
   (use-package eglot
     :ensure t
     :config
     ;; Ensure `nil` is in your PATH.
     (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
+    ;;(add-to-list 'eglot-server-programs '(typescript-mode . ("typescript-language-server" "--stdio")))
     :hook
     (nix-mode . eglot-ensure)
+    ;;(typescript-mode . eglot-ensure)
     )
 #+end_src
 
@@ -1294,6 +1291,8 @@
 ** Eslint
 
 #+begin_src emacs-lisp
+  (use-package eslintd-fix)
+
   (setq flycheck-javascript-eslint-executable "eslint_d")
   (setq eslintd-fix-executable "/usr/local/bin/eslint_d")
   (add-hook 'typescript-tsx-mode-hook 'eslintd-fix-mode)
@@ -1319,13 +1318,15 @@
 
 ** Node
 #+begin_src emacs-lisp
-  (defun my-setup-dap-node ()
-    "Require dap-node feature and run dap-node-setup if VSCode module isn't already installed"
-    (require 'dap-node)
-    (unless (file-exists-p dap-node-debug-path) (dap-node-setup)))
+  ;; (setq dap-auto-configure-features '(sessions locals controls tooltip))
 
-  (add-hook 'typescript-mode-hook 'my-setup-dap-node)
-  (add-hook 'javascript-mode-hook 'my-setup-dap-node)
+  ;; (defun my-setup-dap-node ()
+  ;;   "Require dap-node feature and run dap-node-setup if VSCode module isn't already installed"
+  ;;   (require 'dap-node)
+  ;;   (unless (file-exists-p dap-node-debug-path) (dap-node-setup)))
+
+  ;; (add-hook 'typescript-mode-hook 'my-setup-dap-node)
+  ;; (add-hook 'javascript-mode-hook 'my-setup-dap-node)
 #+end_src
 
 * WINDOWS
@@ -1484,11 +1485,11 @@
 
 *** Buffer Move Up
 #+begin_src emacs-lisp
-                                                                                                        ;;;###autoload
+                                                                                                          ;;;###autoload
   (defun buf-move-up ()
     "Swap the current buffer and the buffer above the split.
-                                                                                                           If there is no split, ie now window above the current one, an
-                                                                                                           error is signaled."
+                                                                                                             If there is no split, ie now window above the current one, an
+                                                                                                             error is signaled."
     ;;  "Switches between the current buffer, and the buffer above the
     ;;  split, if possible."
     (interactive)
@@ -1505,11 +1506,11 @@
 
 *** Buffer Move Down
 #+begin_src emacs-lisp
-                                                                                                        ;;;###autoload
+                                                                                                          ;;;###autoload
   (defun buf-move-down ()
     "Swap the current buffer and the buffer under the split.
-                                                                                                           If there is no split, ie now window under the current one, an
-                                                                                                           error is signaled."
+                                                                                                             If there is no split, ie now window under the current one, an
+                                                                                                             error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'down))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1525,11 +1526,11 @@
 
 *** Buffer Move Left
 #+begin_src emacs-lisp
-                                                                                                        ;;;###autoload
+                                                                                                          ;;;###autoload
   (defun buf-move-left ()
     "Swap the current buffer and the buffer on the left of the split.
-                                                                                                           If there is no split, ie now window on the left of the current
-                                                                                                           one, an error is signaled."
+                                                                                                             If there is no split, ie now window on the left of the current
+                                                                                                             one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'left))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1546,8 +1547,8 @@
 #+begin_src emacs-lisp
   (defun buf-move-right ()
     "Swap the current buffer and the buffer on the right of the split.
-         If there is no split, ie now window on the right of the current
-         one, an error is signaled."
+           If there is no split, ie now window on the right of the current
+           one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'right))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1806,9 +1807,9 @@
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                                                                                                           FN is a function that operates on org-element's value and returns a string.
-                                                                                                           LANGUAGE is a string referring to one of orb-babel's supported languages.
-                                                                                                           (https://orgmode.org/manual/Languages.html#Languages)"
+                                                                                                             FN is a function that operates on org-element's value and returns a string.
+                                                                                                             LANGUAGE is a string referring to one of orb-babel's supported languages.
+                                                                                                             (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -1824,7 +1825,7 @@
         (emacs-lisp-mode)
         (insert
          (replace-regexp-in-string "[[:space:]]*
-                                                                                                                                                                              [[:space:]]*)" ")" string))
+                                                                                                                                                                                [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 

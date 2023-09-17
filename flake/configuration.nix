@@ -111,6 +111,7 @@
     nodePackages.typescript
     nodePackages.typescript-language-server
     nodePackages.eslint
+    nodePackages.eslint_d
     nodePackages.jsonlint
     nodePackages.tailwindcss
     nodePackages.vercel
@@ -238,7 +239,10 @@
     proggyfonts
   ];
 
-  environment.variables = { RUST_BACKTRACE = "1"; };
+  environment.variables = {
+    RUST_BACKTRACE = "1";
+    LSP_USE_PLISTS = "true";
+  };
 
   # FLAKE
   nix = { settings.experimental-features = [ "nix-command" "flakes" ]; };

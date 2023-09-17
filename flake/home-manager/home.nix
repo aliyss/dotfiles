@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 
-let firefox-patched = pkgs.callPackage ./apps/firefox/firefox-patched.nix { };
-in {
+{
   imports = [
     ./apps/wayland.nix
     ./apps/tmux.nix
@@ -38,7 +37,6 @@ in {
     #   echo "Hello, ${config.home.username}!"
     # '')
 
-    firefox-patched
     atool
     httpie
     tmux
