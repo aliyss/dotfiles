@@ -1,43 +1,13 @@
-/* Script for the Browser Console
+// config.js - a minimal bootstrap to restore Ctrl+Shift+B for Library (switched with toggleBookmarksToolbar at Ctrl+Shift+O) - by AveYo
+// create in Firefox install directory - for windows = C:\Program Files\Mozilla Firefox\
+// must also create C:\Program Files\Mozilla Firefox\defaults\pref\config-prefs.js
 
-	   NOTE: BEFORE RUNNING THIS SCRIPT, CHECK THIS SETTING:
-	   Type or paste about:config into the address bar and press Enter
-	   Click the button promising to be careful
-	   In the search box paste devtools.chrome.enabled
-	   If the preference is false, double-click it to toggle to true
-
-	Paste this entire script into the command line at the bottom of the Browser Console (Windows: Ctrl+Shift+j)
-	Then press Enter to run the script.
-*/
-
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-console.log("here");
-
-(async function () {
-    // Define an array of key change objects (so far, only one)
-    console.log("here");
-    var myKeyChanges = [
+try {
+    let { classes: Cc, interfaces: Ci, manager: Cm } = Components;
+    const { Services } = Components.utils.import(
+        "resource://gre/modules/Services.jsm",
+    );
+    const myKeyChanges = [
         {
             id: "context-copylink",
             newkey: "a",
@@ -49,23 +19,10 @@ console.log("here");
             newlabel: "Copy Email Address",
         },
     ];
-    // Current window
-    for (var i = 0; i < myKeyChanges.length; i++) {
-        var menuitem = gBrowser.ownerDocument.getElementById(
-            myKeyChanges[i].id,
-        );
-        if (menuitem) {
-            if (myKeyChanges[i].newkey.length == 1) {
-                menuitem.setAttribute("accesskey", myKeyChanges[i].newkey);
-            }
-            if (myKeyChanges[i].newlabel.length > 0) {
-                menuitem.setAttribute("label", myKeyChanges[i].newlabel);
-            }
-        }
+    function ConfigJS() {
+        Services.obs.addObserver(this, "chrome-document-global-created", false);
     }
-    // All future windows -- based largely on
-    // https://www.reddit.com/r/firefox/comments/kilmm2/restore_ctrlshiftb_library_by_setting_configjs/
-    var acceleratorUpdater = {
+    ConfigJS.prototype = {
         observe: function (aSubject) {
             aSubject.addEventListener("DOMContentLoaded", this, { once: true });
         },
@@ -79,7 +36,53 @@ console.log("here");
                 )
             ) {
                 if (window._gBrowser) {
-                    alert("hell");
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    let mozilla =
+                        window.document.getElementById("manBookmarkKb");
+                    mozilla.setAttribute(
+                        "oncommand",
+                        "BookmarkingUI.toggleBookmarksToolbar('shortcut');",
+                    );
+                    mozilla.removeAttribute("command");
+                    let arse = window.document.getElementById(
+                        "viewBookmarksToolbarKb",
+                    );
+                    arse.setAttribute("command", "Browser:ShowAllBookmarks");
+                    arse.removeAttribute("oncommand");
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    let log = [];
+                    window.document.addEventListener(
+                        "keypress",
+                        function (event) {
+                            if (log.length < 1) {
+                                log.push(event.charCode);
+                                return;
+                            }
+                            if (log.length > 3) {
+                                log = [];
+                                return;
+                            }
+                            if (
+                                event.keyCode === 0 &&
+                                event.charCode === "t".charCodeAt(0) &&
+                                log[0] === "t".charCodeAt(0)
+                            ) {
+                                window.BrowserBack();
+                                log = [];
+                                return;
+                            }
+                            if (
+                                event.keyCode === 0 &&
+                                event.charCode === "n".charCodeAt(0) &&
+                                log[0] === "t".charCodeAt(0)
+                            ) {
+                                window.BrowserForward();
+                                log = [];
+                                return;
+                            }
+                        },
+                    );
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     for (var i = 0; i < myKeyChanges.length; i++) {
                         var menuitem = window.document.getElementById(
                             myKeyChanges[i].id,
@@ -99,13 +102,12 @@ console.log("here");
                             }
                         }
                     }
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 }
             }
         },
     };
-    Services.obs.addObserver(
-        acceleratorUpdater,
-        "chrome-document-global-created",
-        false,
-    );
-})();
+    if (!Services.appinfo.inSafeMode) {
+        new ConfigJS();
+    }
+} catch (ex) {}

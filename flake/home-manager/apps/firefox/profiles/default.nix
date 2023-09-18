@@ -43,6 +43,9 @@ in {
     "general.config.filename" = "config.js";
     "general.config.obscure_value" = 0;
     "general.config.sandbox_enabled" = false;
+
+    "autoadmin.global_config_url" =
+      "file:///home/aliyss/.config/flake/home-manager/apps/firefox/config/autoconfig.js";
   };
   extensions = with config.nur.repos.rycee.firefox-addons;
     [ ublock-origin bitwarden darkreader tridactyl ] ++ customExtensions;
