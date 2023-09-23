@@ -7,7 +7,7 @@
     ./apps/spicetify.nix
     ./apps/zsh.nix
     ./apps/emacs.nix
-    ./apps/nvim.nix
+    ./apps/neovim.nix
     ./apps/firefox.nix
     ./services/emacs.nix
     ./services/mako.nix
