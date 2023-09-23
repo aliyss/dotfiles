@@ -1,18 +1,7 @@
 { pkgs, ... }:
 
 {
-  programs.neovim = let
-    toLua = str: ''
-      lua << EOF
-      ${str}
-      EOF
-    '';
-    toLuaFile = file: ''
-      lua << EOF
-      ${builtins.readFile file}
-      EOF
-    '';
-  in {
+  programs.neovim = {
     enable = true;
     viAlias = true;
     vimAlias = true;
@@ -27,18 +16,25 @@
     plugins = with pkgs.vimPlugins; [
       {
         plugin = comment-nvim;
-        config = toLua ''require("Comment").setup()'';
+        config = ''require("Comment").setup()'';
+        type = "lua";
       }
       {
         plugin = nvim-cmp;
-        config = toLuaFile ./neovim/plugin/cmp.lua;
+        config = builtins.readFile ./neovim/plugin/cmp.lua;
+        type = "lua";
       }
       {
         plugin = nvim-lspconfig;
-        config = toLuaFile ./neovim/plugin/lsp.lua;
+        config = builtins.readFile ./neovim/plugin/lsp.lua;
+        type = "lua";
+      }
+      {
+        plugin = dashboard-nvim;
+        config = builtins.readFile ./neovim/plugin/dashboard.lua;
+        type = "lua";
       }
       telescope-nvim
-      dashboard-nvim
       which-key-nvim
       cmp_luasnip
       cmp-nvim-lsp

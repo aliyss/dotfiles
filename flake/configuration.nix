@@ -93,7 +93,7 @@
 
     # Editor
     ## Vim: for quick configurations in case graphics dies
-    vim
+    neovim
     ## Emacs: for everything else
     ((emacsPackagesFor emacs29-pgtk).emacsWithPackages
       (epkgs: [ epkgs.vterm epkgs.lsp-tailwindcss ]))
