@@ -11,6 +11,7 @@
     ./apps/firefox.nix
     ./services/emacs.nix
     ./services/mako.nix
+    ./services/openrgb.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -43,7 +44,7 @@
     tmux
     stremio
     tridactyl-native
-
+    openrgb
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

@@ -50,58 +50,86 @@ try {
                     arse.setAttribute("command", "Browser:ShowAllBookmarks");
                     arse.removeAttribute("oncommand");
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    let log = [];
-                    window.document.addEventListener(
-                        "keypress",
-                        function (event) {
-                            if (log.length < 1) {
-                                log.push(event.charCode);
-                                return;
-                            }
-                            if (log.length > 3) {
-                                log = [];
-                                return;
-                            }
-                            if (
-                                event.keyCode === 0 &&
-                                event.charCode === "t".charCodeAt(0) &&
-                                log[0] === "t".charCodeAt(0)
-                            ) {
+                    // CONFIG NATIVE KEYBINDINGS
+                    var keybindingConfig = {
+                        t: {
+                            t: () => {
+                                window.console.log("Browsed Back");
                                 window.BrowserBack();
-                                log = [];
-                                return;
-                            }
-                            if (
-                                event.keyCode === 0 &&
-                                event.charCode === "n".charCodeAt(0) &&
-                                log[0] === "t".charCodeAt(0)
-                            ) {
+                            },
+                            n: () => {
+                                window.console.log("Browsed Forward");
                                 window.BrowserForward();
-                                log = [];
+                            },
+                        },
+                        b: {
+                            b: () => {
+                                window.console.log("Tab Back");
+                                window.gBrowser.tabContainer.advanceSelectedTab(
+                                    -1,
+                                    true,
+                                );
+                            },
+                            n: () => {
+                                window.console.log("Tab Forward");
+                                window.gBrowser.tabContainer.advanceSelectedTab(
+                                    1,
+                                    true,
+                                );
+                            },
+                        },
+                    };
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // CONFIG HELPERS
+                    var currentConfig = keybindingConfig;
+                    function loopOverKeybindingConfig(
+                        event,
+                        config = currentConfig,
+                    ) {
+                        if (
+                            config[event.key] &&
+                            typeof config[event.key] !== "function"
+                        ) {
+                            currentConfig = config[event.key];
+                            return;
+                        } else if (config[event.key]) {
+                            // config[event.key]();
+                        }
+                        currentConfig = keybindingConfig;
+                        window.console.log("Reset Keybinding Current Config");
+                    }
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    window.document.addEventListener(
+                        "keydown",
+                        function (event) {
+                            if (event.target.localName === "input") {
+                                window.console.log(event.target);
                                 return;
                             }
+                            window.console.log(event.target);
+                            loopOverKeybindingConfig(event);
                         },
                     );
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    for (var i = 0; i < myKeyChanges.length; i++) {
-                        var menuitem = window.document.getElementById(
-                            myKeyChanges[i].id,
-                        );
-                        if (menuitem) {
-                            if (myKeyChanges[i].newkey.length == 1) {
-                                menuitem.setAttribute(
-                                    "accesskey",
-                                    myKeyChanges[i].newkey,
-                                );
-                            }
-                            if (myKeyChanges[i].newlabel.length > 0) {
-                                menuitem.setAttribute(
-                                    "label",
-                                    myKeyChanges[i].newlabel,
-                                );
-                            }
-                        }
-                    }
+                    // for (var i = 0; i < myKeyChanges.length; i++) {
+                    //     var menuitem = window.document.getElementById(
+                    //         myKeyChanges[i].id,
+                    //     );
+                    //     if (menuitem) {
+                    //         if (myKeyChanges[i].newkey.length == 1) {
+                    //             menuitem.setAttribute(
+                    //                 "accesskey",
+                    //                 myKeyChanges[i].newkey,
+                    //             );
+                    //         }
+                    //         if (myKeyChanges[i].newlabel.length > 0) {
+                    //             menuitem.setAttribute(
+                    //                 "label",
+                    //                 myKeyChanges[i].newlabel,
+                    //             );
+                    //         }
+                    //     }
+                    // }
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 }
             }
