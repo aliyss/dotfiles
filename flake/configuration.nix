@@ -66,10 +66,10 @@
       layout = "us";
       xkbVariant = "colemak_dh_iso";
     };
-    #   hardware.openrgb = {
-    #     enable = true;
-    #     package = pkgs.openrgb-with-all-plugins;
-    #   };
+    # hardware.openrgb = {
+    #   enable = true;
+    #   package = pkgs.openrgb-with-all-plugins;
+    # };
   };
 
   # DEFAULT USER ACCOUNT

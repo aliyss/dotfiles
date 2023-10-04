@@ -1,7 +1,7 @@
-{ pkgs, lib, builtins, ... }:
+{ pkgs, lib, ... }:
 let
   openrgb-rules = builtins.fetchurl {
-    url =
-      "https://gitlab.com/CalcProgrammer1/OpenRGB/-/raw/master/60-openrgb.rules";
+    url = "https://openrgb.org/releases/release_0.9/60-openrgb.rules";
+    sha256 = "0f5bmz0q8gs26mhy4m55gvbvcyvd7c0bf92aal4dsyg9n7lyq6xp";
   };
-in { services.udev.extraRules = builtins.readFile openrgb-rules; }
+in { services.udev = { extraRules = builtins.readFile openrgb-rules; }; }
