@@ -127,6 +127,8 @@
     rustfmt
     rust-analyzer
     clippy
+    openssl
+    pkgconfig
     ## Python
     python3
     (pkgs.python3.withPackages (ps: with ps; [ python-openstackclient ]))
@@ -242,6 +244,7 @@
   environment.variables = {
     RUST_BACKTRACE = "1";
     LSP_USE_PLISTS = "true";
+    PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
   };
 
   # FLAKE

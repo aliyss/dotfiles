@@ -6,6 +6,7 @@
 
 * TABLE OF CONTENTS                                                     :toc:
 - [[#important-programs][IMPORTANT PROGRAMS]]
+  - [[#direnv][Direnv]]
   - [[#package-manager-elpaca][Package Manager (Elpaca)]]
   - [[#evil-mode][Evil Mode]]
   - [[#general-keybindings][General Keybindings]]
@@ -90,6 +91,13 @@
 :PROPERTIES:
 :DESCRIPTION: Programs to load as soon as emacs launches.
 :END:
+
+** Direnv
+#+begin_src emacs-lisp
+(use-package direnv
+ :config
+ (direnv-mode))
+#+end_src
 
 ** Package Manager (Elpaca)
 :PROPERTIES:
@@ -1145,6 +1153,7 @@
   (use-package lua-mode)
   (use-package json-mode)
   (use-package web-mode)
+  (use-package rust-mode)
   (use-package dotenv-mode
     :elpaca '(dotenv-mode :host github :repo "preetpalS/emacs-dotenv-mode")
     :ensure t
