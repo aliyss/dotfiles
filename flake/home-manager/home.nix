@@ -3,6 +3,7 @@
 {
   imports = [
     ./apps/wayland.nix
+    ./apps/minecraft.nix
     ./apps/tmux.nix
     ./apps/spicetify.nix
     ./apps/zsh.nix
