@@ -3,7 +3,6 @@
 {
   imports = [
     ./apps/wayland.nix
-    ./apps/minecraft.nix
     ./apps/tmux.nix
     ./apps/spicetify.nix
     ./apps/zsh.nix
@@ -12,6 +11,7 @@
     ./apps/firefox.nix
     ./services/emacs.nix
     ./services/mako.nix
+    ./services/minecraft.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -38,7 +38,7 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-
+    minecraft-server
     atool
     httpie
     tmux
