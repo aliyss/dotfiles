@@ -20,6 +20,5 @@
       level-seed = "10292992";
     };
   };
-  # enable closed source packages such as the minecraft server
   nixpkgs.config.allowUnfree = true;
 }

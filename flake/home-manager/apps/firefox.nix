@@ -31,12 +31,12 @@ let
   defaultFirefox = firefox-override.override {
     cfg = {
       enableGnomeExtensions = true;
-      enableTridactylNative = true;
       autoConfig = ''
         pref("general.config.filename", "config.js");
         pref("general.config.obscure_value", 0);
         pref("general.config.sandbox_enabled", false);
       '';
+      nativeMessagingHosts.packages = [ pkgs.tridactyl-native ];
     };
     extraPolicies = {
       DisableFirefoxStudies = true;

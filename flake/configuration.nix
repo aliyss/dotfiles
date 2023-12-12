@@ -20,6 +20,11 @@
 
   # NETWORKING
   networking.networkmanager.enable = true;
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 80 443 25565 ];
+  };
+
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # NETWORKING PROXY
@@ -119,6 +124,7 @@
     rustywind
     tailwindcss
     nodePackages.prettier
+    nodePackages.localtunnel
     ## Typescript
     typescript
     ## Rust
@@ -128,7 +134,7 @@
     rust-analyzer
     clippy
     openssl
-    pkgconfig
+    pkg-config
     ## Python
     python3
     (pkgs.python3.withPackages (ps: with ps; [ python-openstackclient ]))

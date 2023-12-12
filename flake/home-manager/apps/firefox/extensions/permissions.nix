@@ -24,6 +24,9 @@ let
         "https://github.com/*"
         "https://*.github.io/*"
         "https://*.letsblock.it/*"
+        "https://github.com/uBlockOrigin/*"
+        "https://ublockorigin.github.io/*"
+        "https://*.reddit.com/r/uBlockOrigin/*"
       ];
     };
     "bitwarden" = {

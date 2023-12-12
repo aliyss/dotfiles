@@ -25,11 +25,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1692763155,
-        "narHash": "sha256-qMrGKZ8c/q/mHO3ZdrcBPwiVVXPLLgXjY98Ejqb5kAA=",
+        "lastModified": 1702203126,
+        "narHash": "sha256-4BhN2Vji19MzRC7SUfPZGmtZ2WZydQeUk/ogfRBIZMs=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6a20e40acaebf067da682661aa67da8b36812606",
+        "rev": "defbb9c5857e157703e8fc7cf3c2ceb01cb95883",
         "type": "github"
       },
       "original": {
@@ -40,11 +40,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1692913444,
-        "narHash": "sha256-1SvMQm2DwofNxXVtNWWtIcTh7GctEVrS/Xel/mdc6iY=",
+        "lastModified": 1702151865,
+        "narHash": "sha256-9VAt19t6yQa7pHZLDbil/QctAgVsA66DLnzdRGqDisg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "18324978d632ffc55ef1d928e81630c620f4f447",
+        "rev": "666fc80e7b2afb570462423cb0e1cf1a3a34fedd",
         "type": "github"
       },
       "original": {
@@ -72,11 +72,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1693934318,
-        "narHash": "sha256-1LY4jKryPK5Utbc5Ob/LsibP0I/WmbFSJGZrPlL+ygY=",
+        "lastModified": 1702374333,
+        "narHash": "sha256-XMTl+mhxt3Gu+gID/ZSuESjs6vRV6YTMZdyQWklZasA=",
         "owner": "nix-community",
         "repo": "nur",
-        "rev": "97ec7d19bf6fd09c735bbe89f035c331ad267a66",
+        "rev": "afac0dcdeb4bcfd484dee11afa7c9ab0b354d251",
         "type": "github"
       },
       "original": {
@@ -100,11 +100,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1692988996,
-        "narHash": "sha256-D24zP3Qtl5U7g3VqLW5Rs0/DcCBUdM4Jt8hAu8Hrvo8=",
+        "lastModified": 1699986787,
+        "narHash": "sha256-eYlLWibKtHN/uWJQLzOMRXpoTbO6VcFTfVY4dpgdJcQ=",
         "owner": "the-argus",
         "repo": "spicetify-nix",
-        "rev": "12f87d15ec88f1b68ebc813c371d7e9ef163aafd",
+        "rev": "3c702af1f717b7876fac08809201b1368d0d956c",
         "type": "github"
       },
       "original": {
@@ -131,11 +131,11 @@
     "tridactyl-native-messenger": {
       "flake": false,
       "locked": {
-        "lastModified": 1686927800,
-        "narHash": "sha256-kbSbsZ25gSrts9WISyA94rqXIH2s7IGvjx5fN3n0Oso=",
+        "lastModified": 1700481257,
+        "narHash": "sha256-gicdpWAoimZMNGLc8w0vtJiFFxeqxB8P4lgWDun7unM=",
         "owner": "tridactyl",
         "repo": "native_messenger",
-        "rev": "6e0d2cd3bc7dab02e8e87aaaa60b52c20131db42",
+        "rev": "3059abd9fb3f14d598f6c299335c3ebac5bc689a",
         "type": "github"
       },
       "original": {
