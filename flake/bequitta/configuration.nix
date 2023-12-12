@@ -4,6 +4,7 @@
   services.minecraft-server = {
     enable = true;
     eula = true;
+    package = pkgs."minecraft-server";
     openFirewall = true;
     declarative = true;
     # see here for more info: https://minecraft.gamepedia.com/Server.properties#server.properties
@@ -17,7 +18,7 @@
       # This password can be used to administer your minecraft server.
       # Exact details as to how will be explained later. If you want
       # you can replace this with another password.
-      rcon.password = "hunter2";
+      # rcon.password = "hunter2";
       # query.port = 25565;
     };
   };

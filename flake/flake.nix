@@ -8,6 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     spicetify-nix.url = "github:the-argus/spicetify-nix";
+    prismlauncher.url = "github:Diegiwg/PrismLauncher-Cracked";
     nur.url = "github:nix-community/nur";
     tridactyl-native-messenger = {
       url = "github:tridactyl/native_messenger";

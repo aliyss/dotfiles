@@ -9,6 +9,7 @@
     ./apps/emacs.nix
     ./apps/neovim.nix
     ./apps/firefox.nix
+    ./apps/prismlauncher.nix
     ./services/emacs.nix
     ./services/mako.nix
   ];
@@ -44,6 +45,9 @@
     stremio
     tridactyl-native
   ];
+
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [ "minecraft-server-1.20.2" ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
