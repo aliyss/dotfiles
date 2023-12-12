@@ -31,7 +31,7 @@
         # Desktop
         aliyss-bequitta = lib.nixosSystem {
           specialArgs = { inherit system; };
-          modules = [ ./configuration.nix ];
+          modules = [ ./configuration.nix ./bequitta/configuration.nix ];
         };
         # Laptop: Not yet merged
         aliyss-blade = lib.nixosSystem {
