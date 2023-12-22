@@ -20,6 +20,7 @@
     initExtra = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh;
       bindkey '^f' autosuggest-accept;
+      bindkey -v
 
       if [[ "$TERM" == "dumb" ]]
       then

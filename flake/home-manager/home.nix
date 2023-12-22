@@ -9,7 +9,6 @@
     ./apps/emacs.nix
     ./apps/neovim.nix
     ./apps/firefox.nix
-    ./apps/prismlauncher.nix
     ./services/emacs.nix
     ./services/mako.nix
   ];
@@ -38,16 +37,13 @@
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
-    minecraft-server
     atool
     httpie
     tmux
     stremio
     tridactyl-native
+    prismlauncher
   ];
-
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [ "minecraft-server-1.20.2" ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.

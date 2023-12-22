@@ -7,10 +7,12 @@
     package = pkgs."minecraft-server";
     openFirewall = true;
     declarative = true;
+    dataDir = "/var/lib/minecraft-3";
     # see here for more info: https://minecraft.gamepedia.com/Server.properties#server.properties
     serverProperties = {
       server-port = 25565;
       gamemode = "survival";
+      online-mode = false;
       motd = "NixOS Minecraft server";
       max-players = 5;
       enable-rcon = true;

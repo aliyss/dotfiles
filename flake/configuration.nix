@@ -164,6 +164,11 @@
     # Other Useful Packages
     wget
     wl-clipboard
+
+    minecraft-server
+    mcaselector
+    gsettings-desktop-schemas
+    xdg-user-dirs
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -224,8 +229,14 @@
   # HARDWARE
   hardware = {
     # Display
-    opengl.enable = true;
-    nvidia.modesetting.enable = true;
+    opengl = {
+      enable = true;
+      driSupport = true;
+    };
+    nvidia = {
+      modesetting.enable = true;
+      nvidiaSettings = true;
+    };
     # Sound
     pulseaudio.enable = false;
     pulseaudio.support32Bit = true;
@@ -251,6 +262,9 @@
     RUST_BACKTRACE = "1";
     LSP_USE_PLISTS = "true";
     PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+    GSETTINGS_SCHEMA_DIR =
+      "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas/";
+
   };
 
   # FLAKE

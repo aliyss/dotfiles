@@ -1,3 +1,4 @@
+
 #+title: Aliyss' GNU Emacs Config
 #+author: Aliyss Snow
 #+description: Aliyss' personal GNU Emacs configuration file
@@ -94,9 +95,7 @@
 
 ** Direnv
 #+begin_src emacs-lisp
-(use-package direnv
- :config
- (direnv-mode))
+(setq package-install-upgrade-built-in t)
 #+end_src
 
 ** Package Manager (Elpaca)
@@ -1047,6 +1046,11 @@
 :END:
 
 #+begin_src emacs-lisp
+
+  (use-package yasnippet
+    :ensure t
+  )
+
   (use-package lsp-mode
     :ensure t
     :commands lsp
@@ -1073,6 +1077,7 @@
     (add-hook 'typescript-mode-hook 'lsp-deferred)
     (add-hook 'javascript-mode-hook 'lsp-deferred)
     (add-hook 'json-mode-hook 'lsp-deferred)
+    (add-hook 'nix-mode-hook 'lsp-deferred)
     (setq lsp-auto-guess-root t)
     (setq lsp-log-io nil)
     (setq lsp-restart 'auto-restart)
