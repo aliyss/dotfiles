@@ -168,6 +168,7 @@
     mcaselector
     gsettings-desktop-schemas
     xdg-user-dirs
+
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

@@ -1,7 +1,12 @@
 { config, lib, pkgs, ... }:
-
-{
+let
+  version = "1.20.2";
+  url =
+    "https://launcher.mojang.com/v1/objects/5b868151bd02b41319f54c8d4061b8cae84e665c/server.jar";
+  sha256 = "sha256-Ha7kg4VprUbkHwpvRZaExQDH8mhTVqQM+36DjW546ug=";
+in {
   imports = [
+    ./packages.nix
     ./apps/wayland.nix
     ./apps/tmux.nix
     ./apps/spicetify.nix
@@ -26,24 +31,6 @@
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
   home.stateVersion = "23.05"; # Please read the comment before changing.
-
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
-  home.packages = with pkgs; [
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
-    atool
-    httpie
-    tmux
-    stremio
-    tridactyl-native
-    prismlauncher
-  ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
