@@ -63,12 +63,7 @@ ConfigJS.prototype = {
 
         window.document.addEventListener("keydown", function (event) {
           window.console.log(event.target);
-          // loopOverKeybindingConfig(event);
-        });
-
-        window.document.addEventListener("oninput", function (event) {
-          window.console.log("input");
-          // window.console.log(event.target);
+          // Uncomment this to make stuff work
           // loopOverKeybindingConfig(event);
         });
       }
