@@ -1,4 +1,4 @@
-{ pkgs, lib, spicetify-nix, ... }:
+{ pkgs, spicetify-nix, ... }:
 let spicePkgs = spicetify-nix.packages.${pkgs.system}.default;
 in {
   imports = [ spicetify-nix.homeManagerModule ];
@@ -8,7 +8,7 @@ in {
     # spicetify-nix
     officialThemes = pkgs.fetchgit {
       url = "https://github.com/spicetify/spicetify-themes";
-      sha256 = "sha256-iMRutzOrZHaKfHOr2qOM/TkTYHysFBlmunVhU65kf2k=";
+      sha256 = "sha256-3s6sRuOeSxJT7G4hol0zIX1fHnkf7cEByV8xt9TVgtc=";
     };
   in {
     enable = true;

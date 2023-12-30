@@ -88,7 +88,7 @@
 
   # NIXPKGS CONFIG
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.pulseaudio = true;
+  # nixpkgs.config.pulseaudio = true;
 
   # SYSTEM PROFILE PACKAGES
   # $ nix search wget
@@ -165,7 +165,6 @@
     wget
     wl-clipboard
 
-    minecraft-server
     mcaselector
     gsettings-desktop-schemas
     xdg-user-dirs
@@ -183,7 +182,6 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    enableNvidiaPatches = true;
   };
 
   # SHELL CONFIGURATION
