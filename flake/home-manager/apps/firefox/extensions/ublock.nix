@@ -10,6 +10,7 @@
         adminSettings = {
           userFilters = ''
             www.youtube.com###cinematics > div > canvas
+            www.youtube.com###cinematics-container
           '';
         };
         userSettings = [
@@ -28,7 +29,6 @@
             "ublock-quick-fixes"
             "ublock-abuse"
             "ublock-unbreak"
-            "easylist"
             "easyprivacy"
             "urlhaus-1"
             "plowe-0"

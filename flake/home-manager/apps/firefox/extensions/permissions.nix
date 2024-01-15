@@ -9,6 +9,7 @@ let
         "privacy"
         "storage"
         "tabs"
+        "alarms"
         "unlimitedStorage"
         "webNavigation"
         "webRequest"

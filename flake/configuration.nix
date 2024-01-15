@@ -77,12 +77,13 @@
     # };
   };
 
+  virtualisation.docker.enable = true;
   # DEFAULT USER ACCOUNT
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aliyss = {
     isNormalUser = true;
     description = "aliyss";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [ ];
   };
 
@@ -137,7 +138,7 @@
     pkg-config
     ## Python
     python3
-    (pkgs.python3.withPackages (ps: with ps; [ python-openstackclient ]))
+    # (pkgs.python3.withPackages (ps: with ps; [ python-openstackclient ]))
     ## Configuration Files
     nil
     ## Nix

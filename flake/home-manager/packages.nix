@@ -33,6 +33,9 @@ in {
         sha256 = minecraftServerInfo.sha256;
       };
     }))
+    ngrok
+
+    (pkgs.callPackage ./apps/zrok.nix { })
   ];
 
 }

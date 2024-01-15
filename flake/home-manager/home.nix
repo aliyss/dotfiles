@@ -1,10 +1,4 @@
-{ config, lib, pkgs, ... }:
-let
-  version = "1.20.2";
-  url =
-    "https://launcher.mojang.com/v1/objects/5b868151bd02b41319f54c8d4061b8cae84e665c/server.jar";
-  sha256 = "sha256-Ha7kg4VprUbkHwpvRZaExQDH8mhTVqQM+36DjW546ug=";
-in {
+{ config, lib, pkgs, ... }: {
   imports = [
     ./packages.nix
     ./apps/wayland.nix

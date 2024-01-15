@@ -44,6 +44,8 @@
     bind we fillcmdline winclose
 
     bind e fillcmdline open
+
+    blacklistadd monkeytype.com
   '';
 
 }
