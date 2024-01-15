@@ -1,8 +1,3 @@
-// config.js - a minimal bootstrap to restore Ctrl+Shift+B for Library (switched with toggleBookmarksToolbar at Ctrl+Shift+O) - by AveYo
-// create in Firefox install directory - for windows = C:\Program Files\Mozilla Firefox\
-// must also create C:\Program Files\Mozilla Firefox\defaults\pref\config-prefs.js
-
-//
 function ConfigJS() {
   Services.obs.addObserver(this, "chrome-document-global-created", false);
 }
