@@ -1,4 +1,3 @@
-
 #+title: Aliyss' GNU Emacs Config
 #+author: Aliyss Snow
 #+description: Aliyss' personal GNU Emacs configuration file
@@ -95,7 +94,7 @@
 
 ** Direnv
 #+begin_src emacs-lisp
-(setq package-install-upgrade-built-in t)
+  (setq package-install-upgrade-built-in t)
 #+end_src
 
 ** Package Manager (Elpaca)
@@ -691,7 +690,7 @@
     :diminish
     :config
     (ivy-set-display-transformer 'ivy-switch-buffer
-     'ivy-rich-switch-buffer-transformer)
+                                 'ivy-rich-switch-buffer-transformer)
     )
 
   (with-eval-after-load 'ivy
@@ -1049,7 +1048,7 @@
 
   (use-package yasnippet
     :ensure t
-  )
+    )
 
   (use-package lsp-mode
     :ensure t
@@ -1078,6 +1077,7 @@
     (add-hook 'javascript-mode-hook 'lsp-deferred)
     (add-hook 'json-mode-hook 'lsp-deferred)
     (add-hook 'nix-mode-hook 'lsp-deferred)
+    (add-hook 'dart-mode-hook 'lsp-deferred)
     (setq lsp-auto-guess-root t)
     (setq lsp-log-io nil)
     (setq lsp-restart 'auto-restart)
@@ -1159,6 +1159,7 @@
   (use-package json-mode)
   (use-package web-mode)
   (use-package rust-mode)
+  (use-package yaml-mode)
   (use-package dotenv-mode
     :elpaca '(dotenv-mode :host github :repo "preetpalS/emacs-dotenv-mode")
     :ensure t
@@ -1178,6 +1179,34 @@
     :init
     (setq lsp-tailwindcss-add-on-mode t)
     )
+
+  (defun set-flutter-sdk-dir ()
+    (direnv-update-environment)
+    (setq lsp-dart-flutter-sdk-dir
+          (string-trim-right (shell-command-to-string "echo $FLUTTER_SDK"))))
+
+  (use-package dart-mode
+    :init
+    (add-hook 'dart-mode-hook 'set-flutter-sdk-dir)
+
+    :hook (dart-mode . flutter-test-mode))
+
+  ;; Assuming usage with dart-mode
+  (use-package dart-mode
+    ;; Optional
+    )
+
+  (use-package lsp-dart
+    :ensure t
+    :config
+    :hook (dart-mode . lsp))
+
+  (use-package flutter
+    :after dart-mode
+    :bind (:map dart-mode-map
+                ("C-M-x" . #'flutter-run-or-hot-reload))
+    :custom
+    (flutter-sdk-path 'set-flutter-sdk-dir))
 
   (add-hook 'before-save-hook 'lsp-tailwindcss-rustywind-before-save)
 #+end_src
@@ -1507,11 +1536,11 @@
 
 *** Buffer Move Up
 #+begin_src emacs-lisp
-                                                                                                              ;;;###autoload
+                                                                                                                    ;;;###autoload
   (defun buf-move-up ()
     "Swap the current buffer and the buffer above the split.
-                                                                                                                 If there is no split, ie now window above the current one, an
-                                                                                                                 error is signaled."
+                                                                                                                       If there is no split, ie now window above the current one, an
+                                                                                                                       error is signaled."
     ;;  "Switches between the current buffer, and the buffer above the
     ;;  split, if possible."
     (interactive)
@@ -1528,11 +1557,11 @@
 
 *** Buffer Move Down
 #+begin_src emacs-lisp
-                                                                                                              ;;;###autoload
+                                                                                                                    ;;;###autoload
   (defun buf-move-down ()
     "Swap the current buffer and the buffer under the split.
-                                                                                                                 If there is no split, ie now window under the current one, an
-                                                                                                                 error is signaled."
+                                                                                                                       If there is no split, ie now window under the current one, an
+                                                                                                                       error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'down))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1548,11 +1577,11 @@
 
 *** Buffer Move Left
 #+begin_src emacs-lisp
-                                                                                                              ;;;###autoload
+                                                                                                                    ;;;###autoload
   (defun buf-move-left ()
     "Swap the current buffer and the buffer on the left of the split.
-                                                                                                                 If there is no split, ie now window on the left of the current
-                                                                                                                 one, an error is signaled."
+                                                                                                                       If there is no split, ie now window on the left of the current
+                                                                                                                       one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'left))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1569,8 +1598,8 @@
 #+begin_src emacs-lisp
   (defun buf-move-right ()
     "Swap the current buffer and the buffer on the right of the split.
-               If there is no split, ie now window on the right of the current
-               one, an error is signaled."
+                     If there is no split, ie now window on the right of the current
+                     one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'right))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1829,9 +1858,9 @@
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                                                                                                                 FN is a function that operates on org-element's value and returns a string.
-                                                                                                                 LANGUAGE is a string referring to one of orb-babel's supported languages.
-                                                                                                                 (https://orgmode.org/manual/Languages.html#Languages)"
+                                                                                                                       FN is a function that operates on org-element's value and returns a string.
+                                                                                                                       LANGUAGE is a string referring to one of orb-babel's supported languages.
+                                                                                                                       (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -1847,7 +1876,7 @@
         (emacs-lisp-mode)
         (insert
          (replace-regexp-in-string "[[:space:]]*
-                                                                                                                                                                                    [[:space:]]*)" ")" string))
+                                                                                                                                                                                          [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 

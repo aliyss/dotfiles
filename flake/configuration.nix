@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -68,8 +68,10 @@
         wayland = true;
       };
       # Keymaps
-      layout = "us";
-      xkbVariant = "colemak_dh_iso";
+      xkb = {
+        variant = "colemak_dh_iso";
+        layout = "us";
+      };
     };
     # hardware.openrgb = {
     #   enable = true;
@@ -136,6 +138,7 @@
     clippy
     openssl
     pkg-config
+    flutter
     ## Python
     python3
     # (pkgs.python3.withPackages (ps: with ps; [ python-openstackclient ]))

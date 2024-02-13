@@ -46,6 +46,7 @@
     bind e fillcmdline open
 
     blacklistadd monkeytype.com
+    blacklistadd remotedesktop.google.com
   '';
 
 }
