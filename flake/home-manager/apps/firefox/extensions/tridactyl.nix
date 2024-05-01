@@ -47,6 +47,8 @@
 
     blacklistadd monkeytype.com
     blacklistadd remotedesktop.google.com
+    blacklistadd aliyss.vercel.app
+    blacklistadd silyas.vercel.app
   '';
 
 }

@@ -1,19 +1,20 @@
-{ config, lib, pkgs, ... }: {
+{...}: {
   imports = [
     ./packages.nix
     ./apps/wayland.nix
     ./apps/tmux.nix
     ./apps/spicetify.nix
     ./apps/zsh.nix
-    ./apps/emacs.nix
+    ./apps/fish.nix
+    ./apps/direnv.nix
+    # ./apps/emacs.nix
     ./apps/neovim.nix
     ./apps/firefox.nix
-    ./services/emacs.nix
+    # ./services/emacs.nix
     ./services/mako.nix
   ];
 
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
+  # Home Manager needs a bit of information about you and the paths it should manage.
   home.username = "aliyss";
   home.homeDirectory = "/home/aliyss";
 
@@ -46,9 +47,10 @@
     LSP_USE_PLISTS = "true";
     # Firefox
     MOZ_ENABLE_WAYLAND = 1;
+    # Wine
+    WINEPREFIX = "~/.wine/";
   };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-
 }

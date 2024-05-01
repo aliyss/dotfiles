@@ -16,6 +16,9 @@
             www.youtube.com##+js(set, yt.config_.EXPERIMENT_FLAGS.ab_pl_man, false)
             ||googlevideo.com/videoplayback$xhr,3p,method=get,domain=www.youtube.com
             $removeparam=si,domain=youtu.be|youtube-nocookie.com|music.youtube.com|www.youtube.com,badfilter
+            www.unisg.ch##.show.fade.modal-backdrop
+            www.phind.com##.show.modal.fade
+            www.phind.com##.show.modal-backdrop.fade
           '';
         };
         userSettings = [

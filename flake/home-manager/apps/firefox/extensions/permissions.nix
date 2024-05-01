@@ -45,6 +45,8 @@ let
         "webRequestBlocking"
         "file:///*"
         "https://lastpass.com/export.php"
+        "<all_urls>"
+        "*://*/*"
       ];
     };
     "darkreader" = {

@@ -1,14 +1,18 @@
-{ pkgs, spicetify-nix, ... }:
-let spicePkgs = spicetify-nix.packages.${pkgs.system}.default;
+{
+  pkgs,
+  spicetify-nix,
+  ...
+}: let
+  spicePkgs = spicetify-nix.packages.${pkgs.system}.default;
 in {
-  imports = [ spicetify-nix.homeManagerModule ];
+  imports = [spicetify-nix.homeManagerModule];
 
   programs.spicetify = let
     # use a different version of spicetify-themes than the one provided by
     # spicetify-nix
     officialThemes = pkgs.fetchgit {
       url = "https://github.com/spicetify/spicetify-themes";
-      sha256 = "sha256-UeHrYgMOB4a7xnl2atAJiNGlvKg8hDyFoaiwNtmQ0Ss=";
+      sha256 = "sha256-g2TEX4egBFzeUzZX7ncpNTNsREYpIk7HJeSAJgOluaw=";
     };
   in {
     enable = true;
@@ -28,7 +32,7 @@ in {
       sidebarConfig = true;
     };
 
-    enabledCustomApps = with spicePkgs.apps; [ marketplace ];
+    enabledCustomApps = with spicePkgs.apps; [marketplace];
 
     enabledExtensions = with spicePkgs.extensions; [
       fullAppDisplay

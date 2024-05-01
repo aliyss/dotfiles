@@ -1,22 +1,19 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    enableAutosuggestions = true;
-    syntaxHighlighting = { enable = false; };
+    autosuggestion.enable = true;
+    syntaxHighlighting = {enable = false;};
     oh-my-zsh = {
       enable = true;
-      plugins = [ "docker-compose" "docker" "git" "tmux" ];
+      plugins = ["docker-compose" "docker" "git" "tmux"];
       theme = "dst";
     };
     shellAliases = {
-      update-system =
-        "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta";
+      update-system = "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta";
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
     };
-    sessionVariables = { ZSH_TMUX_AUTOSTART = "true"; };
+    sessionVariables = {ZSH_TMUX_AUTOSTART = "true";};
     initExtra = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh;
       bindkey '^f' autosuggest-accept;

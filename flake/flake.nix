@@ -17,38 +17,41 @@
     };
   };
 
-  outputs = { nixpkgs, nur, home-manager, ... }@inputs:
-    let
-      system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        localSystem = { inherit system; };
-        config.allowUnfree = true;
-      };
+  outputs = {
+    nixpkgs,
+    nur,
+    home-manager,
+    ...
+  } @ inputs: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs {
+      localSystem = {inherit system;};
+      config.allowUnfree = true;
+    };
 
-      lib = nixpkgs.lib;
-    in {
-
-      # NIXOS CONFIGURATIONS
-      nixosConfigurations = {
-        # Desktop
-        aliyss-bequitta = lib.nixosSystem {
-          specialArgs = { inherit system; };
-          modules = [ ./configuration.nix ./bequitta/configuration.nix ];
-        };
-        # Laptop: Not yet merged
-        aliyss-blade = lib.nixosSystem {
-          specialArgs = { inherit system; };
-          modules = [ ./configuration.nix ];
-        };
+    lib = nixpkgs.lib;
+  in {
+    # NIXOS CONFIGURATIONS
+    nixosConfigurations = {
+      # Desktop
+      aliyss-bequitta = lib.nixosSystem {
+        specialArgs = {inherit system;};
+        modules = [./configuration.nix ./bequitta/configuration.nix];
       };
-      # HOME CONFIGURATIONS
-      homeConfigurations = {
-        # Aliyss' User Profile
-        aliyss = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          modules = [ ./home-manager/home.nix nur.nixosModules.nur ];
-          extraSpecialArgs = inputs;
-        };
+      # Laptop: Not yet merged
+      aliyss-blade = lib.nixosSystem {
+        specialArgs = {inherit system;};
+        modules = [./configuration.nix];
       };
     };
+    # HOME CONFIGURATIONS
+    homeConfigurations = {
+      # Aliyss' User Profile
+      aliyss = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        modules = [./home-manager/home.nix nur.nixosModules.nur];
+        extraSpecialArgs = inputs;
+      };
+    };
+  };
 }

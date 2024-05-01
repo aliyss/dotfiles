@@ -1,9 +1,7 @@
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   programs.tmux = {
     enable = true;
-    shell = "${pkgs.zsh}/bin/zsh";
+    shell = "${pkgs.fish}/bin/fish";
     keyMode = "vi";
     newSession = true;
     escapeTime = 0;
@@ -31,10 +29,10 @@
       #     set -g @continuum-save-interval '10'
       #   '';
       # }
-      { plugin = tmuxPlugins.sensible; }
-      { plugin = tmuxPlugins.vim-tmux-navigator; }
-      { plugin = tmuxPlugins.cpu; }
-      { plugin = tmuxPlugins.better-mouse-mode; }
+      {plugin = tmuxPlugins.sensible;}
+      {plugin = tmuxPlugins.vim-tmux-navigator;}
+      {plugin = tmuxPlugins.cpu;}
+      {plugin = tmuxPlugins.better-mouse-mode;}
     ];
     extraConfig = ''
       set -g status-right '#[fg=color15] #{cpu_percentage}  %H:%M '

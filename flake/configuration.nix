@@ -1,10 +1,7 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   imports = [
     # Untouched hardware configuration file
     ./hardware-configuration.nix
@@ -13,7 +10,7 @@
   # BOOTLOADER
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelModules = [ "i2c-dev" "i2c-piix4" ];
+  boot.kernelModules = ["i2c-dev" "i2c-piix4"];
 
   # HOSTNAME
   networking.hostName = "aliyss-bequitta";
@@ -22,7 +19,7 @@
   networking.networkmanager.enable = true;
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 80 443 25565 ];
+    allowedTCPPorts = [80 443 25565];
   };
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -62,7 +59,7 @@
     # Display
     xserver = {
       enable = true;
-      videoDrivers = [ "nvidia" ];
+      videoDrivers = ["nvidia"];
       displayManager.gdm = {
         enable = true;
         wayland = true;
@@ -79,18 +76,33 @@
     # };
   };
 
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    enableOnBoot = false;
+    rootless = {
+      enable = true;
+      setSocketVariable = true;
+      daemon.settings = {
+        runtimes = {
+          nvidia = {
+            path = "${pkgs.nvidia-docker}/bin/nvidia-container-runtime";
+          };
+        };
+      };
+    };
+  };
+
   # DEFAULT USER ACCOUNT
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aliyss = {
     isNormalUser = true;
     description = "aliyss";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
-    packages = with pkgs; [ ];
+    extraGroups = ["networkmanager" "wheel" "docker" "uinput"];
   };
 
   # NIXPKGS CONFIG
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.cudaSupport = true;
   # nixpkgs.config.pulseaudio = true;
 
   # SYSTEM PROFILE PACKAGES
@@ -104,7 +116,7 @@
     neovim
     ## Emacs: for everything else
     ((emacsPackagesFor emacs29-pgtk).emacsWithPackages
-      (epkgs: [ epkgs.vterm epkgs.lsp-tailwindcss ]))
+      (epkgs: [epkgs.vterm epkgs.lsp-tailwindcss epkgs.dap-mode]))
     ### Emacs: Additional Packages, compatibility with config.org file
     youtube-dl
     #### required to install some language servers
@@ -124,13 +136,14 @@
     nodePackages.tailwindcss
     nodePackages.vercel
     nodePackages."@tailwindcss/language-server"
-    rustywind
-    tailwindcss
     nodePackages.prettier
     nodePackages.localtunnel
+    ## TailwindCSS
+    tailwindcss
     ## Typescript
     typescript
     ## Rust
+    rustywind
     rustc
     cargo
     rustfmt
@@ -138,6 +151,8 @@
     clippy
     openssl
     pkg-config
+    gcc
+    ## Flutter
     flutter
     ## Python
     python3
@@ -145,7 +160,7 @@
     ## Configuration Files
     nil
     ## Nix
-    nixfmt
+    nixfmt-classic
 
     # Hardware
     pulseaudio
@@ -168,11 +183,26 @@
     # Other Useful Packages
     wget
     wl-clipboard
+    ydotool
 
-    mcaselector
     gsettings-desktop-schemas
     xdg-user-dirs
 
+    # Gaming
+    ## Minecraft Editor
+    mcaselector
+    ## wine-staging (version with experimental features)
+    wineWowPackages.staging
+    ## winetricks (all versions)
+    winetricks
+    ## native wayland support (unstable)
+    wineWowPackages.waylandFull
+
+    (lutris.override {
+      extraPkgs = pkgs: [
+        # List package dependencies here
+      ];
+    })
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -193,22 +223,17 @@
   ## ssh
   programs.ssh.askPassword = "";
   ## zsh
-  programs.zsh = {
+  programs.fish = {
     enable = true;
     shellAliases = {
       ll = "ls -l";
       screenshot = ''grim -g "$(slurp -d)"'';
     };
-    ohMyZsh = {
-      enable = true;
-      plugins = [ "git" ];
-      theme = "fino-time";
-    };
   };
   ## Default Shell
-  users.defaultUserShell = pkgs.zsh;
+  users.defaultUserShell = pkgs.fish;
   ## Environment Shell
-  environment.shells = with pkgs; [ zsh ];
+  environment.shells = with pkgs; [fish];
 
   # List services that you want to enable:
 
@@ -249,7 +274,7 @@
 
   # FONTS
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    (nerdfonts.override {fonts = ["JetBrainsMono"];})
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
@@ -262,14 +287,14 @@
   ];
 
   environment.variables = {
+    YDOTOOL_SOCKET = "/tmp/ydotools";
     RUST_BACKTRACE = "1";
     LSP_USE_PLISTS = "true";
     PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
-    GSETTINGS_SCHEMA_DIR =
-      "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas/";
-
+    GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas/";
+    WINEPREFIX = "~/.wine";
   };
 
   # FLAKE
-  nix = { settings.experimental-features = [ "nix-command" "flakes" ]; };
+  nix = {settings.experimental-features = ["nix-command" "flakes"];};
 }

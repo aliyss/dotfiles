@@ -51,6 +51,8 @@
   - [[#syntax-highlighting][Syntax Highlighting]]
   - [[#modes][Modes]]
   - [[#treesitter][Treesitter]]
+  - [[#glsl][GLSL]]
+  - [[#python][Python]]
   - [[#rustic][Rustic]]
   - [[#javascript--typescript][Javascript / Typescript]]
   - [[#eglot][Eglot]]
@@ -95,6 +97,10 @@
 ** Direnv
 #+begin_src emacs-lisp
   (setq package-install-upgrade-built-in t)
+
+  (use-package direnv
+    :config
+    (direnv-mode))
 #+end_src
 
 ** Package Manager (Elpaca)
@@ -799,7 +805,7 @@
     :custom
     (company-begin-commands '(self-insert-command))
     (company-idle-delay .1)
-    (company-minimum-prefix-length 2)
+    (company-minimum-prefix-length 1)
     (company-show-numbers t)
     (company-tooltip-align-annotations 't)
     (global-company-mode t))
@@ -917,10 +923,12 @@
 
 #+begin_src emacs-lisp
   (use-package vterm
+    :ensure t
     :diminish
     :config
-    (setq shell-file-name "/bin/sh"
-          vterm-max-scrollback 5000))
+     (add-hook 'vterm-mode-hook 'turn-off-evil-mode)
+  )
+
 #+end_src
 
 ** Vterm-Toggle
@@ -942,8 +950,8 @@
                        (with-current-buffer buffer
                          (or (equal major-mode 'vterm-mode)
                              (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
-                   (display-buffer-reuse-window display-buffer-at-bottom)
-                   ;;(display-buffer-reuse-window display-buffer-in-direction)
+                   ;;(display-buffer-reuse-window display-buffer-at-bottom)
+                   (display-buffer-reuse-window display-buffer-in-direction)
                    ;;display-buffer-in-direction/direction/dedicated is added in emacs27
                    ;;(direction . bottom)
                    ;;(dedicated . t) ;dedicated is supported in emacs27
@@ -1048,6 +1056,8 @@
 
   (use-package yasnippet
     :ensure t
+    :config
+    (yas-global-mode 1)
     )
 
   (use-package lsp-mode
@@ -1146,6 +1156,7 @@
   (setq auto-mode-alist (append '((".*\\.env$" . dotenv-mode)) auto-mode-alist))
   (setq auto-mode-alist (append '((".*\\.cjs$" . js-mode)) auto-mode-alist))
   (setq auto-mode-alist (append '((".*\\.html$" . web-mode)) auto-mode-alist))
+  (setq auto-mode-alist (append '((".*\\.glsl$" . glsl-mode)) auto-mode-alist))
 #+end_src
 
 ** Modes
@@ -1230,6 +1241,76 @@
     :after tree-sitter)
 #+end_src
 
+** GLSL
+
+#+begin_src emacs-lisp
+
+(provide 'glsl-mode)
+
+(eval-when-compile			; required and optional libraries
+  (require 'cc-mode)
+  (require 'find-file))
+
+(defconst glsls-version "1.0"
+  "OpenGLSL major mode version number.")
+
+(defvar glsl-mode-hook nil)
+
+(defvar glsl-mode-map
+  (let ((glsl-mode-map (make-sparse-keymap)))
+    (define-key glsl-mode-map [S-iso-lefttab] 'ff-find-other-file)
+    glsl-mode-map)
+  "Keymap for GLSL major mode")
+
+(add-to-list 'auto-mode-alist '("\\.vert\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.frag\\'" . glsl-mode))
+
+(defconst glsl-font-lock-keywords-1
+  (list
+   '("\\<\\(b\\(?:ool\\|vec[1-4]\\)\\|float\\|i\\(?:nt\\|vec[1-4]\\)\\|mat[234]\\|sampler\\(?:1D\\(?:Shadow\\)?\\|2D\\(?:Shadow\\)?\\|3D\\|Cube\\)\\|v\\(?:ec[1-4]\\|oid\\)\\)\\>" . font-lock-type-face)
+   '("\\<\\(attribute\\|break\\|con\\(?:st\\|tinue\\)\\|d\\(?:iscard\\|o\\)\\|else\\|for\\|i\\(?:nout\\|[fn]\\)\\|out\\|return\\|struct\\|uniform\\|varying\\|while\\)\\>" . font-lock-keyword-face)
+   '("\\<\\(a\\(?:bs\\|cos\\|ll\\|ny\\|\\(?:si\\|ta\\)n\\)\\|c\\(?:eil\\|lamp\\|\\(?:o\\|ros\\)s\\)\\|d\\(?:Fd[xy]\\|istance\\|ot\\)\\|e\\(?:qual\\|xp2?\\)\\|f\\(?:aceforward\\|loor\\|ract\\|transform\\|width\\)\\|greaterThan\\(?:Equal\\)?\\|inversesqrt\\|l\\(?:e\\(?:ngth\\|ssThan\\(?:Equal\\)?\\)\\|og2?\\)\\|m\\(?:a\\(?:trixCompMult\\|x\\)\\|in\\|ode\\)\\|no\\(?:ise[1-4]\\|rmalize\\|t\\(?:Equal\\)?\\)\\|pow\\|r\\(?:adians\\|ef\\(?:\\(?:le\\|ra\\)ct\\)\\)\\|s\\(?:hadow\\(?:1D\\(?:Lod\\|Proj\\(?:Lod\\)?\\)?\\|2D\\(?:Lod\\|Proj\\(?:Lod\\)?\\)?\\)\\|i\\(?:g?n\\)\\|moothstep\\|qrt\\|tep\\)\\|t\\(?:an\\|exture\\(?:1D\\(?:Lod\\|Proj\\(?:Lod\\)?\\)?\\|2D\\(?:Lod\\|Proj\\(?:Lod\\)?\\)?\\|3D\\(?:Lod\\|Proj\\(?:Lod\\)?\\)?\\|Cube\\(?:Lod\\)?\\)\\)\\)\\>" . font-lock-builtin-face)
+   '("\\<\\(gl_\\(?:Back\\(?:Color\\|Light\\(?:\\(?:Model\\)?Product\\)\\|Material\\|SecondaryColor\\)\\|C\\(?:lipVertex\\|olor\\(?:\\)?\\)\\|DepthRange\\(?:\\)?\\|EyePlane[Q-T]\\|F\\(?:og\\(?:Coord\\)?\\|r\\(?:ag\\(?:Co\\(?:lor\\|ord\\)\\|D\\(?:ata\\|epth\\)\\)\\|ont\\(?:Color\\|Facing\\|Light\\(?:\\(?:Model\\)?Product\\)\\|Material\\|SecondaryColor\\)\\)\\)\\|LightSource\\|M\\(?:ax\\(?:\\(?:C\\(?:lipPlane\\|ombinedTextureImageUnit\\)\\|DrawBuffer\\|FragmentUniformComponent\\|Light\\|Texture\\(?:Coord\\|\\(?:Image\\)?Unit\\)\\|V\\(?:aryingFloat\\|ertex\\(?:Attrib\\|\\(?:TextureImageUni\\|UniformComponen\\)t\\)\\)\\)s\\)\\|odelView\\(?:Matrix\\(?:\\(?:Inver\\(?:seTranspo\\)?\\|Transpo\\)se\\)?\\|ProjectionMatrix\\(?:\\(?:Inver\\(?:seTranspo\\)?\\|Transpo\\)se\\)?\\)\\|ultiTexCoord[0-7]\\)\\|Normal\\(?:Matrix\\|Scale\\)?\\|ObjectPlane[Q-T]\\|P\\(?:o\\(?:int\\(?:Size\\)??\\|sition\\)\\|rojectionMatrix\\(?:\\(?:Inver\\(?:seTranspo\\)?\\|Transpo\\)se\\)?\\)\\|SecondaryColor\\(?:\\)?\\|Tex\\(?:Coord\\|ture\\(?:EnvColor\\|Matrix\\(?:\\(?:Inver\\(?:seTranspo\\)?\\|Transpo\\)se\\)?\\)\\)\\|Vertex\\)\\)\\>" . font-lock-variable-name-face)
+   )
+  "Minimal highlighting expressions for GLSL mode")
+
+(defvar glsl-font-lock-keywords glsl-font-lock-keywords-1
+  "Default highlighting expressions for GLSL mode")
+
+(defvar glsl-mode-syntax-table
+  (let ((glsl-mode-syntax-table (make-syntax-table)))
+    (modify-syntax-entry ?/ ". 124b" glsl-mode-syntax-table)
+    (modify-syntax-entry ?* ". 23" glsl-mode-syntax-table)
+    (modify-syntax-entry ?\n "> b" glsl-mode-syntax-table)
+    glsl-mode-syntax-table)
+  "Syntax table for glsl-mode")
+
+(defvar glsl-other-file-alist
+  '(("\\.frag$"
+     (".vert"))
+    ("\\.vert$"
+     (".frag")))
+  "Alist of extensions to find given the current file's extension")
+
+(define-derived-mode glsl-mode c-mode "GLSL"
+  "Major mode for editing OpenGLSL shader files."
+  (set (make-local-variable 'font-lock-defaults) '(glsl-font-lock-keywords))
+  (set (make-local-variable 'ff-other-file-alist) 'glsl-other-file-alist)
+  )
+
+#+end_src
+
+** Python
+
+#+begin_src emacs-lisp
+  (setq lsp-pyright-python-executable-cmd "python3")
+
+  (use-package lsp-pyright
+    :hook (python-mode . (lambda () (require 'lsp-pyright) (lsp-deferred)))
+    :init (when (executable-find "python3")
+            (setq lsp-pyright-python-executable-cmd "python3")))
+#+end_src
+
 ** Rustic
 :PROPERTIES:
 :SOURCE:   https://github.com/brotzeit/rustic
@@ -1306,36 +1387,36 @@
 ** Tide
 #+begin_src emacs-lisp
 
-  ;; (use-package tide
-  ;;   :ensure t
-  ;;   :after (typescript-mode company flycheck)
-  ;;   :hook ((typescript-mode . tide-setup)
-  ;;          (typescript-mode . tide-hl-identifier-mode)
-  ;;          (before-save . tide-format-before-save))
-  ;;   :config
-  ;;   (flycheck-add-next-checker 'typescript-tide 'javascript-eslint)
-  ;;   (setq tide-completion-enable-autoimport-suggestions t
-  ;;         tide-save-buffer-after-code-edit nil
-  ;;         tide-completion-show-source t
-  ;;         tide-hl-identifier-mode t
-  ;;         tide-hl-identifier-idle-time 1.5
-  ;;         tide-recenter-after-jump t
+ ;; (use-package tide
+ ;; :ensure t
+ ;; :after (typescript-mode company flycheck)
+ ;;   :hook ((typescript-mode . tide-setup)
+ ;;          (typescript-mode . tide-hl-identifier-mode)
+ ;;          (before-save . tide-format-before-save))
+ ;;   :config
+ ;;   (flycheck-add-next-checker 'typescript-tide 'javascript-eslint)
+ ;;   (setq tide-completion-enable-autoimport-suggestions t
+ ;;         tide-save-buffer-after-code-edit nil
+ ;;         tide-completion-show-source t
+ ;;         tide-hl-identifier-mode t
+ ;;         tide-hl-identifier-idle-time 1.5
+ ;;         tide-recenter-after-jump t
 
-  ;;         web-mode-enable-auto-quoting nil
-  ;;         web-mode-markup-indent-offset 2
-  ;;         web-mode-code-indent-offset 2
-  ;;         web-mode-attr-indent-offset 2
-  ;;         web-mode-attr-value-indent-offset 2
+ ;;         web-mode-enable-auto-quoting nil
+ ;;         web-mode-markup-indent-offset 2
+ ;;         web-mode-code-indent-offset 2
+ ;;         web-mode-attr-indent-offset 2
+ ;;         web-mode-attr-value-indent-offset 2
 
-  ;;         )
-  ;;   )
+ ;;         )
+ ;;   )
 
-  ;; ;; hooks
-  ;; (add-hook 'before-save-hook 'tide-format-before-save)
+ ;; ;; hooks
+ ;; (add-hook 'before-save-hook 'tide-format-before-save)
 
-  ;; (add-hook 'web-mode-hook 'company-mode)
-  ;; (add-hook 'web-mode-hook 'prettier-js-mode)
-  ;; (add-hook 'web-mode-hook #'turn-on-smartparens-mode t)
+ ;; (add-hook 'web-mode-hook 'company-mode)
+ ;; (add-hook 'web-mode-hook 'prettier-js-mode)
+ ;; (add-hook 'web-mode-hook #'turn-on-smartparens-mode t)
 #+end_src
 
 ** Eslint
@@ -1361,7 +1442,8 @@
                                           root))))
       (when (and eslint (file-executable-p eslint))
         (setq-local flycheck-javascript-eslint-executable eslint))))
-  (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)   (add-hook 'json-mode-hook 'flymake-json-mode)
+  (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
+(add-hook 'json-mode-hook 'flymake-json-mode)
 #+end_src
 
 * Debugger
@@ -1536,11 +1618,11 @@
 
 *** Buffer Move Up
 #+begin_src emacs-lisp
-                                                                                                                    ;;;###autoload
+                                                                                                                              ;;;###autoload
   (defun buf-move-up ()
     "Swap the current buffer and the buffer above the split.
-                                                                                                                       If there is no split, ie now window above the current one, an
-                                                                                                                       error is signaled."
+                                                                                                                                 If there is no split, ie now window above the current one, an
+                                                                                                                                 error is signaled."
     ;;  "Switches between the current buffer, and the buffer above the
     ;;  split, if possible."
     (interactive)
@@ -1557,11 +1639,11 @@
 
 *** Buffer Move Down
 #+begin_src emacs-lisp
-                                                                                                                    ;;;###autoload
+                                                                                                                              ;;;###autoload
   (defun buf-move-down ()
     "Swap the current buffer and the buffer under the split.
-                                                                                                                       If there is no split, ie now window under the current one, an
-                                                                                                                       error is signaled."
+                                                                                                                                 If there is no split, ie now window under the current one, an
+                                                                                                                                 error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'down))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1577,11 +1659,11 @@
 
 *** Buffer Move Left
 #+begin_src emacs-lisp
-                                                                                                                    ;;;###autoload
+                                                                                                                              ;;;###autoload
   (defun buf-move-left ()
     "Swap the current buffer and the buffer on the left of the split.
-                                                                                                                       If there is no split, ie now window on the left of the current
-                                                                                                                       one, an error is signaled."
+                                                                                                                                 If there is no split, ie now window on the left of the current
+                                                                                                                                 one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'left))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1598,8 +1680,8 @@
 #+begin_src emacs-lisp
   (defun buf-move-right ()
     "Swap the current buffer and the buffer on the right of the split.
-                     If there is no split, ie now window on the right of the current
-                     one, an error is signaled."
+                               If there is no split, ie now window on the right of the current
+                               one, an error is signaled."
     (interactive)
     (let* ((other-win (windmove-find-other-window 'right))
            (buf-this-buf (window-buffer (selected-window))))
@@ -1858,9 +1940,9 @@
 #+begin_src emacs-lisp
   (defun edit-src-block (src fn language)
     "Replace SRC org-element's value property with the result of FN.
-                                                                                                                       FN is a function that operates on org-element's value and returns a string.
-                                                                                                                       LANGUAGE is a string referring to one of orb-babel's supported languages.
-                                                                                                                       (https://orgmode.org/manual/Languages.html#Languages)"
+                                                                                                                                 FN is a function that operates on org-element's value and returns a string.
+                                                                                                                                 LANGUAGE is a string referring to one of orb-babel's supported languages.
+                                                                                                                                 (https://orgmode.org/manual/Languages.html#Languages)"
     (let ((src-language (org-element-property :language src))
           (value (org-element-property :value src)))
       (when (string= src-language language)
@@ -1876,7 +1958,7 @@
         (emacs-lisp-mode)
         (insert
          (replace-regexp-in-string "[[:space:]]*
-                                                                                                                                                                                          [[:space:]]*)" ")" string))
+                                                                                                                                                                                                    [[:space:]]*)" ")" string))
         (indent-region (point-min) (point-max))
         (buffer-substring (point-min) (point-max)))))
 
