@@ -1,13 +1,15 @@
 local treesitter = require("nvim-treesitter.configs")
 
-treesitter.setup({
-    highlight = {
-        enable = true,
-    },
-    indent = {
-        enable = true,
-    },
-    autotag = {
-        enable = true,
-    },
-})
+local treesitter_config = {
+	highlight = {
+		enable = true,
+	},
+	indent = {
+		enable = true,
+	},
+	autotag = {
+		enable = true,
+	},
+}
+
+treesitter.setup(treesitter_config)

@@ -3,6 +3,7 @@ local conform = require("conform")
 conform.setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
+		python = { "isort", "black" },
 		nix = { "alejandra" },
 	},
 	format_on_save = {

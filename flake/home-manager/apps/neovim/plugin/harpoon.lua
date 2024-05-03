@@ -1,1 +1,1 @@
-local harpoon = require("harpoon").setup()
+require("harpoon").setup()

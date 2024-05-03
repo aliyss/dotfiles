@@ -1,11 +1,11 @@
 local g = vim.g
 local o = vim.o
 
-g.mapleader = ' '
-g.maplocalleader = ' '
+g.mapleader = " "
+g.maplocalleader = " "
 
 o.termguicolors = true
-o.clipboard = 'unnamedplus'
+o.clipboard = "unnamedplus"
 
 o.scrolloff = 8
 
@@ -14,7 +14,7 @@ o.updatetime = 200
 
 o.number = true
 o.numberwidth = 3
-o.signcolumn = 'yes'
+o.signcolumn = "yes"
 o.relativenumber = true
 o.cursorline = true
 
@@ -39,4 +39,4 @@ o.history = 50
 o.splitright = true
 o.splitbelow = true
 
-o.mouse = 'a'
+o.mouse = "a"

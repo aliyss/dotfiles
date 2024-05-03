@@ -213,6 +213,9 @@
   #   enableSSHSupport = true;
   # };
 
+  # NIX_LD
+  programs.nix-ld.enable = true;
+
   # HYPRLAND
   programs.hyprland = {
     enable = true;
