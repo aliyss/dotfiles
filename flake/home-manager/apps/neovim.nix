@@ -34,9 +34,13 @@ in {
       wl-clipboard
       stylua
       pyright
+      pylint
+      pylyzer
       black
       isort
       alejandra
+      prettierd
+      nodePackages_latest.jsonlint
       lolcrab
     ];
     plugins = with plugins; [

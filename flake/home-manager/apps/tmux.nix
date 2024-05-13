@@ -37,6 +37,8 @@
     extraConfig = ''
       set -g status-right '#[fg=color15] #{cpu_percentage}  %H:%M '
 
+
+      set-option -sa terminal-features ',fish*:RGB'
       set-option -sa terminal-overrides ",xterm*:Tc"
 
       unbind C-b

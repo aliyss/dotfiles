@@ -77,10 +77,28 @@ wk.register({
 			k = { "<cmd>NvimTmuxNavigateUp<cr>", "Top Window" },
 			l = { "<cmd>NvimTmuxNavigateRight<cr>", "Right Window" },
 			w = { "<cmd>NvimTmuxNavigateNext<cr>", "Next Window" },
+			c = { "<cmd>wincmd c<cr>", "Close Window" },
+			s = { "<cmd>wincmd s<cr>", "Split Window Horizontally" },
+			v = { "<cmd>wincmd v<cr>", "Split Window Vertically" },
 		},
 		e = {
 			"<cmd>Neotree toggle<cr>",
 			"Open Tree",
+		},
+		c = {
+			name = "+Launch",
+			d = {
+				"<cmd>Dashboard<cr>",
+				"Open Dashboard",
+			},
+			n = {
+				"<cmd>:e ~/.config/flake/home-manager/apps/neovim.nix<cr>",
+				"Open Neovim Config",
+			},
+			h = {
+				"<cmd>:e ~/.config/hypr/hyprland.conf<cr>",
+				"Open Hyprland Config",
+			},
 		},
 		l = {
 			name = "+LSP",

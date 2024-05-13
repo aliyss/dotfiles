@@ -7,11 +7,11 @@
     ./apps/zsh.nix
     ./apps/fish.nix
     ./apps/direnv.nix
-    # ./apps/emacs.nix
     ./apps/neovim.nix
     ./apps/firefox.nix
-    # ./services/emacs.nix
     ./services/mako.nix
+    # ./apps/emacs.nix
+    # ./services/emacs.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should manage.

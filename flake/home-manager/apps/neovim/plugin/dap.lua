@@ -48,6 +48,7 @@ local enrich_config = function(finalConfig, on_config)
 			for word in string.gmatch(line, "[^=]+") do
 				table.insert(words, word)
 			end
+			print(vim.inspect(words))
 			if not final_config.env then
 				final_config.env = {}
 			end

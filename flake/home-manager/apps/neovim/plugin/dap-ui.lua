@@ -49,9 +49,9 @@ dap.listeners.before.attach.dapui_config = function()
 end
 
 dap.listeners.before.launch.dapui_config = function()
-	dapui.open(1)
-	dapui.open(2)
-	dapui.close(3)
+	dapui.close(1)
+	dapui.close(2)
+	dapui.open(3)
 end
 
 dap.listeners.before.event_terminated.dapui_config = function()

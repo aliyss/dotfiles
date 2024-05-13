@@ -12,7 +12,7 @@ in {
     # spicetify-nix
     officialThemes = pkgs.fetchgit {
       url = "https://github.com/spicetify/spicetify-themes";
-      sha256 = "sha256-g2TEX4egBFzeUzZX7ncpNTNsREYpIk7HJeSAJgOluaw=";
+      sha256 = "sha256-q81guDB+Uxf1j4mlqlBFqUC3TGEQ2PCwUgEmSIvE6vQ=";
     };
   in {
     enable = true;
@@ -35,8 +35,6 @@ in {
     enabledCustomApps = with spicePkgs.apps; [marketplace];
 
     enabledExtensions = with spicePkgs.extensions; [
-      fullAppDisplay
-      shuffle
       keyboardShortcut
       hidePodcasts
       adblock

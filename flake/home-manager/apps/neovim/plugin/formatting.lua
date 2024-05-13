@@ -5,6 +5,7 @@ conform.setup({
 		lua = { "stylua" },
 		python = { "isort", "black" },
 		nix = { "alejandra" },
+		json = { "prettierd" },
 	},
 	format_on_save = {
 		lsp_fallback = true,

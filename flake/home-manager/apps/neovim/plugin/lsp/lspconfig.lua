@@ -1,6 +1,18 @@
 local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
+vim.filetype.add({
+	filename = {
+		[".env"] = "config",
+		[".conf"] = "config",
+		[".todo"] = "txt",
+	},
+	pattern = {
+		["requirement.*.txt"] = "config",
+		["gitconf.*"] = "gitconfig",
+	},
+})
+
 vim.api.nvim_create_autocmd("LSPAttach", {
 	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 	callback = function(ev)
@@ -105,6 +117,10 @@ lspconfig["pyright"].setup({
 	before_init = function(_, config)
 		config.settings.python.pythonPath = get_python_path(config.root_dir)
 	end,
+})
+
+lspconfig["pylyzer"].setup({
+	capabilities = capabilities,
 })
 
 lspconfig["nil_ls"].setup({

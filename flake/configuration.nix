@@ -1,7 +1,11 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   imports = [
     # Untouched hardware configuration file
     ./hardware-configuration.nix
@@ -51,9 +55,27 @@
   # SERVICES
   services = {
     # Sound
-    pipewire.enable = true;
-    pipewire.pulse.enable = true;
-    pipewire.wireplumber.enable = true;
+    pipewire = {
+      enable = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
+      pulse.enable = true;
+      wireplumber = {
+        enable = true;
+        configPackages = [
+          (pkgs.writeTextDir "share/wireplumber/bluetooth.lua.d/51-bluez-config.lua" ''
+            bluez_monitor.properties = {
+            	["bluez5.enable-sbc-xq"] = true,
+            	["bluez5.enable-msbc"] = true,
+            	["bluez5.enable-hw-volume"] = true,
+            	["bluez5.headset-roles"] = "[ hsp_hs hsp_ag hfp_hf hfp_ag ]"
+            }
+          '')
+        ];
+      };
+    };
     # Bluetooth
     blueman.enable = true;
     # Display
@@ -70,6 +92,7 @@
         layout = "us";
       };
     };
+
     # hardware.openrgb = {
     #   enable = true;
     #   package = pkgs.openrgb-with-all-plugins;
@@ -155,15 +178,19 @@
     ## Flutter
     flutter
     ## Python
-    python3
-    # (pkgs.python3.withPackages (ps: with ps; [ python-openstackclient ]))
+    python311
+    (python311.withPackages (ps:
+      with ps; [
+        pip
+        # python-openstackclient
+      ]))
     ## Configuration Files
     nil
     ## Nix
     nixfmt-classic
 
     # Hardware
-    pulseaudio
+    pavucontrol
 
     # Browser
     firefox-wayland
@@ -219,7 +246,14 @@
   # HYPRLAND
   programs.hyprland = {
     enable = true;
-    xwayland.enable = true;
+    xwayland.enable = true; # Add this back in in case of errors
+  };
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-wlr
+    ];
   };
 
   # SHELL CONFIGURATION
@@ -263,6 +297,8 @@
     opengl = {
       enable = true;
       driSupport = true;
+      driSupport32Bit = true;
+      extraPackages = [pkgs.libvdpau-va-gl];
     };
     nvidia = {
       modesetting.enable = true;
@@ -296,8 +332,18 @@
     PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
     GSETTINGS_SCHEMA_DIR = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}/glib-2.0/schemas/";
     WINEPREFIX = "~/.wine";
+    VDPAU_DRIVER = "va_gl";
+    LIBVA_DRIVER_NAME = "nvidia";
+  };
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    GBM_BACKEND = "nvidia-drm";
   };
 
   # FLAKE
-  nix = {settings.experimental-features = ["nix-command" "flakes"];};
+  nix = {
+    settings.experimental-features = ["nix-command" "flakes"];
+    registry.nixpkgs.flake = inputs.nixpkgs;
+    nixPath = ["nixpkgs=${inputs.nixpkgs}"];
+  };
 }

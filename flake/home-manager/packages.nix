@@ -20,6 +20,7 @@ in {
     stremio
     tridactyl-native
     prismlauncher
+    nyxt
 
     (pkgs.minecraftServers.vanilla-1-20.overrideAttrs (old: rec {
       name = "minecraft-server-${minecraftServerInfo.version}";
@@ -30,7 +31,7 @@ in {
       };
     }))
     # ngrok
-    ollama
+    btop
 
     (pkgs.callPackage ./apps/zrok.nix {})
   ];

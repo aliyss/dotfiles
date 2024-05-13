@@ -18,6 +18,9 @@ o.signcolumn = "yes"
 o.relativenumber = true
 o.cursorline = true
 
+o.wrap = true
+o.linebreak = true
+
 o.expandtab = true
 o.cindent = true
 o.autoindent = true

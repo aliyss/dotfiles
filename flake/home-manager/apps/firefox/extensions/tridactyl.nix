@@ -1,9 +1,13 @@
-{ pkgs, nimPackages, tridactyl-native-messenger, ... }:
-
 {
-  home.file.".mozilla/native-messaging-hosts/tridactyl.json".text =
-    let tridactyl = pkgs.tridactyl-native;
-    in builtins.toJSON {
+  pkgs,
+  nimPackages,
+  tridactyl-native-messenger,
+  ...
+}: {
+  home.file.".mozilla/native-messaging-hosts/tridactyl.json".text = let
+    tridactyl = pkgs.tridactyl-native;
+  in
+    builtins.toJSON {
       name = "tridactyl";
       description = "Tridactyl native command handler";
       path = "${tridactyl}/bin/native_main";
@@ -49,6 +53,6 @@
     blacklistadd remotedesktop.google.com
     blacklistadd aliyss.vercel.app
     blacklistadd silyas.vercel.app
+    blacklistadd http://localhost:8000/record?language=en-US&userId=
   '';
-
 }
