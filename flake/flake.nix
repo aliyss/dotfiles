@@ -47,7 +47,10 @@
       };
       # Laptop: Not yet merged
       aliyss-blade = lib.nixosSystem {
-        specialArgs = {inherit system;};
+        specialArgs = {
+          inherit system;
+          inherit inputs;
+        };
         modules = [./configuration.nix];
       };
     };

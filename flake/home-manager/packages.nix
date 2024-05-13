@@ -22,7 +22,7 @@ in {
     prismlauncher
     nyxt
 
-    (pkgs.minecraftServers.vanilla-1-20.overrideAttrs (old: rec {
+    (pkgs.minecraftServers.vanilla-1-20.overrideAttrs (old: {
       name = "minecraft-server-${minecraftServerInfo.version}";
       version = minecraftServerInfo.version;
       src = pkgs.fetchurl {
