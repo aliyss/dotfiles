@@ -36,6 +36,7 @@
     ];
     extraConfig = ''
       set -g status-right '#[fg=color15] #{cpu_percentage}  %H:%M '
+      set-option -g history-limit 10000
 
 
       set-option -sa terminal-features ',fish*:RGB'

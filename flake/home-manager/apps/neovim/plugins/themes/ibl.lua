@@ -1,0 +1,4 @@
+-- vim.api.nvim_set_hl(0, "@ibl.scope.char.1", { fg = "#d3869b" })
+-- vim.api.nvim_set_hl(0, "@ibl.scope.underline.1", { sp = "#d3869b", underline = true })
+--
+-- require("ibl").setup()

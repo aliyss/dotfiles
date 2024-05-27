@@ -37,4 +37,20 @@
       sha256 = "sha256-CxAgQSbOrg/SsQXupwCv8cyZXIB7tkWO+Y6FDtoR8xk=";
     };
   };
+  ibl = pkgs.vimUtils.buildVimPlugin {
+    name = "ibl";
+    src = pkgs.fetchgit {
+      url = "https://github.com/lukas-reineke/indent-blankline.nvim";
+      rev = "3d08501caef2329aba5121b753e903904088f7e6";
+      sha256 = "sha256-Xp8ZQBz0in2MX3l0bnLUsSbH0lDPE+QvdmFpBFry5yY=";
+    };
+  };
+  precognition = pkgs.vimUtils.buildVimPlugin {
+    name = "precognition";
+    src = pkgs.fetchgit {
+      url = "https://github.com/tris203/precognition.nvim";
+      rev = "455f5275649990f99449ac152a832dc7a9b42a6a";
+      sha256 = "sha256-Xp8ZQBz0in2MX3l0bnLUsSbH0lDPE+QvdmFpBFry5yY=";
+    };
+  };
 }

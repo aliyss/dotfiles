@@ -21,6 +21,7 @@ in {
     tridactyl-native
     prismlauncher
     nyxt
+    bun
 
     (pkgs.minecraftServers.vanilla-1-20.overrideAttrs (old: {
       name = "minecraft-server-${minecraftServerInfo.version}";

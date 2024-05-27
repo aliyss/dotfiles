@@ -28,6 +28,10 @@ in {
     vimAlias = true;
     vimdiffAlias = true;
     extraPackages = with pkgs; [
+      eslint_d
+      ripgrep
+      ripgrep-all
+      tailwindcss
       luajitPackages.luacheck
       luajitPackages.lua-lsp
       xclip
@@ -41,44 +45,44 @@ in {
       alejandra
       prettierd
       nodePackages_latest.jsonlint
+      python311Packages.pynvim
       lolcrab
     ];
     plugins = with plugins; [
       {
         plugin = nvim-tmux-navigation;
-        config = builtins.readFile ./neovim/plugin/tmux-navigator.lua;
+        config = builtins.readFile ./neovim/plugins/tmux-navigator.lua;
         type = "lua";
       }
       nvim-ts-context-commentstring
       todo-comments-nvim
       {
         plugin = comment-nvim;
-        config = builtins.readFile ./neovim/plugin/comment.lua;
+        config = builtins.readFile ./neovim/plugins/comment.lua;
         type = "lua";
       }
       nvim-web-devicons
       {
         plugin = dashboard-nvim;
-        config = builtins.readFile ./neovim/plugin/dashboard.lua;
+        config = builtins.readFile ./neovim/plugins/dashboard.lua;
         type = "lua";
       }
       plenary-nvim
       {
         plugin = harpoon;
-        config = builtins.readFile ./neovim/plugin/harpoon.lua;
+        config = builtins.readFile ./neovim/plugins/harpoon.lua;
         type = "lua";
       }
       {
         plugin = neo-tree-nvim;
-        config = builtins.readFile ./neovim/plugin/neo-tree.lua;
+        config = builtins.readFile ./neovim/plugins/neo-tree.lua;
         type = "lua";
       }
       {
         plugin = project-nvim;
-        config = builtins.readFile ./neovim/plugin/project.lua;
+        config = builtins.readFile ./neovim/plugins/project.lua;
         type = "lua";
       }
-
       ## Treesitter
       nvim-ts-autotag
       nvim-treesitter.withAllGrammars
@@ -93,13 +97,13 @@ in {
       lspkind-nvim
       {
         plugin = nvim-cmp;
-        config = builtins.readFile ./neovim/plugin/cmp.lua;
+        config = builtins.readFile ./neovim/plugins/cmp.lua;
         type = "lua";
       }
       ## Autopairs
       {
         plugin = nvim-autopairs;
-        config = builtins.readFile ./neovim/plugin/autopairs.lua;
+        config = builtins.readFile ./neovim/plugins/autopairs.lua;
         type = "lua";
       }
       ## LSP
@@ -107,56 +111,108 @@ in {
       mason-tool-installer-nvim
       {
         plugin = mason-nvim;
-        config = builtins.readFile ./neovim/plugin/lsp/mason.lua;
+        config = builtins.readFile ./neovim/plugins/lsp/mason.lua;
         type = "lua";
       }
       {
         plugin = nvim-lspconfig;
-        config = builtins.readFile ./neovim/plugin/lsp/lspconfig.lua;
+        config = builtins.readFile ./neovim/plugins/lsp/lspconfig.lua;
         type = "lua";
       }
       ## Formatting
       {
         plugin = conform-nvim;
-        config = builtins.readFile ./neovim/plugin/formatting.lua;
+        config = builtins.readFile ./neovim/plugins/lsp/formatting.lua;
         type = "lua";
       }
       ## Lint
       {
         plugin = nvim-lint;
-        config = builtins.readFile ./neovim/plugin/linting.lua;
+        config = builtins.readFile ./neovim/plugins/lsp/linting.lua;
+        type = "lua";
+      }
+      ## Highlighting
+      {
+        plugin = semshi;
+        config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
         type = "lua";
       }
       ## Errors
       {
         plugin = trouble;
-        config = builtins.readFile ./neovim/plugin/trouble.lua;
+        config = builtins.readFile ./neovim/plugins/trouble.lua;
         type = "lua";
       }
       ## Debugging
+      direnv-vim
       {
         plugin = nvim-dap;
-        config = builtins.readFile ./neovim/plugin/dap.lua;
+        config = builtins.readFile ./neovim/plugins/debugging/dap.lua;
         type = "lua";
       }
       nvim-nio
       {
         plugin = nvim-dap-ui;
-        config = builtins.readFile ./neovim/plugin/dap-ui.lua;
+        config = builtins.readFile ./neovim/plugins/debugging/dap-ui.lua;
         type = "lua";
       }
-      telescope-nvim
+      ## Git
+      {
+        plugin = gitsigns-nvim;
+        config = builtins.readFile ./neovim/plugins/git/gitsigns.lua;
+        type = "lua";
+      }
+      ## LLM
+      {
+        plugin = copilot-vim;
+        config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
+        type = "lua";
+      }
+      ## Telescope
+      telescope-undo-nvim
+      telescope-fzf-native-nvim
+      {
+        plugin = telescope-nvim;
+        config = builtins.readFile ./neovim/plugins/telescope.lua;
+        type = "lua";
+      }
+      ## Autosession
+      {
+        plugin = auto-session;
+        config = builtins.readFile ./neovim/plugins/autosession.lua;
+        type = "lua";
+      }
       ## Themes
+      {
+        plugin = colorizer;
+        config = builtins.readFile ./neovim/plugins/themes/colorizer.lua;
+        type = "lua";
+      }
       nyoom-oxocarbon
       {
         plugin = lualine-nvim;
-        config = builtins.readFile ./neovim/theme/lualine.lua;
+        config = builtins.readFile ./neovim/plugins/themes/lualine.lua;
+        type = "lua";
+      }
+      {
+        plugin = ibl;
+        config = builtins.readFile ./neovim/plugins/themes/ibl.lua;
         type = "lua";
       }
       ## Keybindings
       {
+        plugin = precognition;
+        config = builtins.readFile ./neovim/plugins/keybindings/precognition.lua;
+        type = "lua";
+      }
+      {
+        plugin = hardtime-nvim;
+        config = builtins.readFile ./neovim/plugins/keybindings/hardtime.lua;
+        type = "lua";
+      }
+      {
         plugin = which-key-nvim;
-        config = builtins.readFile ./neovim/plugin/which-key.lua;
+        config = builtins.readFile ./neovim/plugins/keybindings/which-key.lua;
         type = "lua";
       }
     ];
