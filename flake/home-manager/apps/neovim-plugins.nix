@@ -50,7 +50,7 @@
     src = pkgs.fetchgit {
       url = "https://github.com/tris203/precognition.nvim";
       rev = "455f5275649990f99449ac152a832dc7a9b42a6a";
-      sha256 = "sha256-Xp8ZQBz0in2MX3l0bnLUsSbH0lDPE+QvdmFpBFry5yY=";
+      sha256 = "sha256-hzaY0OE0i4nMcU0E7LYm6+IAwoGYt1Xxx4H7nhssCdM=";
     };
   };
 }
