@@ -23,8 +23,8 @@ require("dashboard").setup({
 	},
 	preview = {
 		-- command = "lolcrab",
-		file_path = "~/.config/flake/home-manager/apps/neovim/plugin/themes/header.txt",
-		file_width = 60,
-		file_height = 10,
+		file_path = "~/.config/flake/home-manager/apps/neovim/plugins/themes/header.txt",
+		file_width = 47,
+		file_height = 11,
 	},
 })

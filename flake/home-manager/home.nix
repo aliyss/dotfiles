@@ -49,6 +49,7 @@
     MOZ_ENABLE_WAYLAND = 1;
     # Wine
     WINEPREFIX = "~/.wine/";
+    EDITOR = "nvim";
   };
 
   # Let Home Manager install and manage itself.

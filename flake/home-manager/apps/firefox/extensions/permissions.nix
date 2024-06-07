@@ -1,6 +1,9 @@
-{ pkgs, config, lib, ... }:
-
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: let
   extensions = {
     "ublock-origin" = {
       permissions = [
@@ -47,11 +50,11 @@ let
         "https://lastpass.com/export.php"
         "<all_urls>"
         "*://*/*"
+        "webNavigation"
       ];
     };
     "darkreader" = {
-      permissions =
-        [ "alarms" "contextMenus" "storage" "tabs" "theme" "<all_urls>" ];
+      permissions = ["alarms" "contextMenus" "storage" "tabs" "theme" "<all_urls>"];
     };
     "tridactyl" = {
       permissions = [
@@ -83,16 +86,16 @@ let
     };
   };
 in {
-
-  assertions = lib.mapAttrsToList (k: v:
-    let
-      unaccepted = lib.subtractLists v.permissions
+  assertions =
+    lib.mapAttrsToList (k: v: let
+      unaccepted =
+        lib.subtractLists v.permissions
         config.nur.repos.rycee.firefox-addons.${k}.meta.mozPermissions;
     in {
-      assertion = unaccepted == [ ];
+      assertion = unaccepted == [];
       message = "Extension ${k} has unaccepted permissions: ${
-          builtins.toJSON unaccepted
-        }";
-    }) extensions;
-
+        builtins.toJSON unaccepted
+      }";
+    })
+    extensions;
 }

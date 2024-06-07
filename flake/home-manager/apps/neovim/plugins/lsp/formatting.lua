@@ -18,3 +18,7 @@ conform.setup({
 		timeout_ms = 1000,
 	},
 })
+
+require("guess-indent").setup({
+	auto_cmd = true,
+})

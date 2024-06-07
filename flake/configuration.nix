@@ -4,6 +4,7 @@
 {
   pkgs,
   inputs,
+  config,
   ...
 }: {
   imports = [
@@ -14,7 +15,17 @@
   # BOOTLOADER
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelModules = ["i2c-dev" "i2c-piix4"];
+  boot.kernelModules = [
+    "i2c-dev"
+    "i2c-piix4"
+    # Virtual Camera. Custom DroidCam v4l2loopback driver needed for video.
+    "v4l2loopback"
+    # Virtual Microphone. Custom DroidCam v4l2loopback driver needed for audio.
+    "snd-aloop"
+  ];
+  boot.extraModulePackages = [
+    pkgs.linuxPackages.v4l2loopback # Webcam loopback
+  ];
 
   # HOSTNAME
   networking.hostName = "aliyss-bequitta";
@@ -83,7 +94,7 @@
       enable = true;
       videoDrivers = ["nvidia"];
       displayManager.gdm = {
-        enable = true;
+        enable = false;
         wayland = true;
       };
       # Keymaps
@@ -93,11 +104,44 @@
       };
     };
 
+    greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
+          # command = "${config.programs.hyprland.package}/bin/Hyprland --config /home/aliyss/.config/hypr/hyprland.conf";
+          user = "greeter";
+        };
+      };
+    };
+
     # hardware.openrgb = {
     #   enable = true;
     #   package = pkgs.openrgb-with-all-plugins;
     # };
   };
+
+  systemd.services.greetd.serviceConfig = {
+    Type = "idle";
+    StandardInput = "tty";
+    StandardOutput = "tty";
+    StandardError = "journal"; # Without this errors will spam on screen
+    # Without these bootlogs will spam on screen
+    TTYReset = true;
+    TTYVHangup = true;
+    TTYVTDisallocate = true;
+  };
+
+  console = {
+    useXkbConfig = true;
+  };
+
+  # security.pam.services.hyprlock = {
+  #   # text = "auth include system-auth";
+  #   text = "auth include login";
+  #   fprintAuth = false;
+  #   enableGnomeKeyring = true;
+  # };
 
   virtualisation.docker = {
     enable = true;
@@ -112,6 +156,9 @@
           };
         };
       };
+    };
+    daemon.settings = {
+      userns-remap = "default";
     };
   };
 
@@ -131,6 +178,9 @@
   # SYSTEM PROFILE PACKAGES
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    # Lock
+    greetd.tuigreet
+
     # Terminal
     foot
 
@@ -230,6 +280,12 @@
         # List package dependencies here
       ];
     })
+
+    # Camera (DroidCam)
+    v4l-utils
+    android-tools
+    adb-sync
+    scrcpy
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -246,8 +302,13 @@
   # HYPRLAND
   programs.hyprland = {
     enable = true;
-    xwayland.enable = true; # Add this back in in case of errors
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
   };
+
+  # programs.hyprlock = {
+  #   enable = true;
+  # };
+
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
@@ -325,7 +386,16 @@
     proggyfonts
   ];
 
+  # environment.loginShellInit = ''
+  #   if [ -z $DISPLAY ] && [ "$(tty)" = "/dev/tty1" ]; then
+  #     exec dbus-launch Hyprland
+  #   fi
+  # '';
+
   environment.variables = {
+    XDG_CURRENT_DESKTOP = "Hyrland";
+    XDG_SESSION_TYPE = "wayland";
+    XDG_SESSION_DESKTOP = "Hyrland";
     YDOTOOL_SOCKET = "/tmp/ydotools";
     RUST_BACKTRACE = "1";
     LSP_USE_PLISTS = "true";

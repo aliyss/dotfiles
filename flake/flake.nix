@@ -2,6 +2,7 @@
   description = "Aliyss' flake.nix configuration file!";
 
   inputs = {
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";

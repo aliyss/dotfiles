@@ -120,6 +120,7 @@ in {
         type = "lua";
       }
       ## Formatting
+      guess-indent-nvim
       {
         plugin = conform-nvim;
         config = builtins.readFile ./neovim/plugins/lsp/formatting.lua;
@@ -200,14 +201,22 @@ in {
         type = "lua";
       }
       ## Keybindings
+      # {
+      #   plugin = precognition;
+      #   config = builtins.readFile ./neovim/plugins/keybindings/precognition.lua;
+      #   type = "lua";
+      # }
       {
-        plugin = precognition;
-        config = builtins.readFile ./neovim/plugins/keybindings/precognition.lua;
-        type = "lua";
+        plugin = vim-be-good;
       }
       {
         plugin = hardtime-nvim;
         config = builtins.readFile ./neovim/plugins/keybindings/hardtime.lua;
+        type = "lua";
+      }
+      {
+        plugin = neoscroll-nvim;
+        config = builtins.readFile ./neovim/plugins/keybindings/neoscroll.lua;
         type = "lua";
       }
       {

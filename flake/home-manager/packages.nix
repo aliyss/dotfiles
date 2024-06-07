@@ -20,6 +20,7 @@ in {
     stremio
     tridactyl-native
     prismlauncher
+    heroic
     nyxt
     bun
 

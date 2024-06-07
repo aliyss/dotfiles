@@ -4,6 +4,10 @@ xkb_symbols "basic" {
     include "latin"
     name[Group1]= "German (Geniusnessness)";
 
+    key <CAPS> {
+        [Escape, ISO_Level3_Shift ]
+    };
+
     key <TLDE> { [    section,     degree                           ] };
     key <AE01> { [          1,       plus,          bar, exclamdown ] };
     key <AE02> { [          2,   quotedbl,           at, oneeighth  ] };
@@ -24,9 +28,12 @@ xkb_symbols "basic" {
     key <AD04>	{ [         p,          P,        thorn,        THORN ]	};
     key <AD05>	{ [         b,          B,  leftdoublequotemark, leftsinglequotemark ] };
     key <AD06>	{ [         j,          J,    dead_hook,    dead_horn ] };
-    key <AD07>	{ [         l,          L,      lstroke,      Lstroke ]	};
-    key <AD08>	{ [         u,          U,    downarrow,      uparrow ]	};
-    key <AD09> { [          y,          Y                           ] };
+    // key <AD07>	{ [         l,          L,      lstroke,      Lstroke ]	};
+    key <AD07>	{ [         l,          L,      lstroke,      1     ] };
+    // key <AD08>	{ [         u,          U,    downarrow,      uparrow ]	};
+    key <AD08>	{ [         u,          U,    downarrow,      2     ] };
+    // key <AD09> { [          y,          Y                           ] };
+    key <AD09> { [          y,          Y,    uparrow,        3     ] };
     key <AD10> { [ odiaeresis,     eacute                           ] };
     key <AD11> { [ udiaeresis,     egrave,  bracketleft             ] };
     key <AD12> { [ dead_diaeresis, exclam, bracketright             ] };
@@ -37,9 +44,12 @@ xkb_symbols "basic" {
     key <AC04>	{ [         t,          T,       tslash,       Tslash ]	};
     key <AC05>	{ [         g,          G,          eng,          ENG ]	};
     key <AC06>	{ [         m,          M,           mu,    masculine ]	};
-    key <AC07>	{ [         n,          N, rightdoublequotemark, rightsinglequotemark ]	};
-    key <AC08>	{ [         e,          E,     EuroSign               ]	};
-    key <AC09>	{ [         i,          I,   rightarrow,     idotless ]	};
+    // key <AC07>	{ [         n,          N, rightdoublequotemark, rightsinglequotemark ]	};
+    key <AC07>	{ [         n,          N, rightdoublequotemark, 4    ]	};
+    // key <AC08>	{ [         e,          E,     EuroSign           ]	};
+    key <AC08>	{ [         e,          E,     EuroSign,        5            ]	};
+    // key <AC09>	{ [         i,          I,   rightarrow,     idotless ]	};
+    key <AC09>	{ [         i,          I,   rightarrow,     6        ]	};
     key <AC10>  { [         o,          O,           oe,           OE ] };
     key <AC11>  { [ adiaeresis,     agrave,    braceleft              ] };
     key <BKSL> { [     dollar,   sterling,   braceright             ] };
@@ -50,13 +60,14 @@ xkb_symbols "basic" {
     key <AB03>	{ [         c,          C,         cent,    copyright ]	};
     key <AB04>	{ [         d,          D,          eth,          ETH ]	};
     key <AB05>	{ [         v,          V,   doublelowquotemark, singlelowquotemark ]	};
-    key <AB06>	{ [         k,          K,          kra,    ampersand ]	};
-    key <AB07>	{ [         h,          H,      hstroke,      Hstroke ]	};
-    key <AB08>  { [      comma,  semicolon                           ] };
-    key <AB09>  { [     period,      colon                           ] };
-    key <AB10>  { [      minus, underscore                           ] };
+    // key <AB06>	{ [         k,          K,          kra,    ampersand ]	};
+    key <AB06>	{ [         k,          K,          kra,    7         ]	};
+    // key <AB07>	{ [         h,          H,      hstroke,      Hstroke ]	};
+    key <AB07>	{ [         h,          H,      hstroke,    8         ]	};
+    key <AB08>  { [      comma,  semicolon, Hstroke,        9         ] };
+    key <AB09>  { [     period,      colon                            ] };
+    key <AB10>  { [      minus, underscore                            ] };
 
-    key <CAPS> { [Escape] };
     key <ESC> { [Caps_Lock] };
 
     include "level3(ralt_switch)"

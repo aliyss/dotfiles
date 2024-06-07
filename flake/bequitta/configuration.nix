@@ -1,5 +1,6 @@
 {...}: {
   imports = [
+    ./programs/adb.nix
     ./services/redis.nix
     ./services/ollama.nix
     # ./services/neo4j.nix

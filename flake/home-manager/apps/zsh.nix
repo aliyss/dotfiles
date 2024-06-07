@@ -12,6 +12,7 @@
     shellAliases = {
       update-system = "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta";
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
+      start-camera = "scrcpy --video-source=camera --no-audio --camera-id=1 --v4l2-sink=/dev/video0 --no-video-playback";
     };
     sessionVariables = {ZSH_TMUX_AUTOSTART = "true";};
     initExtra = ''

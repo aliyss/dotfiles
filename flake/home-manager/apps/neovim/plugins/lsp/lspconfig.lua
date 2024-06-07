@@ -119,9 +119,9 @@ lspconfig["pyright"].setup({
 	end,
 })
 
-lspconfig["pylyzer"].setup({
-	capabilities = capabilities,
-})
+-- lspconfig["pylyzer"].setup({
+-- 	capabilities = capabilities,
+-- })
 
 lspconfig["nil_ls"].setup({
 	capabilities = capabilities,
