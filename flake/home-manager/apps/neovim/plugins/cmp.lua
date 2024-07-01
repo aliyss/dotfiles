@@ -42,6 +42,7 @@ cmp.setup({
 		-- end, { "i", "s" }),
 	}),
 	sources = {
+		{ name = "orgmode" },
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
 		{ name = "buffer" },
@@ -52,5 +53,15 @@ cmp.setup({
 			maxwidth = 50,
 			ellipsis_char = "...",
 		}),
+	},
+})
+
+cmp.setup.filetype({
+	{ "sql" },
+	{
+		sources = {
+			{ name = "vim-dadbod-completion" },
+			{ name = "buffer" },
+		},
 	},
 })

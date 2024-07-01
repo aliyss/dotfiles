@@ -24,6 +24,7 @@
     colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/master/tridactyl/aliyss.css aliyss
 
     set newtab about:newtab
+    set allowautofocus false
     set smoothscroll true
     set editorcmd emacsclient -a \"\" -c -e '(progn (find-file "%f") (forward-line (1- %l)) (forward-char %c))'
 
@@ -33,13 +34,15 @@
     bind bc tabclose
     bind be fillcmdline tabclose
     bind bj fillcmdline taball
+    bind bw fillcmdline tabopen -c Work
+    bind bo fillcmdline tabopen
+    bind br recontain Work
+    bind bs tabsort --containers
 
     unbind --mode=normal t
     bind tt back
     bind tn forward
     bind td tabdetach
-    bind be fillcmdline tabclose
-    bind bj fillcmdline taball
 
     unbind --mode=normal w
     bind ww fillcmdline winopen
@@ -47,7 +50,13 @@
     bind wc winclose
     bind we fillcmdline winclose
 
+    unbind --mode=normal s
+    bind ss fillcmdline open search
+
     bind e fillcmdline open
+
+    seturl monkeytype.com allowautofocus true
+    seturl keybr.com allowautofocus true
 
     blacklistadd monkeytype.com
     blacklistadd remotedesktop.google.com

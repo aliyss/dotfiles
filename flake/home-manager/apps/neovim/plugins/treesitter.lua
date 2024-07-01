@@ -1,6 +1,7 @@
 local treesitter = require("nvim-treesitter.configs")
 
 local treesitter_config = {
+	ignore_install = { "org" },
 	highlight = {
 		enable = true,
 	},

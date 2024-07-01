@@ -108,9 +108,10 @@
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
-          # command = "${config.programs.hyprland.package}/bin/Hyprland --config /home/aliyss/.config/hypr/hyprland.conf";
-          user = "greeter";
+          # command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
+          # command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
+          command = "${config.programs.hyprland.package}/bin/Hyprland";
+          user = "aliyss";
         };
       };
     };
@@ -136,12 +137,12 @@
     useXkbConfig = true;
   };
 
-  # security.pam.services.hyprlock = {
-  #   # text = "auth include system-auth";
-  #   text = "auth include login";
-  #   fprintAuth = false;
-  #   enableGnomeKeyring = true;
-  # };
+  security.pam.services.hyprlock = {
+    # text = "auth include system-auth";
+    text = "auth include login";
+    fprintAuth = false;
+    enableGnomeKeyring = true;
+  };
 
   virtualisation.docker = {
     enable = true;
@@ -305,10 +306,6 @@
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
   };
 
-  # programs.hyprlock = {
-  #   enable = true;
-  # };
-
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
@@ -355,6 +352,7 @@
   # HARDWARE
   hardware = {
     # Display
+    mwProCapture.enable = true;
     opengl = {
       enable = true;
       driSupport = true;

@@ -14,6 +14,7 @@ in {
 
     "browser.aboutConfig.showWarning" = false;
     "browser.warnOnQuit" = true;
+    "browser.autofocus" = true;
     "browser.toolbars.bookmarks.visibility" = false;
     "browser.startup.page" = 3;
 
@@ -51,7 +52,7 @@ in {
     "autoadmin.global_config_url" = "file:///home/aliyss/.config/flake/home-manager/apps/firefox/config/autoconfig.js";
   };
   extensions = with config.nur.repos.rycee.firefox-addons;
-    [ublock-origin bitwarden darkreader tridactyl] ++ customExtensions;
+    [ublock-origin bitwarden darkreader tridactyl multi-account-containers user-agent-string-switcher] ++ customExtensions;
   search = {
     force = true;
     default = "Google";

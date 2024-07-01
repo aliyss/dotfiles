@@ -40,6 +40,7 @@ in {
       pyright
       pylint
       pylyzer
+      postgresql_16
       black
       isort
       alejandra
@@ -86,6 +87,16 @@ in {
       ## Treesitter
       nvim-ts-autotag
       nvim-treesitter.withAllGrammars
+      ## SQL Grammar
+      vim-dadbod
+      vim-dadbod-ui
+      vim-dadbod-completion
+      ## OrgMode Grammar
+      {
+        plugin = "orgmode";
+        config = builtins.readFile ./neovim/plugins/modes/orgmode.lua;
+        type = "lua";
+      }
       ## CMP
       neodev-nvim
       cmp-buffer
@@ -224,6 +235,7 @@ in {
         config = builtins.readFile ./neovim/plugins/keybindings/which-key.lua;
         type = "lua";
       }
+      aw-watcher-vim
     ];
     extraLuaConfig = ''
       ${builtins.readFile ./neovim/options.lua}
