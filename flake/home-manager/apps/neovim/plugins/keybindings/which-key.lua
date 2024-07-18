@@ -140,7 +140,7 @@ wk.register({
 			},
 		},
 		d = {
-			name = "+Debugging",
+			name = "+Debugging/Database",
 			a = {
 				function()
 					require("dap.ext.vscode").load_launchjs(nil, {})
@@ -188,6 +188,19 @@ wk.register({
 				end,
 				"Toggle Breakpoint",
 			},
+			B = {
+				function()
+					vim.cmd(":tabnew")
+					vim.cmd(":DBUI")
+				end,
+				"Open DBUI",
+			},
+			e = {
+				function()
+					vim.cmd(":DBUIToggle")
+				end,
+				"Toggle DBUI",
+			},
 			l = {
 				function()
 					dap.list_breakpoints()
@@ -196,7 +209,19 @@ wk.register({
 			},
 		},
 		t = {
-			name = "+Trouble",
+			name = "+Trouble/Tabs",
+			a = {
+				"<cmd>tabnew<cr>",
+				"New Tab",
+			},
+			t = {
+				"<cmd>tabprevious<cr>",
+				"Previous Tab",
+			},
+			n = {
+				"<cmd>tabnext<cr>",
+				"Next Tab",
+			},
 			d = {
 				"<cmd>Trouble diagnostics toggle<cr>",
 				"Diagnostics",

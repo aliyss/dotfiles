@@ -63,11 +63,11 @@ in {
         type = "lua";
       }
       nvim-web-devicons
-      {
-        plugin = dashboard-nvim;
-        config = builtins.readFile ./neovim/plugins/dashboard.lua;
-        type = "lua";
-      }
+      # {
+      #   plugin = dashboard-nvim;
+      #   config = builtins.readFile ./neovim/plugins/dashboard.lua;
+      #   type = "lua";
+      # }
       plenary-nvim
       {
         plugin = harpoon;
@@ -91,9 +91,16 @@ in {
       vim-dadbod
       vim-dadbod-ui
       vim-dadbod-completion
+      ## Rest Client
+      # luarocks-nvim
+      # {
+      #   plugin = rest-nvim;
+      #   config = builtins.readFile ./neovim/plugins/modes/rest.lua;
+      #   type = "lua";
+      # }
       ## OrgMode Grammar
       {
-        plugin = "orgmode";
+        plugin = orgmode;
         config = builtins.readFile ./neovim/plugins/modes/orgmode.lua;
         type = "lua";
       }
@@ -233,6 +240,11 @@ in {
       {
         plugin = which-key-nvim;
         config = builtins.readFile ./neovim/plugins/keybindings/which-key.lua;
+        type = "lua";
+      }
+      {
+        plugin = stay-in-place;
+        config = builtins.readFile ./neovim/plugins/keybindings/stay-in-place.lua;
         type = "lua";
       }
       aw-watcher-vim

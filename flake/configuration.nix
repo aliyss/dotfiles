@@ -108,13 +108,18 @@
       enable = true;
       settings = {
         default_session = {
+          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
           # command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
-          # command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
-          command = "${config.programs.hyprland.package}/bin/Hyprland";
-          user = "aliyss";
+          # command = "${config.programs.hyprland.package}/bin/Hyprland";
+          user = "greeter";
         };
       };
     };
+
+    # USB
+    devmon.enable = true;
+    gvfs.enable = true;
+    udisks2.enable = true;
 
     # hardware.openrgb = {
     #   enable = true;

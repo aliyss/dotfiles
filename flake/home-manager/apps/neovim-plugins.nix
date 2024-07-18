@@ -61,4 +61,28 @@
       sha256 = "sha256-I7YYvQupeQxWr2HEpvba5n91+jYvJrcWZhQg+5rI908=";
     };
   };
+  stay-in-place = pkgs.vimUtils.buildVimPlugin {
+    name = "stay-in-place";
+    src = pkgs.fetchgit {
+      url = "https://github.com/gbprod/stay-in-place.nvim";
+      rev = "0628b6db8970fc731abf9608d6f80659b58932c9";
+      sha256 = "sha256-Cq9/JQoxuUiAQPobiSizwmvdxJRjE7XjG47A38wdVwY=";
+    };
+  };
+  rest-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "rest-nvim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/rest-nvim/rest.nvim";
+      rev = "e7843c55f9df6a9db9f97dac180035c6ff895a90";
+      sha256 = "sha256-bVm50Z4cNm+TKOZzY8i+3+8X9yqJ5Bd6/AP5qrrUMwo=";
+    };
+  };
+  luarocks-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "luarocks-nvim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/vhyrro/luarocks.nvim";
+      rev = "1db9093915eb16ba2473cfb8d343ace5ee04130a";
+      sha256 = "sha256-siqpyQLpxWYfZKxoPrflnCg8V5oTQcIXKrezjCgZfMM=";
+    };
+  };
 }

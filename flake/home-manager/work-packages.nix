@@ -3,7 +3,7 @@
   # environment.
   packages = with pkgs; [
     slack
-    insomnia
+    bruno
     dbeaver-bin
   ];
 }

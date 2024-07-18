@@ -48,6 +48,11 @@
 
       set-option -g status-style default
       set-option -g status-position top
+
+      set -g allow-passthrough on
+
+      set -ga update-environment TERM
+      set -ga update-environment TERM_PROGRAM
     '';
   };
 }

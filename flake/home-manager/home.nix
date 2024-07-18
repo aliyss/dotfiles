@@ -5,6 +5,7 @@
     ./apps/tmux.nix
     ./apps/spicetify.nix
     ./apps/zsh.nix
+    ./apps/yazi.nix
     ./apps/fish.nix
     ./apps/direnv.nix
     ./apps/neovim.nix

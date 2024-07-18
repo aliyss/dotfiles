@@ -37,9 +37,11 @@ in {
       # ngrok
       btop
 
-      # (pkgs.callPackage ./apps/zrok.nix {})
-      # (pkgs.callPackage ./apps/dependencies/awatcher/awatcher.nix {})
       aw-server-rust
+
+      # yazi
+      glow
+      redisinsight
     ]
     ++ work-packages.packages;
 }
