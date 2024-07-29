@@ -11,4 +11,8 @@
     source = ./services/redis/release/librejson.so;
     mode = "755";
   };
+  environment.etc."systemd/redis/timeseries.so" = {
+    source = ./services/redis/release/timeseries.so;
+    mode = "755";
+  };
 }

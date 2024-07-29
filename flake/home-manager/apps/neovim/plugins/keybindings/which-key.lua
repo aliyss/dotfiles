@@ -78,11 +78,11 @@ wk.register({
 			},
 			c = {
 				function()
-					local bufTable = count_bufs_by_type()
+					-- local bufTable = count_bufs_by_type()
 					vim.cmd("bdelete")
-					if bufTable.normal <= 1 then
-						vim.cmd("Dashboard")
-					end
+					-- if bufTable.normal <= 1 then
+					-- 	vim.cmd("Dashboard")
+					-- end
 				end,
 				"Close Buffer",
 			},
