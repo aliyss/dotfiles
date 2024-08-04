@@ -7,7 +7,7 @@
         settings = {
           loadmodule = [
             "/etc/systemd/redis/librejson.so"
-            "/etc/systemd/redis/timeserietimeseriess.so"
+            "/etc/systemd/redis/timeseries.so"
           ];
         };
       };

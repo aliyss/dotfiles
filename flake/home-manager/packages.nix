@@ -1,9 +1,9 @@
 {pkgs, ...}: let
   work-packages = import ./work-packages.nix {inherit pkgs;};
   minecraftServerInfo = {
-    version = "1.20.2";
-    url = "https://launcher.mojang.com/v1/objects/5b868151bd02b41319f54c8d4061b8cae84e665c/server.jar";
-    sha256 = "sha256-Ha7kg4VprUbkHwpvRZaExQDH8mhTVqQM+36DjW546ug=";
+    version = "1.21";
+    url = "https://piston-data.mojang.com/v1/objects/450698d1863ab5180c25d7c804ef0fe6369dd1ba/server.jar";
+    sha256 = "sha256-yWOU2ob52fnvfKLS7h8vCYDCm3qlyUtDwCxQQ1289T8=";
   };
 in {
   # The home.packages option allows you to install Nix packages into your
@@ -26,7 +26,7 @@ in {
       nyxt
       bun
 
-      (pkgs.minecraftServers.vanilla-1-20.overrideAttrs (old: {
+      (pkgs.minecraft-server.overrideAttrs (old: {
         name = "minecraft-server-${minecraftServerInfo.version}";
         version = minecraftServerInfo.version;
         src = pkgs.fetchurl {
