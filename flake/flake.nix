@@ -8,7 +8,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    spicetify-nix.url = "github:the-argus/spicetify-nix";
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     playit-nixos-module.url = "github:pedorich-n/playit-nixos-module";
     prismlauncher.url = "github:julcioo/PrismLauncher-Cracked";
     nur.url = "github:nix-community/nur";

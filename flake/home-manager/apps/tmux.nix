@@ -50,6 +50,7 @@
       set-option -g status-position top
 
       set -g allow-passthrough on
+      set -g repeat-time 1000
 
       set -ga update-environment TERM
       set -ga update-environment TERM_PROGRAM

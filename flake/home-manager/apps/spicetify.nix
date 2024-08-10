@@ -3,21 +3,19 @@
   spicetify-nix,
   ...
 }: let
-  spicePkgs = spicetify-nix.packages.${pkgs.system}.default;
+  spicePkgs = spicetify-nix.legacyPackages.${pkgs.system};
 in {
-  imports = [spicetify-nix.homeManagerModule];
-
   programs.spicetify = let
     # use a different version of spicetify-themes than the one provided by
     # spicetify-nix
     officialThemes = pkgs.fetchgit {
       url = "https://github.com/spicetify/spicetify-themes";
-      sha256 = "sha256-8IF2Y7xJtzk92rl4bfjiMXCISzUMaxXxOaMZkLS5mww=";
+      sha256 = "sha256-a3tGk30V+O4qOzhQ0dfucLTxFWLcAJYYigFzQVhSgiE=";
     };
   in {
     enable = true;
     theme = {
-      name = "text";
+      name = "marketplace";
       src = officialThemes;
       appendName = true; # theme is located at "${src}/text" not just "${src}"
 

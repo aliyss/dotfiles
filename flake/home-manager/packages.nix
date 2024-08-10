@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  spicetify-nix,
+  ...
+}: let
   work-packages = import ./work-packages.nix {inherit pkgs;};
   minecraftServerInfo = {
     version = "1.21";
@@ -6,6 +10,7 @@
     sha256 = "sha256-yWOU2ob52fnvfKLS7h8vCYDCm3qlyUtDwCxQQ1289T8=";
   };
 in {
+  imports = [spicetify-nix.homeManagerModules.default];
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs;
@@ -23,7 +28,7 @@ in {
       tridactyl-native
       prismlauncher
       heroic
-      nyxt
+      # nyxt
       bun
 
       (pkgs.minecraft-server.overrideAttrs (old: {
@@ -34,14 +39,12 @@ in {
           sha256 = minecraftServerInfo.sha256;
         };
       }))
-      # ngrok
+
       btop
 
       aw-server-rust
 
-      # yazi
-      glow
-      redisinsight
+      # redisinsight
     ]
     ++ work-packages.packages;
 }

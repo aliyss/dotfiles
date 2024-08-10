@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   imports = [
     ./packages.nix
     ./apps/wayland.nix
@@ -51,6 +51,14 @@
     # Wine
     WINEPREFIX = "~/.wine/";
     EDITOR = "nvim";
+  };
+
+  home.pointerCursor = {
+    package = pkgs.simp1e-cursors;
+    name = "Simp1e-Catppuccin-Frappe";
+    size = 28;
+    gtk.enable = true;
+    x11.enable = true;
   };
 
   # Let Home Manager install and manage itself.

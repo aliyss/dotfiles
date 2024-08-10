@@ -34,10 +34,11 @@ in {
       tailwindcss
       luajitPackages.luacheck
       luajitPackages.lua-lsp
+      luajitPackages.lua-curl
       xclip
       wl-clipboard
       stylua
-      pyright
+      basedpyright
       pylint
       pylyzer
       postgresql_16
@@ -47,7 +48,15 @@ in {
       prettierd
       nodePackages_latest.jsonlint
       python311Packages.pynvim
+      rust-analyzer
       lolcrab
+      nil
+    ];
+    extraLuaPackages = pkgs: [
+      pkgs.lua-curl
+      pkgs.xml2lua
+      pkgs.mimetypes
+      pkgs.nvim-nio
     ];
     plugins = with plugins; [
       {
@@ -92,12 +101,11 @@ in {
       vim-dadbod-ui
       vim-dadbod-completion
       ## Rest Client
-      # luarocks-nvim
-      # {
-      #   plugin = rest-nvim;
-      #   config = builtins.readFile ./neovim/plugins/modes/rest.lua;
-      #   type = "lua";
-      # }
+      {
+        plugin = rest-nvim;
+        config = builtins.readFile ./neovim/plugins/modes/rest.lua;
+        type = "lua";
+      }
       ## OrgMode Grammar
       {
         plugin = orgmode;

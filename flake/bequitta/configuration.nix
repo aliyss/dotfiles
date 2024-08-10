@@ -3,7 +3,7 @@
     ./programs/adb.nix
     ./programs/hyprlock.nix
     ./services/redis.nix
-    ./services/ollama.nix
+    # ./services/ollama.nix
     # ./services/neo4j.nix
   ];
 

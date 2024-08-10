@@ -17,7 +17,7 @@ mason_lspconfig.setup({
 		"tsserver",
 		"html",
 		"lua_ls",
-		"pyright",
+		"basedpyright",
 		"nil_ls",
 	},
 })

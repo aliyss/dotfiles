@@ -61,7 +61,7 @@
   };
 
   # SOUND
-  sound.enable = true;
+  # sound.enable = true;
 
   # SERVICES
   services = {
@@ -197,7 +197,7 @@
     ((emacsPackagesFor emacs29-pgtk).emacsWithPackages
       (epkgs: [epkgs.vterm epkgs.lsp-tailwindcss epkgs.dap-mode]))
     ### Emacs: Additional Packages, compatibility with config.org file
-    youtube-dl
+    # youtube-dl
     #### required to install some language servers
     unzip
     gcc
@@ -251,8 +251,11 @@
     # Browser
     firefox-wayland
 
-    # Wallpaper for Hyprland
+    # Theme
+    ## Wallpaper for Hyprland
     swww
+    ## Cursor
+    hyprcursor
 
     # Screenshots
     grim
@@ -358,10 +361,9 @@
   hardware = {
     # Display
     mwProCapture.enable = true;
-    opengl = {
+    graphics = {
       enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
+      enable32Bit = true;
       extraPackages = [pkgs.libvdpau-va-gl];
     };
     nvidia = {

@@ -1,9 +1,6 @@
 {pkgs, ...}: {
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
+  # Packages I require for work only.
   packages = with pkgs; [
     slack
-    bruno
-    dbeaver-bin
   ];
 }

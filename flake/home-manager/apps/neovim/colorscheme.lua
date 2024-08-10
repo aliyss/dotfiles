@@ -11,3 +11,4 @@ a.nvim_set_hl(0, "SignColumn", { bg = "none" })
 
 -- Telescope
 a.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
+a.nvim_set_hl(0, "LspInlayHint", { fg = "#666666" })

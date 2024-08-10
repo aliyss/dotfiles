@@ -8,9 +8,9 @@
 in {
   programs.yazi = {
     enable = true;
-    plugins = {
-      "glow.yazi" = yazi-glow;
-    };
+    # plugins = {
+    #   "glow.yazi" = yazi-glow;
+    # };
     enableZshIntegration = true;
   };
 }

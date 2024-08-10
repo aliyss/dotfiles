@@ -10,6 +10,7 @@ vim.filetype.add({
 	pattern = {
 		["requirement.*.txt"] = "config",
 		["gitconf.*"] = "gitconfig",
+		[".*.http"] = "http",
 	},
 })
 
@@ -53,6 +54,9 @@ vim.api.nvim_create_autocmd("LSPAttach", {
 })
 
 local capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
+local on_attach = function(_, bufnr)
+	vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+end
 
 local signs = { Error = " ", Warn = " ", Hint = "󰘥 ", Info = " " }
 
@@ -62,6 +66,7 @@ for type, icon in pairs(signs) do
 end
 
 lspconfig["lua_ls"].setup({
+	on_attach = on_attach,
 	capabilities = capabilities,
 	settings = {
 		Lua = {
@@ -85,7 +90,7 @@ lspconfig["lua_ls"].setup({
 				paramName = "All",
 				paramType = true,
 				semicolon = "SameLine",
-				setType = false,
+				setType = true,
 			},
 		},
 	},
@@ -112,11 +117,17 @@ local function get_python_path(workspace)
 	return "python"
 end
 
-lspconfig["pyright"].setup({
+lspconfig["basedpyright"].setup({
+	on_attach = on_attach,
 	capabilities = capabilities,
 	before_init = function(_, config)
-		config.settings.python.pythonPath = get_python_path(config.root_dir)
+		-- vim.cmd(":PyrightSetPythonPath " .. get_python_path(config.root_dir))
 	end,
+	settings = {
+		basedpyright = {
+			typeCheckingMode = "standard",
+		}
+	}
 })
 
 -- lspconfig["pylyzer"].setup({
@@ -124,15 +135,37 @@ lspconfig["pyright"].setup({
 -- })
 
 lspconfig["nil_ls"].setup({
+	on_attach = on_attach,
 	capabilities = capabilities,
 })
 
 lspconfig["tsserver"].setup({
+	on_attach = on_attach,
 	capabilities = capabilities,
 })
 
 lspconfig["tailwindcss"].setup({
 	capabilities = capabilities,
+})
+
+lspconfig["rust_analyzer"].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+	filetypes = { "rust" },
+	root_dir = util.root_pattern("Cargo.toml"),
+	settings = {
+		["rust-analyzer"] = {
+			check = {
+				command = "clippy",
+			},
+			cargo = {
+				allFeatures = true,
+			},
+			diagnostics = {
+				enable = true,
+			},
+		},
+	},
 })
 
 require("neodev").setup({
