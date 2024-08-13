@@ -4,17 +4,6 @@
   ...
 }: let
   extensions = {
-    "user-agent-string-switcher" = {
-      permissions = [
-        "storage"
-        "<all_urls>"
-        "webNavigation"
-        "webRequest"
-        "webRequestBlocking"
-        "contextMenus"
-        "*://*/*"
-      ];
-    };
     "mal-sync" = {
       permissions = [
         "storage"

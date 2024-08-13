@@ -118,16 +118,17 @@ local function get_python_path(workspace)
 end
 
 lspconfig["basedpyright"].setup({
-	on_attach = on_attach,
-	capabilities = capabilities,
-	before_init = function(_, config)
-		-- vim.cmd(":PyrightSetPythonPath " .. get_python_path(config.root_dir))
+	on_attach = function(client, bufnr)
+		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+		-- vim.cmd(":PyrightSetPythonPath " .. get_python_path(client["config"].root_dir))
 	end,
+	capabilities = capabilities,
+	before_init = function(_, config) end,
 	settings = {
 		basedpyright = {
 			typeCheckingMode = "standard",
-		}
-	}
+		},
+	},
 })
 
 -- lspconfig["pylyzer"].setup({

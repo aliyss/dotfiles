@@ -69,4 +69,12 @@
       sha256 = "sha256-Cq9/JQoxuUiAQPobiSizwmvdxJRjE7XjG47A38wdVwY=";
     };
   };
+  wookayin-semshi = pkgs.vimUtils.buildVimPlugin {
+    name = "wookayin-semshi";
+    src = pkgs.fetchgit {
+      url = "https://github.com/wookayin/semshi";
+      rev = "0182447e2ff4dfa04cd2dfe5f189e012c581ca45";
+      sha256 = "sha256-gQy8rQBTzODp8OfnHdggxSq275/9T8feJAkWzH+CdvU=";
+    };
+  };
 }

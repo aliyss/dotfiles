@@ -28,17 +28,4 @@ in [
     sha256 = "toSWV87bj8IfdNOCdjGbIF5s2WIMHyyz4y4ojMsnsJg=";
     meta = with lib; {};
   })
-  (buildFirefoxXpiAddon {
-    pname = "user-agent-string-switcher";
-    version = "0.5.0";
-    addonId = "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}";
-    url = "https://addons.mozilla.org/firefox/downloads/file/4098688/user_agent_string_switcher-0.5.0.xpi";
-    sha256 = "ncjaPIxG1PBNEv14nGNQH6ai9QL4WbKGk5oJDbY+rjM=";
-    meta = with lib; {
-      homepage = "https://github.com/ray-lothian/UserAgent-Switcher";
-      description = "Easily override the browser's User-Agent string.";
-      license = licenses.mpl20;
-      platforms = platforms.all;
-    };
-  })
 ]

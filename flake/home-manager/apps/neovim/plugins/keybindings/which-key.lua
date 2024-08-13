@@ -29,7 +29,7 @@ wk.setup({
 
 wk.add({
 	{ "<leader>a", group = "AutoSession" },
-	{ "<leader>as", require("auto-session.session-lens").search_session, desc = "Save Session" },
+	-- { "<leader>as", require("auto-session.session-lens").search_session, desc = "Save Session" },
 	{ "<leader>b", group = "Buffer" },
 	{
 		"<leader>ba",

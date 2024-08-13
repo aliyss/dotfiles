@@ -160,7 +160,7 @@ in {
       }
       ## Highlighting
       {
-        plugin = semshi;
+        plugin = wookayin-semshi;
         config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
         type = "lua";
       }
@@ -204,11 +204,11 @@ in {
         type = "lua";
       }
       ## Autosession
-      {
-        plugin = auto-session;
-        config = builtins.readFile ./neovim/plugins/autosession.lua;
-        type = "lua";
-      }
+      # {
+      #   plugin = auto-session;
+      #   config = builtins.readFile ./neovim/plugins/autosession.lua;
+      #   type = "lua";
+      # }
       ## Themes
       {
         plugin = colorizer;
