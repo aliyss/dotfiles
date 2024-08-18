@@ -1,7 +1,6 @@
 {
   pkgs,
   config,
-  lib,
   ...
 } @ args: let
   customExtensions = import ../extensions/custom.nix args;
@@ -48,6 +47,13 @@ in {
     "general.config.filename" = "config.js";
     "general.config.obscure_value" = 0;
     "general.config.sandbox_enabled" = false;
+
+    "browser.display.background_color.dark" = "#FFFFFF";
+    "layout.css.prefers-color-scheme.content-override" = 0;
+    "browser.display.use_document_fonts" = 0;
+    "font.name.monospace.x-western" = "JetBrainsMono Nerd Font Mono";
+    "font.name.sans-serif.x-western" = "JetBrainsMono Nerd Font";
+    "font.name.serif.x-western" = "JetBrainsMono Nerd Font";
 
     "autoadmin.global_config_url" = "file:///home/aliyss/.config/flake/home-manager/apps/firefox/config/autoconfig.js";
   };

@@ -5,6 +5,7 @@
   pkgs,
   inputs,
   config,
+  lib,
   ...
 }: {
   imports = [
@@ -410,10 +411,47 @@
     VDPAU_DRIVER = "va_gl";
     LIBVA_DRIVER_NAME = "nvidia";
   };
+
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
-    GBM_BACKEND = "nvidia-drm";
+    # GBM_BACKEND = "nvidia-drm";
   };
+
+  environment.etc."egl/egl_external_platform.d".source = let
+    nvidia_wayland = pkgs.writeText "10_nvidia_wayland.json" ''
+      {
+          "file_format_version" : "1.0.0",
+          "ICD" : {
+              "library_path" : "${
+        (pkgs.egl-wayland.overrideAttrs (old: {
+          version = "1.1.15";
+          src = pkgs.fetchFromGitHub {
+            owner = "Nvidia";
+            repo = "egl-wayland";
+            rev = "1.1.15";
+            hash = "sha256-7spfmYwJ6U97x83219/kMwdJXS2vir+U0MUnYWJOLB4=";
+          };
+        }))
+      }/lib/libnvidia-egl-wayland.so"
+          }
+      }
+    '';
+    nvidia_gbm = pkgs.writeText "15_nvidia_gbm.json" ''
+      {
+          "file_format_version" : "1.0.0",
+          "ICD" : {
+              "library_path" : "${config.hardware.nvidia.package}/lib/libnvidia-egl-gbm.so.1"
+          }
+      }
+    '';
+  in
+    lib.mkForce (
+      pkgs.runCommandLocal "nvidia-egl-hack" {} ''
+        mkdir -p $out
+        cp ${nvidia_wayland} $out/10_nvidia_wayland.json
+        cp ${nvidia_gbm} $out/15_nvidia_gbm.json
+      ''
+    );
 
   # FLAKE
   nix = {

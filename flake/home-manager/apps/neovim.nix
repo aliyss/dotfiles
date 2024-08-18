@@ -102,7 +102,7 @@ in {
       vim-dadbod-completion
       ## Rest Client
       {
-        plugin = rest-nvim;
+        plugin = git-rest-nvim;
         config = builtins.readFile ./neovim/plugins/modes/rest.lua;
         type = "lua";
       }

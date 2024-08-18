@@ -77,4 +77,12 @@
       sha256 = "sha256-gQy8rQBTzODp8OfnHdggxSq275/9T8feJAkWzH+CdvU=";
     };
   };
+  git-rest-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "rest-nvim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/rest-nvim/rest.nvim";
+      rev = "e7843c55f9df6a9db9f97dac180035c6ff895a90";
+      sha256 = "sha256-bVm50Z4cNm+TKOZzY8i+3+8X9yqJ5Bd6/AP5qrrUMwo=";
+    };
+  };
 }

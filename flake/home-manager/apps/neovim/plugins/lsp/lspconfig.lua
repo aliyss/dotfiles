@@ -84,7 +84,7 @@ lspconfig["lua_ls"].setup({
 				},
 			},
 			hint = {
-				enable = false,
+				enable = true,
 				arrayIndex = "Auto",
 				await = true,
 				paramName = "All",
@@ -130,10 +130,6 @@ lspconfig["basedpyright"].setup({
 		},
 	},
 })
-
--- lspconfig["pylyzer"].setup({
--- 	capabilities = capabilities,
--- })
 
 lspconfig["nil_ls"].setup({
 	on_attach = on_attach,

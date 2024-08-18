@@ -8,7 +8,7 @@
   defaultConfigJS = builtins.readFile ./firefox/config/config.js;
   defaultAutoConfigJS = builtins.readFile ./firefox/config/autoconfig.js;
 
-  firefox-override = pkgs.firefox-wayland.overrideAttrs (self: {
+  firefox-override = pkgs.firefox.overrideAttrs (self: {
     name = "firefox-override";
 
     buildCommand =
