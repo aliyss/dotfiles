@@ -417,41 +417,28 @@
     # GBM_BACKEND = "nvidia-drm";
   };
 
-  environment.etc."egl/egl_external_platform.d".source = let
-    nvidia_wayland = pkgs.writeText "10_nvidia_wayland.json" ''
-      {
-          "file_format_version" : "1.0.0",
-          "ICD" : {
-              "library_path" : "${
-        (pkgs.egl-wayland.overrideAttrs (old: {
-          version = "1.1.15";
-          src = pkgs.fetchFromGitHub {
-            owner = "Nvidia";
-            repo = "egl-wayland";
-            rev = "1.1.15";
-            hash = "sha256-7spfmYwJ6U97x83219/kMwdJXS2vir+U0MUnYWJOLB4=";
-          };
-        }))
-      }/lib/libnvidia-egl-wayland.so"
-          }
-      }
-    '';
-    nvidia_gbm = pkgs.writeText "15_nvidia_gbm.json" ''
-      {
-          "file_format_version" : "1.0.0",
-          "ICD" : {
-              "library_path" : "${config.hardware.nvidia.package}/lib/libnvidia-egl-gbm.so.1"
-          }
-      }
-    '';
+  environment.etc = let
+    mkEglFile = n: library: let
+      suffix = lib.optionalString (library != "wayland") ".1";
+      pkg =
+        if library != "wayland"
+        then config.hardware.nvidia.package
+        else pkgs.egl-wayland;
+
+      fileName = "${toString n}_nvidia_${library}.json";
+      library_path = "${pkg}/lib/libnvidia-egl-${library}.so${suffix}";
+    in {
+      "egl/egl_external_platform.d/${fileName}".source = pkgs.writeText fileName (builtins.toJSON {
+        file_format_version = "1.0.0";
+        ICD = {inherit library_path;};
+      });
+    };
   in
-    lib.mkForce (
-      pkgs.runCommandLocal "nvidia-egl-hack" {} ''
-        mkdir -p $out
-        cp ${nvidia_wayland} $out/10_nvidia_wayland.json
-        cp ${nvidia_gbm} $out/15_nvidia_gbm.json
-      ''
-    );
+    {"egl/egl_external_platform.d".enable = false;}
+    // mkEglFile 10 "wayland"
+    // mkEglFile 15 "gbm"
+    // mkEglFile 20 "xcb"
+    // mkEglFile 20 "xlib";
 
   # FLAKE
   nix = {
