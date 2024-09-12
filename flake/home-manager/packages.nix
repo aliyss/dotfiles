@@ -44,7 +44,7 @@ in {
 
       aw-server-rust
 
-      # redisinsight
+      speedtest-cli
     ]
     ++ work-packages.packages;
 }

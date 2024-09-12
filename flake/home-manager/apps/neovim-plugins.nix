@@ -85,4 +85,12 @@
       sha256 = "sha256-bVm50Z4cNm+TKOZzY8i+3+8X9yqJ5Bd6/AP5qrrUMwo=";
     };
   };
+  blade-nav = pkgs.vimUtils.buildVimPlugin {
+    name = "blade-nav";
+    src = pkgs.fetchgit {
+      url = "https://github.com/RicardoRamirezR/blade-nav.nvim";
+      rev = "fbf82a609572b568399740e24ccb23d5c7fefe5d";
+      sha256 = "sha256-RjUa5XYDr6hgCuxIixVNA4AtjgdOdI03xBHIbHyUoMg=";
+    };
+  };
 }

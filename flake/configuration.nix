@@ -205,6 +205,10 @@
     mpv
 
     # Language Support
+    ## PHP
+    php
+    ### Globally installed PHP Packages
+    phpPackages.composer
     ## NodeJS
     nodejs_20
     ### Globally installed Node Packages
@@ -399,9 +403,9 @@
   # '';
 
   environment.variables = {
-    XDG_CURRENT_DESKTOP = "Hyrland";
+    XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";
-    XDG_SESSION_DESKTOP = "Hyrland";
+    XDG_SESSION_DESKTOP = "Hyprland";
     YDOTOOL_SOCKET = "/tmp/ydotools";
     RUST_BACKTRACE = "1";
     LSP_USE_PLISTS = "true";

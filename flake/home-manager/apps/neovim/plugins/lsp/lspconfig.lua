@@ -11,6 +11,7 @@ vim.filetype.add({
 		["requirement.*.txt"] = "config",
 		["gitconf.*"] = "gitconfig",
 		[".*.http"] = "http",
+		[".*%.blade%.php"] = "blade",
 	},
 })
 
@@ -131,6 +132,11 @@ lspconfig["basedpyright"].setup({
 	},
 })
 
+lspconfig["phpactor"].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+})
+
 lspconfig["nil_ls"].setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
@@ -163,6 +169,30 @@ lspconfig["rust_analyzer"].setup({
 			},
 		},
 	},
+})
+
+local configs = require("lspconfig.configs")
+
+configs.blade = {
+	default_config = {
+		cmd = { "/home/aliyss/Sources/laravel-dev-tools/laravel-dev-tools", "lsp" },
+		filetypes = { "blade" },
+		root_dir = function(pattern)
+			local cwd = vim.loop.cwd()
+			vim.notify(cwd)
+			local root = util.root_pattern("composer.json", ".git")(pattern)
+			vim.notify(root)
+
+			-- prefer cwd if root is a descendant
+			return util.path.is_descendant(cwd, root) and cwd or root
+		end,
+		settings = {},
+	},
+}
+
+lspconfig["blade"].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
 })
 
 require("neodev").setup({

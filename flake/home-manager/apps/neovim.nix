@@ -21,37 +21,45 @@
       };
     };
   plugins = pkgs.vimPlugins // pkgs.callPackage ./neovim-plugins.nix {};
+  externalPackages = pkgs.callPackage ./neovim-external.nix {};
 in {
   programs.neovim = {
     enable = true;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
-    extraPackages = with pkgs; [
-      eslint_d
-      ripgrep
-      ripgrep-all
-      tailwindcss
-      luajitPackages.luacheck
-      luajitPackages.lua-lsp
-      luajitPackages.lua-curl
-      xclip
-      wl-clipboard
-      stylua
-      basedpyright
-      pylint
-      pylyzer
-      postgresql_16
-      black
-      isort
-      alejandra
-      prettierd
-      nodePackages_latest.jsonlint
-      python311Packages.pynvim
-      rust-analyzer
-      lolcrab
-      nil
-    ];
+    extraPackages = with pkgs;
+      [
+        eslint_d
+        ripgrep
+        ripgrep-all
+        tailwindcss
+        luajitPackages.luacheck
+        luajitPackages.lua-lsp
+        luajitPackages.lua-curl
+        xclip
+        wl-clipboard
+        stylua
+        basedpyright
+        pylint
+        pylyzer
+        postgresql_16
+        phpactor
+        nodePackages.intelephense
+        phpPackages.php-cs-fixer
+        blade-formatter
+        black
+        isort
+        alejandra
+        prettierd
+        nodePackages_latest.jsonlint
+        python311Packages.pynvim
+        rust-analyzer
+        lolcrab
+        nil
+      ]
+      ++ [
+      ];
     extraLuaPackages = pkgs: [
       pkgs.lua-curl
       pkgs.xml2lua
@@ -95,7 +103,35 @@ in {
       }
       ## Treesitter
       nvim-ts-autotag
-      nvim-treesitter.withAllGrammars
+
+      (nvim-treesitter.withPlugins (_:
+        nvim-treesitter.allGrammars
+        ++ [
+          (pkgs.tree-sitter.buildGrammar {
+            language = "just";
+            version = "8af0aab";
+            src = pkgs.fetchFromGitHub {
+              owner = "IndianBoy42";
+              repo = "tree-sitter-just";
+              rev = "8af0aab79854aaf25b620a52c39485849922f766";
+              sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
+            };
+          })
+          (pkgs.tree-sitter.buildGrammar {
+            language = "blade";
+            version = "dead019";
+            src = pkgs.fetchgit {
+              url = "https://github.com/EmranMR/tree-sitter-blade";
+              rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
+              sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
+            };
+          })
+        ]))
+      {
+        plugin = nvim-treesitter;
+        config = builtins.readFile ./neovim/plugins/treesitter.lua;
+        type = "lua";
+      }
       ## SQL Grammar
       vim-dadbod
       vim-dadbod-ui
@@ -126,6 +162,7 @@ in {
         config = builtins.readFile ./neovim/plugins/cmp.lua;
         type = "lua";
       }
+      blade-nav
       ## Autopairs
       {
         plugin = nvim-autopairs;
@@ -262,4 +299,96 @@ in {
       ${builtins.readFile ./neovim/colorscheme.lua}
     '';
   };
+
+  xdg.configFile."nvim/after/queries/html/injections.scm".text = ''
+    ;; extends
+
+    ; AlpineJS attributes
+    (attribute
+      (attribute_name) @_attr
+        (#lua-match? @_attr "^x%-%l")
+        (#not-any-of? @_attr "x-teleport" "x-ref" "x-transition")
+      (quoted_attribute_value
+        (attribute_value) @injection.content)
+      (#set! injection.language "javascript"))
+
+    ; Blade escaped JS attributes
+    ; <x-foo ::bar="baz" />
+    (element
+      (_
+        (tag_name) @_tag
+          (#lua-match? @_tag "^x%-%l")
+      (attribute
+        (attribute_name) @_attr
+          (#lua-match? @_attr "^::%l")
+        (quoted_attribute_value
+          (attribute_value) @injection.content)
+        (#set! injection.language "javascript"))))
+
+    ; Blade PHP attributes
+    ; <x-foo :bar="$baz" />
+    (element
+      (_
+        (tag_name) @_tag
+          (#lua-match? @_tag "^x%-%l")
+        (attribute
+          (attribute_name) @_attr
+            (#lua-match? @_attr "^:%l")
+          (quoted_attribute_value
+            (attribute_value) @injection.content)
+          (#set! injection.language "php_only"))))
+  '';
+
+  xdg.configFile."nvim/after/queries/php/indents.scm".text = ''
+    ;; extends
+
+    [
+      ; prevent double indent for `return new class ...`
+      (return_statement
+        (object_creation_expression))
+      ; prevent double indent for `return function() { ... }`
+      (return_statement
+        (anonymous_function_creation_expression))
+    ] @indent.dedent
+  '';
+
+  xdg.configFile."nvim/queries/blade/folds.scm".text = ''
+    ((directive_start) @start
+        (directive_end) @end.after
+        (#set! role block))
+
+
+    ((bracket_start) @start
+        (bracket_end) @end
+        (#set! role block))
+  '';
+  xdg.configFile."nvim/queries/blade/highlights.scm".text = ''
+    (directive) @function
+    (directive_start) @function
+    (directive_end) @function
+    (comment) @comment
+    ((parameter) @include (#set! "priority" 110))
+    ((php_only) @include (#set! "priority" 110))
+    ((bracket_start) @function (#set! "priority" 120))
+    ((bracket_end) @function (#set! "priority" 120))
+    (keyword) @function
+  '';
+  xdg.configFile."nvim/queries/blade/injections.scm".text = ''
+    ((text) @injection.content
+        (#not-has-ancestor? @injection.content "envoy")
+        (#set! injection.combined)
+        (#set! injection.language php))
+
+    ((text) @injection.content
+        (#has-ancestor? @injection.content "envoy")
+        (#set! injection.combined)
+        (#set! injection.language bash))
+
+    ((php_only) @injection.content
+        (#set! injection.combined)
+        (#set! injection.language php_only))
+
+    ((parameter) @injection.content
+        (#set! injection.language php_only))
+  '';
 }

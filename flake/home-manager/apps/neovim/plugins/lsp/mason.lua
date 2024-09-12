@@ -19,6 +19,8 @@ mason_lspconfig.setup({
 		"lua_ls",
 		"basedpyright",
 		"nil_ls",
+		"phpactor",
+		"intelephense",
 	},
 })
 

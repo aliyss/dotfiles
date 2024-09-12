@@ -10,6 +10,9 @@
         "alarms"
         "webRequest"
         "webRequestBlocking"
+        "declarativeNetRequestWithHostAccess"
+        "notifications"
+
         "https://myanimelist.net/"
         "https://myanimelist.cdn-dena.com/"
         "https://cdn.myanimelist.net/"
@@ -28,8 +31,6 @@
         "https://api.myanimelist.net/"
         "https://api.mangadex.org/"
         "https://shikimori.me/"
-
-        "declarativeNetRequestWithHostAccess"
         "*://myanimelist.net/anime/*"
         "*://myanimelist.net/manga/*"
         "*://myanimelist.net/animelist/*"
@@ -949,7 +950,16 @@
         "*://81u6xl9d.xyz/e/*"
         "*://megaf.cc/e/*"
         "*://doflix.net/*"
-        "notifications"
+        "*://kitsu.app/*"
+        "*://smotret-anime.net/catalog/*"
+        "*://reaperscans.com/*"
+        "*://luminous-scans.com/*"
+        "*://*.anix.to/*"
+        "*://*.anix.ac/*"
+        "*://*.anix.vc/*"
+        "*://templescan.net/*"
+        "*://www.lycoris.cafe/*"
+        "*://smotret-anime.net/translations/embed/*"
       ];
     };
     "multi-account-containers" = {
