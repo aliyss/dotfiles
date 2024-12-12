@@ -142,7 +142,13 @@ lspconfig["nil_ls"].setup({
 	capabilities = capabilities,
 })
 
-lspconfig["tsserver"].setup({
+lspconfig["vimls"].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+	filetypes = { "vim" },
+})
+
+lspconfig["ts_ls"].setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
 })

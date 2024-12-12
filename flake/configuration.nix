@@ -121,6 +121,7 @@
     devmon.enable = true;
     gvfs.enable = true;
     udisks2.enable = true;
+    pcscd.enable = true;
 
     # hardware.openrgb = {
     #   enable = true;
@@ -300,6 +301,12 @@
     android-tools
     adb-sync
     scrcpy
+
+    # Mutt Wizard
+    pinentry-gtk2
+
+    # Zen
+    inputs.zen-browser.packages.${pkgs.system}.default
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -309,6 +316,12 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+    pinentryPackage = lib.mkForce pkgs.pinentry-gtk2;
+  };
 
   # NIX_LD
   programs.nix-ld.enable = true;
@@ -372,6 +385,7 @@
       extraPackages = [pkgs.libvdpau-va-gl];
     };
     nvidia = {
+      open = true;
       modesetting.enable = true;
       nvidiaSettings = true;
     };

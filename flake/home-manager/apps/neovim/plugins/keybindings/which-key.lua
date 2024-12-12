@@ -28,7 +28,7 @@ wk.setup({
 })
 
 wk.add({
-	{ "<leader>a", group = "AutoSession" },
+	-- { "<leader>a", group = "AutoSession" },
 	-- { "<leader>as", require("auto-session.session-lens").search_session, desc = "Save Session" },
 	{ "<leader>b", group = "Buffer" },
 	{
@@ -227,4 +227,11 @@ wk.add({
 	{ "<leader>ws", "<cmd>wincmd s<cr>", desc = "Split Window Horizontally" },
 	{ "<leader>wv", "<cmd>wincmd v<cr>", desc = "Split Window Vertically" },
 	{ "<leader>ww", "<cmd>NvimTmuxNavigateNext<cr>", desc = "Next Window" },
+	{
+		"<leader>me",
+		function()
+			vim.cmd(":HIMALAYAToggle")
+		end,
+		desc = "Toggle Himalaya",
+	},
 })

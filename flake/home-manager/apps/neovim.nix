@@ -50,6 +50,7 @@ in {
         blade-formatter
         black
         isort
+        vim-language-server
         alejandra
         prettierd
         nodePackages_latest.jsonlint
@@ -292,11 +293,19 @@ in {
         config = builtins.readFile ./neovim/plugins/keybindings/stay-in-place.lua;
         type = "lua";
       }
+
+      ## Activity Watch
       aw-watcher-vim
+
+      ## Email
+      notmuch-vim
+      # himalaya-custom-vim
     ];
     extraLuaConfig = ''
       ${builtins.readFile ./neovim/options.lua}
       ${builtins.readFile ./neovim/colorscheme.lua}
+
+      vim.opt.runtimepath:append("~/Projects/vim-himalaya-ui")
     '';
   };
 

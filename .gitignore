@@ -15,6 +15,9 @@
 # Images
 !/images/
 
+# Tridactyl
+!/chawan/
+
 # Emacs
 !/emacs/
 /emacs/*

@@ -3,6 +3,7 @@ local o = vim.o
 
 g.mapleader = " "
 g.maplocalleader = " "
+g.db_ui_use_nerd_fonts = 1
 
 o.termguicolors = true
 o.clipboard = "unnamedplus"

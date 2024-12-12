@@ -2,6 +2,7 @@
   description = "Aliyss' flake.nix configuration file!";
 
   inputs = {
+    zen-browser.url = "github:MarceColl/zen-browser-flake";
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {

@@ -11,6 +11,7 @@
     ./apps/neovim.nix
     ./apps/firefox.nix
     ./services/mako.nix
+    ./services/mbsync.nix
     # ./apps/emacs.nix
     # ./services/emacs.nix
   ];

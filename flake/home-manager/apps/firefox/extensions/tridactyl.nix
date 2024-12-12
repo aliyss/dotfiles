@@ -59,9 +59,10 @@
     seturl keybr.com allowautofocus true
 
     blacklistadd monkeytype.com
+    blacklistadd http://localhost:5173/
     blacklistadd remotedesktop.google.com
     blacklistadd aliyss.vercel.app
     blacklistadd silyas.vercel.app
-    blacklistadd http://localhost:8000/record?language=en-US&userId=
+    blacklistadd http://localhost:8000/
   '';
 }

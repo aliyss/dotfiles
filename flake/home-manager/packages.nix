@@ -4,6 +4,7 @@
   ...
 }: let
   work-packages = import ./work-packages.nix {inherit pkgs;};
+  broken-packages = import ./broken-packages.nix {inherit pkgs;};
   minecraftServerInfo = {
     version = "1.21";
     url = "https://piston-data.mojang.com/v1/objects/450698d1863ab5180c25d7c804ef0fe6369dd1ba/server.jar";
@@ -30,6 +31,8 @@ in {
       heroic
       # nyxt
       bun
+      jq
+      lynx
 
       (pkgs.minecraft-server.overrideAttrs (old: {
         name = "minecraft-server-${minecraftServerInfo.version}";
@@ -45,6 +48,22 @@ in {
       aw-server-rust
 
       speedtest-cli
+
+      ## Email
+      mutt-wizard
+      neomutt
+      pass
+      lynx
+      notmuch
+      abook
+      cronie
+      isync
+
+      ## Himalaya
+      himalaya
+      chawan
+      libsixel
     ]
-    ++ work-packages.packages;
+    ++ work-packages.packages
+    ++ broken-packages.packages;
 }

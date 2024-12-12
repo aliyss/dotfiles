@@ -10,7 +10,7 @@
     name = "nyoom-oxocarbon";
     src = pkgs.fetchgit {
       url = "https://github.com/nyoom-engineering/oxocarbon.nvim";
-      sha256 = "sha256-++JALLPklok9VY2ChOddTYDvDNVadmCeB98jCAJYCZ0=";
+      sha256 = "sha256-Hi/nATEvZ4a6Yxc66KtuJqss6kQV19cmtIlhCw6alOI=";
     };
   };
   harpoon = pkgs.vimUtils.buildVimPlugin {
@@ -91,6 +91,30 @@
       url = "https://github.com/RicardoRamirezR/blade-nav.nvim";
       rev = "fbf82a609572b568399740e24ccb23d5c7fefe5d";
       sha256 = "sha256-RjUa5XYDr6hgCuxIixVNA4AtjgdOdI03xBHIbHyUoMg=";
+    };
+  };
+  notmuch-vim = pkgs.vimUtils.buildVimPlugin {
+    name = "notmuch-vim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/felipec/notmuch-vim";
+      rev = "4270c7e4d4ee1e7f044baedfe087bb33551dee7c";
+      sha256 = "sha256-GzXHs+SkmLHknLknykgs7aGsZF+No1u5Jc4hwzzeMP4=";
+    };
+  };
+  himalaya-custom-vim = pkgs.vimUtils.buildVimPlugin {
+    name = "himalaya-custom-vim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/pimalaya/himalaya-vim";
+      rev = "f25c003e8fe532348b4080bf8d738cfa1bbf1f5f";
+      sha256 = "sha256-oQtl3VmLpZf+cj1YGLKHbxmaE5GFLEeDi2Z7g3mvZjc=";
+    };
+  };
+  pckr-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "pckr-nvim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/lewis6991/pckr.nvim";
+      rev = "b84aad12570471b1a64d280ad060c59e168dc950";
+      sha256 = "sha256-K9CtVKr+AkZP+wrWsUWaCRrlgN28NXw0Oyc6o4A1zM4=";
     };
   };
 }
