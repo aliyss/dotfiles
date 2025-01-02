@@ -139,7 +139,7 @@ in {
       vim-dadbod-completion
       ## Rest Client
       {
-        plugin = git-rest-nvim;
+        plugin = rest-nvim;
         config = builtins.readFile ./neovim/plugins/modes/rest.lua;
         type = "lua";
       }
@@ -163,7 +163,7 @@ in {
         config = builtins.readFile ./neovim/plugins/cmp.lua;
         type = "lua";
       }
-      blade-nav
+      # blade-nav
       ## Autopairs
       {
         plugin = nvim-autopairs;
@@ -204,7 +204,7 @@ in {
       }
       ## Errors
       {
-        plugin = trouble;
+        plugin = trouble-nvim;
         config = builtins.readFile ./neovim/plugins/trouble.lua;
         type = "lua";
       }
@@ -260,7 +260,7 @@ in {
         type = "lua";
       }
       {
-        plugin = ibl;
+        plugin = indent-blankline-nvim;
         config = builtins.readFile ./neovim/plugins/themes/ibl.lua;
         type = "lua";
       }

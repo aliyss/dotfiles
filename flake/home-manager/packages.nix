@@ -28,7 +28,7 @@ in {
       stremio
       tridactyl-native
       prismlauncher
-      heroic
+      # heroic
       # nyxt
       bun
       jq

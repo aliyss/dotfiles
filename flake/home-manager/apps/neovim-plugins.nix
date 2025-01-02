@@ -13,20 +13,20 @@
       sha256 = "sha256-Hi/nATEvZ4a6Yxc66KtuJqss6kQV19cmtIlhCw6alOI=";
     };
   };
-  harpoon = pkgs.vimUtils.buildVimPlugin {
-    name = "harpoon";
-    src = pkgs.fetchgit {
-      url = "https://github.com/ThePrimeagen/harpoon";
-      rev = "0378a6c428a0bed6a2781d459d7943843f374bce";
-      sha256 = "sha256-FZQH38E02HuRPIPAog/nWM55FuBxKp8AyrEldFkoLYk=";
-    };
-  };
+  # harpoon = pkgs.vimUtils.buildVimPlugin {
+  #   name = "harpoon";
+  #   src = pkgs.fetchgit {
+  #     url = "https://github.com/ThePrimeagen/harpoon";
+  #     rev = "0378a6c428a0bed6a2781d459d7943843f374bce";
+  #     sha256 = "sha256-FZQH38E02HuRPIPAog/nWM55FuBxKp8AyrEldFkoLYk=";
+  #   };
+  # };
   trouble = pkgs.vimUtils.buildVimPlugin {
     name = "trouble";
     src = pkgs.fetchgit {
       url = "https://github.com/folke/trouble.nvim";
-      rev = "b4b9a11b3578d510963f6f681fecb4631ae992c3";
-      sha256 = "sha256-TjQ8UiV1BqmAddhu9iu+X1HbmCS6SQoIOyXbe8gZRqo=";
+      rev = "46cf952fc115f4c2b98d4e208ed1e2dce08c9bf6";
+      sha256 = "sha256-JhnERZfma2JHFEn/DElVmrSU5KxM2asx3SJ+86lCfoo=";
     };
   };
   nvim-tmux-navigation = pkgs.vimUtils.buildVimPlugin {
@@ -37,14 +37,14 @@
       sha256 = "sha256-CxAgQSbOrg/SsQXupwCv8cyZXIB7tkWO+Y6FDtoR8xk=";
     };
   };
-  ibl = pkgs.vimUtils.buildVimPlugin {
-    name = "ibl";
-    src = pkgs.fetchgit {
-      url = "https://github.com/lukas-reineke/indent-blankline.nvim";
-      rev = "3d08501caef2329aba5121b753e903904088f7e6";
-      sha256 = "sha256-Xp8ZQBz0in2MX3l0bnLUsSbH0lDPE+QvdmFpBFry5yY=";
-    };
-  };
+  # ibl = pkgs.vimUtils.buildVimPlugin {
+  #   name = "ibl";
+  #   src = pkgs.fetchgit {
+  #     url = "https://github.com/lukas-reineke/indent-blankline.nvim";
+  #     rev = "259357fa4097e232730341fa60988087d189193a";
+  #     sha256 = "sha256-H3lUQZDvgj3a2STYeMUDiOYPe7rfsy08tJ4SlDd+LuE=";
+  #   };
+  # };
   precognition = pkgs.vimUtils.buildVimPlugin {
     name = "precognition";
     src = pkgs.fetchgit {
@@ -81,18 +81,18 @@
     name = "rest-nvim";
     src = pkgs.fetchgit {
       url = "https://github.com/rest-nvim/rest.nvim";
-      rev = "e7843c55f9df6a9db9f97dac180035c6ff895a90";
-      sha256 = "sha256-bVm50Z4cNm+TKOZzY8i+3+8X9yqJ5Bd6/AP5qrrUMwo=";
+      rev = "545509268d5e928d72d64764c21ef65c77e90edf";
+      sha256 = "sha256-bhyiGb4P+eG5FroQafhuVIxnnrM1ZJOIBy7O2bwnrpU=";
     };
   };
-  blade-nav = pkgs.vimUtils.buildVimPlugin {
-    name = "blade-nav";
-    src = pkgs.fetchgit {
-      url = "https://github.com/RicardoRamirezR/blade-nav.nvim";
-      rev = "fbf82a609572b568399740e24ccb23d5c7fefe5d";
-      sha256 = "sha256-RjUa5XYDr6hgCuxIixVNA4AtjgdOdI03xBHIbHyUoMg=";
-    };
-  };
+  # blade-nav = pkgs.vimUtils.buildVimPlugin {
+  #   name = "blade-nav";
+  #   src = pkgs.fetchgit {
+  #     url = "https://github.com/RicardoRamirezR/blade-nav.nvim";
+  #     rev = "fbf82a609572b568399740e24ccb23d5c7fefe5d";
+  #     sha256 = "sha256-RjUa5XYDr6hgCuxIixVNA4AtjgdOdI03xBHIbHyUoMg=";
+  #   };
+  # };
   notmuch-vim = pkgs.vimUtils.buildVimPlugin {
     name = "notmuch-vim";
     src = pkgs.fetchgit {

@@ -64,7 +64,7 @@
       # Aliyss' User Profile
       aliyss = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        modules = [./home-manager/home.nix nur.nixosModules.nur];
+        modules = [./home-manager/home.nix];
         extraSpecialArgs = inputs;
       };
     };
