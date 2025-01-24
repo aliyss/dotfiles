@@ -227,6 +227,12 @@ in {
         config = builtins.readFile ./neovim/plugins/git/gitsigns.lua;
         type = "lua";
       }
+      ## GitHub
+      {
+        plugin = pipeline-nvim;
+        config = builtins.readFile ./neovim/plugins/git/pipeline.lua;
+        type = "lua";
+      }
       ## LLM
       {
         plugin = copilot-vim;
@@ -304,8 +310,10 @@ in {
     extraLuaConfig = ''
       ${builtins.readFile ./neovim/options.lua}
       ${builtins.readFile ./neovim/colorscheme.lua}
+      ${builtins.readFile ./neovim/tmux.lua}
 
       vim.opt.runtimepath:append("~/Projects/vim-himalaya-ui")
+
     '';
   };
 
