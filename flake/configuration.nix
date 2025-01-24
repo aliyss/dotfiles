@@ -262,6 +262,8 @@
     swww
     ## Cursor
     hyprcursor
+    ## Clipboard
+    clipse
 
     # Screenshots
     grim

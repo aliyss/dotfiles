@@ -28,7 +28,7 @@ in {
       stremio
       tridactyl-native
       prismlauncher
-      # heroic
+      heroic
       # nyxt
       bun
       jq
@@ -63,6 +63,12 @@ in {
       himalaya
       chawan
       libsixel
+
+      ## Anime
+      ani-cli
+
+      ## Audio
+      cli-visualizer
     ]
     ++ work-packages.packages
     ++ broken-packages.packages;

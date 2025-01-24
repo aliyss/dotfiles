@@ -117,4 +117,12 @@
       sha256 = "sha256-K9CtVKr+AkZP+wrWsUWaCRrlgN28NXw0Oyc6o4A1zM4=";
     };
   };
+  pipeline-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "pipeline-nvim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/topaxi/pipeline.nvim";
+      rev = "805d918b0ff0811611a40eaa7a662600900044e8";
+      sha256 = "sha256-R360qmXENRguzDzP3I7+vMRZ6aCeJm5YcdV51WfRDOQ=";
+    };
+  };
 }
