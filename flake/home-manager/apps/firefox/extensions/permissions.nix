@@ -1,8 +1,8 @@
-{lib, ...}: let
-  nur-no-pkgs = import (builtins.fetchTarball {
-    url = "https://github.com/nix-community/NUR/archive/a5d86e6a82ddb651a2d4c1609dc550d683e6eba3.tar.gz";
-    sha256 = "13skdpgyjm401ckd2pfabg0f2dqw31hr70r7j8b1j743b7d06k2f";
-  }) {};
+{
+  lib,
+  pkgs,
+  ...
+}: let
   extensions = {
     "mal-sync" = {
       permissions = [
@@ -13,6 +13,49 @@
         "declarativeNetRequestWithHostAccess"
         "notifications"
 
+        "*://*.gogoanime3.cc/*"
+        "*://*.anitaku.bz/*"
+        "*://*.voiranime.com/*"
+        "*://zonatmo.com/*"
+        "*://animexin.top/*"
+        "*://smotret-anime.org/catalog/*"
+        "*://smotret-anime.online/catalog/*"
+        "*://*.animeunity.so/anime/*"
+        "*://flamecomics.me/*"
+        "*://flamecomics.xyz/*"
+        "*://hianime.nz/*"
+        "*://hianime.mn/*"
+        "*://hianime.sx/*"
+        "*://animego.me/anime/*"
+        "*://q1n.net/*"
+        "*://scyllacomics.xyz/*"
+        "*://vortexscans.org/*"
+        "*://weebcentral.com/*"
+        "*://anilib.me/*"
+        "*://demo.kavitareader.com/*"
+        "*://mangalib.org/*"
+        "*://mangalib.me/*"
+        "*://*.slashlib.me/*"
+        "*://*.yaoilib.net/*"
+        "*://aninexus.to/*"
+        "*://*.jwplayerhls.com/*"
+        "*://*.videzz.net/*"
+        "*://geo.dailymotion.com/*"
+        "*://smotret-anime.org/translations/embed/*"
+        "*://smotret-anime.online/translations/embed/*"
+        "*://*.s3embtaku.pro/*"
+        "*://dood.li/e/*"
+        "*://bethshouldercan.com/e/*"
+        "*://sandratableother.com/e/*"
+        "*://robertordercharacter.com/e/*"
+        "*://omegadthree.com/*"
+        "*://hlswish.com/e/*"
+        "*://rogeriobetin.com/*"
+        "*://nvlabs-fi-cdn.q9x.in/*"
+        "*://oneupload.to/*"
+        "*://player.vimeo.com/*"
+        "*://fle-rvd0i9o8-moo.com/*"
+        "*://dhtpre.com/*"
         "https://myanimelist.net/"
         "https://myanimelist.cdn-dena.com/"
         "https://cdn.myanimelist.net/"
@@ -1065,7 +1108,7 @@ in {
     lib.mapAttrsToList (k: v: let
       unaccepted =
         lib.subtractLists v.permissions
-        nur-no-pkgs.repos.rycee.firefox-addons.${k}.meta.mozPermissions;
+        pkgs.nur.repos.rycee.firefox-addons.${k}.meta.mozPermissions;
     in {
       assertion = unaccepted == [];
       message = "Extension ${k} has unaccepted permissions: ${

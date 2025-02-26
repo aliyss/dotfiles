@@ -21,7 +21,6 @@
       };
     };
   plugins = pkgs.vimPlugins // pkgs.callPackage ./neovim-plugins.nix {};
-  externalPackages = pkgs.callPackage ./neovim-external.nix {};
 in {
   programs.neovim = {
     enable = true;
@@ -56,6 +55,9 @@ in {
         nodePackages_latest.jsonlint
         python311Packages.pynvim
         rust-analyzer
+        hyprlang
+        go
+        hyprls
         lolcrab
         nil
       ]
@@ -149,6 +151,12 @@ in {
         config = builtins.readFile ./neovim/plugins/modes/orgmode.lua;
         type = "lua";
       }
+      ## Markdown
+      {
+        plugin = markview-nvim;
+        config = builtins.readFile ./neovim/plugins/modes/markview.lua;
+        type = "lua";
+      }
       ## CMP
       neodev-nvim
       cmp-buffer
@@ -163,7 +171,6 @@ in {
         config = builtins.readFile ./neovim/plugins/cmp.lua;
         type = "lua";
       }
-      # blade-nav
       ## Autopairs
       {
         plugin = nvim-autopairs;
@@ -181,6 +188,11 @@ in {
       {
         plugin = nvim-lspconfig;
         config = builtins.readFile ./neovim/plugins/lsp/lspconfig.lua;
+        type = "lua";
+      }
+      {
+        plugin = lsp_lines-nvim;
+        config = builtins.readFile ./neovim/plugins/lsp/lsp_lines.lua;
         type = "lua";
       }
       ## Formatting
@@ -254,17 +266,27 @@ in {
       #   type = "lua";
       # }
       ## Themes
+      nyoom-oxocarbon
+      {
+        plugin = modes-nvim;
+        config = builtins.readFile ./neovim/plugins/themes/modes.lua;
+        type = "lua";
+      }
       {
         plugin = colorizer;
         config = builtins.readFile ./neovim/plugins/themes/colorizer.lua;
         type = "lua";
       }
-      nyoom-oxocarbon
       {
         plugin = lualine-nvim;
         config = builtins.readFile ./neovim/plugins/themes/lualine.lua;
         type = "lua";
       }
+      # {
+      #   plugin = incline-nvim;
+      #   config = builtins.readFile ./neovim/plugins/themes/incline.lua;
+      #   type = "lua";
+      # }
       {
         plugin = indent-blankline-nvim;
         config = builtins.readFile ./neovim/plugins/themes/ibl.lua;
@@ -276,6 +298,9 @@ in {
       #   config = builtins.readFile ./neovim/plugins/keybindings/precognition.lua;
       #   type = "lua";
       # }
+      {
+        plugin = vim-bufsurf;
+      }
       {
         plugin = vim-be-good;
       }

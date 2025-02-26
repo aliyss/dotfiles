@@ -1,9 +1,4 @@
-{
-  pkgs,
-  nimPackages,
-  tridactyl-native-messenger,
-  ...
-}: {
+{pkgs, ...}: {
   home.file.".mozilla/native-messaging-hosts/tridactyl.json".text = let
     tridactyl = pkgs.tridactyl-native;
   in

@@ -14,11 +14,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     playit-nixos-module.url = "github:pedorich-n/playit-nixos-module";
-    prismlauncher.url = "github:julcioo/PrismLauncher-Cracked";
-    nur.url = "github:nix-community/nur";
+    prismlauncher.url = "github:Diegiwg/PrismLauncher-Cracked";
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     tridactyl-native-messenger = {
       url = "github:tridactyl/native_messenger";
       flake = false;
+    };
+    old-ollama-nixpkgs = {
+      url = "github:nixos/nixpkgs/c792c60b8a97daa7efe41a6e4954497ae410e0c1";
     };
   };
 
@@ -32,6 +38,7 @@
     pkgs = import nixpkgs {
       localSystem = {inherit system;};
       config.allowUnfree = true;
+      overlays = [nur.overlays.default];
     };
 
     lib = nixpkgs.lib;

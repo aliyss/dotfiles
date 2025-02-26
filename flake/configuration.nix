@@ -88,6 +88,10 @@
         ];
       };
     };
+    pulseaudio = {
+      enable = false;
+      support32Bit = true;
+    };
     # Bluetooth
     blueman.enable = true;
     # Display
@@ -237,6 +241,9 @@
     openssl
     pkg-config
     gcc
+    ## Hypr
+    hyprls
+    hyprlang
     ## Flutter
     flutter
     ## Python
@@ -306,9 +313,12 @@
 
     # Mutt Wizard
     pinentry-gtk2
+    protonvpn-gui
 
-    # Zen
-    inputs.zen-browser.packages.${pkgs.system}.default
+    # (ollama.override {
+    #   acceleration = "cuda";
+    # })
+    # ollama-cuda
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -380,7 +390,7 @@
   # HARDWARE
   hardware = {
     # Display
-    mwProCapture.enable = true;
+    # mwProCapture.enable = true;
     graphics = {
       enable = true;
       enable32Bit = true;
@@ -391,9 +401,6 @@
       modesetting.enable = true;
       nvidiaSettings = true;
     };
-    # Sound
-    pulseaudio.enable = false;
-    pulseaudio.support32Bit = true;
     # Bluetooth
     bluetooth.enable = true;
   };

@@ -22,6 +22,7 @@ mason_lspconfig.setup({
 		"vimls",
 		"phpactor",
 		"intelephense",
+		"hyprls",
 	},
 })
 
