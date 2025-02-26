@@ -125,4 +125,36 @@
       sha256 = "sha256-R360qmXENRguzDzP3I7+vMRZ6aCeJm5YcdV51WfRDOQ=";
     };
   };
+  incline-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "incline-nvim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/b0o/incline.nvim";
+      rev = "16fc9c073e3ea4175b66ad94375df6d73fc114c0";
+      sha256 = "sha256-5DoIvIdAZV7ZgmQO2XmbM3G+nNn4tAumsShoN3rDGrs=";
+    };
+  };
+  vim-bufsurf = pkgs.vimUtils.buildVimPlugin {
+    name = "vim-bufsurf";
+    src = pkgs.fetchgit {
+      url = "https://github.com/ton/vim-bufsurf";
+      rev = "e6dbc7ad66c7e436e5eb20d304464e378bd7f28c";
+      sha256 = "sha256-o/Uf4bnh3IctKnT50JitTe5/+BUrCyrlOOzkmwAzxLk=";
+    };
+  };
+  modes-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "modes-nvim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/mvllow/modes.nvim";
+      rev = "1e34663c32e8f5d915921a938e0dc4e3e788ceb8";
+      sha256 = "sha256-XgER+qp/GSAimj7C23coOpwsEc3CdImyN+tFVIPKqh0=";
+    };
+  };
+  llama-vim = pkgs.vimUtils.buildVimPlugin {
+    name = "llama-vim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/ggml-org/llama.vim";
+      rev = "9cf5ed33b28edd7b2c7925677ef15c7779f054de";
+      sha256 = "sha256-+x29Ma1N4tNBcCOGTox4XucFFMQzFqgEo03APajoa/Q=";
+    };
+  };
 }

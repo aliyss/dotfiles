@@ -4,10 +4,6 @@
   ...
 } @ args: let
   customExtensions = import ../extensions/custom.nix args;
-  nur-no-pkgs = import (builtins.fetchTarball {
-    url = "https://github.com/nix-community/NUR/archive/a5d86e6a82ddb651a2d4c1609dc550d683e6eba3.tar.gz";
-    sha256 = "13skdpgyjm401ckd2pfabg0f2dqw31hr70r7j8b1j743b7d06k2f";
-  }) {};
 in {
   isDefault = true;
   settings = {
@@ -61,7 +57,7 @@ in {
 
     "autoadmin.global_config_url" = "file:///home/aliyss/.config/flake/home-manager/apps/firefox/config/autoconfig.js";
   };
-  extensions = with nur-no-pkgs.repos.rycee.firefox-addons;
+  extensions = with pkgs.nur.repos.rycee.firefox-addons;
     [ublock-origin bitwarden darkreader tridactyl multi-account-containers] ++ customExtensions;
   search = {
     force = true;

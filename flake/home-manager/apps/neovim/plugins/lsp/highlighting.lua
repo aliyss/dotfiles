@@ -1,8 +1,3 @@
--- vim.api.nvim_create_autocmd({ "FileType" }, {
--- 	pattern = "python",
--- 	command = ":Semshi enable<CR>",
--- })
-
 local status, ts = pcall(require, "nvim-treesitter.configs")
 if not status then
 	return

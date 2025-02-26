@@ -12,6 +12,8 @@ vim.filetype.add({
 		["gitconf.*"] = "gitconfig",
 		[".*.http"] = "http",
 		[".*%.blade%.php"] = "blade",
+		[".*.hl"] = "hyprlang",
+		["hypr.*.conf"] = "hyprlang",
 	},
 })
 
@@ -98,25 +100,6 @@ lspconfig["lua_ls"].setup({
 })
 
 local util = require("lspconfig/util")
-local path = util.path
-
-local function get_python_path(workspace)
-	-- Use activated virtualenv.
-	if vim.env.VIRTUAL_ENV then
-		return path.join(vim.env.VIRTUAL_ENV, "bin", "python")
-	end
-
-	-- Find and use virtualenv in workspace directory.
-	for _, pattern in ipairs({ "*", ".*" }) do
-		local match = vim.fn.glob(path.join(workspace, pattern, "pyvenv.cfg"))
-		if match ~= "" then
-			return path.join(path.dirname(match), "bin", "python")
-		end
-	end
-
-	-- Fallback to system Python.
-	return "python"
-end
 
 lspconfig["basedpyright"].setup({
 	on_attach = function(client, bufnr)
@@ -138,6 +121,11 @@ lspconfig["phpactor"].setup({
 })
 
 lspconfig["nil_ls"].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+})
+
+lspconfig["hyprls"].setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
 })

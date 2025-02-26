@@ -4,12 +4,8 @@
   lib,
   ...
 }: let
-  nur-no-pkgs = import (builtins.fetchTarball {
-    url = "https://github.com/nix-community/NUR/archive/a5d86e6a82ddb651a2d4c1609dc550d683e6eba3.tar.gz";
-    sha256 = "13skdpgyjm401ckd2pfabg0f2dqw31hr70r7j8b1j743b7d06k2f";
-  }) {};
   buildFirefoxXpiAddon =
-    nur-no-pkgs.repos.rycee.firefox-addons.buildFirefoxXpiAddon;
+    pkgs.nur.repos.rycee.firefox-addons.buildFirefoxXpiAddon;
 in [
   (buildFirefoxXpiAddon {
     pname = "mal-sync";
