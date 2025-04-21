@@ -1,4 +1,32 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: let
+  # Default session variables
+  defaultSessionVars = {
+    # Emacs
+    LSP_USE_PLISTS = "true";
+    # Firefox
+    MOZ_ENABLE_WAYLAND = "1";
+    # Wine
+    WINEPREFIX = "${config.home.homeDirectory}/.wine/";
+    EDITOR = "nvim";
+  };
+
+  # Read the .env file safely
+  envFile = builtins.readFile "${config.home.homeDirectory}/.config/.env";
+
+  envVars = builtins.foldl' (
+    acc: line: let
+      parts = lib.splitString "=" line;
+    in
+      if builtins.length parts == 2
+      then acc // {"${(builtins.elemAt parts 0)}" = "${(builtins.elemAt parts 1)}";}
+      else acc
+  ) {} (lib.splitString "\n" envFile);
+in {
   imports = [
     ./packages.nix
     ./apps/wayland.nix
@@ -44,15 +72,7 @@
     # '';
   };
 
-  home.sessionVariables = {
-    # Emacs
-    LSP_USE_PLISTS = "true";
-    # Firefox
-    MOZ_ENABLE_WAYLAND = 1;
-    # Wine
-    WINEPREFIX = "~/.wine/";
-    EDITOR = "nvim";
-  };
+  home.sessionVariables = lib.attrsets.recursiveUpdate defaultSessionVars envVars;
 
   home.pointerCursor = {
     package = pkgs.simp1e-cursors;

@@ -45,7 +45,7 @@ in {
         postgresql_16
         phpactor
         nodePackages.intelephense
-        phpPackages.php-cs-fixer
+        # phpPackages.php-cs-fixer
         blade-formatter
         black
         isort
@@ -57,6 +57,9 @@ in {
         rust-analyzer
         hyprlang
         go
+        gopls
+        gofumpt
+        delve
         hyprls
         lolcrab
         nil
@@ -195,6 +198,11 @@ in {
         config = builtins.readFile ./neovim/plugins/lsp/lsp_lines.lua;
         type = "lua";
       }
+      {
+        plugin = gopher-nvim;
+        config = builtins.readFile ./neovim/plugins/lsp/langs/gopher.lua;
+        type = "lua";
+      }
       ## Formatting
       guess-indent-nvim
       {
@@ -243,12 +251,6 @@ in {
       {
         plugin = pipeline-nvim;
         config = builtins.readFile ./neovim/plugins/git/pipeline.lua;
-        type = "lua";
-      }
-      ## LLM
-      {
-        plugin = copilot-vim;
-        config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
         type = "lua";
       }
       ## Telescope
@@ -331,6 +333,42 @@ in {
       ## Email
       notmuch-vim
       # himalaya-custom-vim
+
+      ## LLM
+      {
+        plugin = copilot-vim;
+        config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
+        type = "lua";
+      }
+      {
+        plugin = avante-nvim.overrideAttrs (old: {
+          version = "git";
+          src = pkgs.fetchFromGitHub {
+            owner = "yetone";
+            repo = "avante.nvim";
+            rev = "eb1cd44731783024621beafe4e46204cbc9a4320";
+            sha256 = "sha256-BzRFgcBG4vn7mamwLvviMl4erTPwg+1AkAb3Ss4Kq8E=";
+          };
+          nvimSkipModules = [
+            "avante.providers.vertex_claude"
+            "avante.providers.copilot"
+            "avante.providers.azure"
+            "avante.providers.ollama"
+          ];
+        });
+        config = builtins.readFile ./neovim/plugins/llm/avante.lua;
+        type = "lua";
+      }
+      # {
+      #   plugin = augment-vim;
+      #   config = builtins.readFile ./neovim/plugins/llm/augment.lua;
+      #   type = "lua";
+      # }
+      # {
+      #   plugin = minuet-ai-nvim;
+      #   config = builtins.readFile ./neovim/plugins/llm/minuet.lua;
+      #   type = "lua";
+      # }
     ];
     extraLuaConfig = ''
       ${builtins.readFile ./neovim/options.lua}

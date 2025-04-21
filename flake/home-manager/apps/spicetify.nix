@@ -10,25 +10,11 @@ in {
     # spicetify-nix
     officialThemes = pkgs.fetchgit {
       url = "https://github.com/spicetify/spicetify-themes";
-      sha256 = "sha256-83v2E56eKgkT6T8fpBrcKpCiKnEu9r7KplUOCRxJ64Q=";
+      sha256 = "sha256-HQJrCB5kN8mE4yzC6Sc0Dh7mpttoAGIx3cvlNGnkPvc=";
     };
   in {
     enable = true;
-    theme = {
-      name = "marketplace";
-      src = officialThemes;
-      appendName = true; # theme is located at "${src}/text" not just "${src}"
-
-      # changes to make to config-xpui.ini for this theme:
-      patches = {
-        "xpui.js_find_8008" = ",(\\w+=)56,";
-        "xpui.js_repl_8008" = ",\${1}32,";
-      };
-      injectCss = true;
-      replaceColors = true;
-      overwriteAssets = true;
-      sidebarConfig = true;
-    };
+    theme = spicePkgs.themes.text;
 
     enabledCustomApps = with spicePkgs.apps; [marketplace];
 

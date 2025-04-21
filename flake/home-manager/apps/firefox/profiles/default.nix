@@ -48,7 +48,7 @@ in {
     "general.config.obscure_value" = 0;
     "general.config.sandbox_enabled" = false;
 
-    "browser.display.background_color.dark" = "#FFFFFF";
+    # "browser.display.background_color.dark" = "#FFFFFFFD";
     "layout.css.prefers-color-scheme.content-override" = 0;
     "browser.display.use_document_fonts" = 0;
     "font.name.monospace.x-western" = "JetBrainsMono Nerd Font Mono";
@@ -61,7 +61,7 @@ in {
     [ublock-origin bitwarden darkreader tridactyl multi-account-containers] ++ customExtensions;
   search = {
     force = true;
-    default = "Google";
+    default = "google";
     engines = {
       "Nix Packages" = {
         urls = [
@@ -82,7 +82,7 @@ in {
         icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
         definedAliases = ["@np"];
       };
-      "Wikipedia (en)".metaData.hidden = true;
+      "wikipedia".metaData.hidden = true;
     };
   };
   userChrome = builtins.readFile ./userChrome.css;

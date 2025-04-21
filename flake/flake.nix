@@ -2,7 +2,10 @@
   description = "Aliyss' flake.nix configuration file!";
 
   inputs = {
-    zen-browser.url = "github:MarceColl/zen-browser-flake";
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
@@ -22,9 +25,6 @@
     tridactyl-native-messenger = {
       url = "github:tridactyl/native_messenger";
       flake = false;
-    };
-    old-ollama-nixpkgs = {
-      url = "github:nixos/nixpkgs/c792c60b8a97daa7efe41a6e4954497ae410e0c1";
     };
   };
 

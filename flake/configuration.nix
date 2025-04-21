@@ -200,7 +200,7 @@
     ## Vim: for quick configurations in case graphics dies
     neovim
     ## Emacs: for everything else
-    ((emacsPackagesFor emacs29-pgtk).emacsWithPackages
+    ((emacsPackagesFor emacs30-pgtk).emacsWithPackages
       (epkgs: [epkgs.vterm epkgs.lsp-tailwindcss epkgs.dap-mode]))
     ### Emacs: Additional Packages, compatibility with config.org file
     # youtube-dl
@@ -253,6 +253,10 @@
         pip
         # python-openstackclient
       ]))
+    ## Go
+    go
+    air
+    gopls
     ## Configuration Files
     nil
     ## Nix
@@ -313,12 +317,8 @@
 
     # Mutt Wizard
     pinentry-gtk2
-    protonvpn-gui
 
-    # (ollama.override {
-    #   acceleration = "cuda";
-    # })
-    # ollama-cuda
+    openrgb-with-all-plugins
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

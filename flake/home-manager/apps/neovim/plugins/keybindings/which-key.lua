@@ -168,6 +168,12 @@ wk.add({
 	{ "<leader>fx", "<cmd>Telescope commands<cr>", desc = "Commands" },
 
 	{ "<leader>g", group = "Git" },
+	{ "<leader>gg", group = "Gopher" },
+	{ "<leader>ggf", "<cmd>Telescope gopher_files<cr>", desc = "Gopher Files" },
+	{ "<leader>ggm", "<cmd>Telescope gopher_mods<cr>", desc = "Gopher Mods" },
+	{ "<leader>ggp", "<cmd>Telescope gopher_pkgs<cr>", desc = "Gopher Packages" },
+	{ "<leader>ggv", "<cmd>Telescope gopher_vars<cr>", desc = "Gopher Vars" },
+	{ "<leader>ggw", "<cmd>Telescope gopher_workspaces<cr>", desc = "Gopher Workspaces" },
 	{ "<leader>gf", group = "Telescope" },
 	{ "<leader>gfR", "<cmd>Telescope git_branch_remote<cr>", desc = "Git Remote Branches" },
 	{ "<leader>gfb", "<cmd>Telescope git_branches<cr>", desc = "Git Branches" },
