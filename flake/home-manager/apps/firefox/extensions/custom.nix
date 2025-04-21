@@ -20,12 +20,12 @@ in [
       platforms = platforms.all;
     };
   })
-  (buildFirefoxXpiAddon {
-    pname = "amoled-black";
-    version = "1.0";
-    addonId = "{bc16b6e3-4935-42b3-bff7-b65b49434857}";
-    url = "https://addons.mozilla.org/firefox/downloads/file/2114250/amoled_black-1.0.xpi";
-    sha256 = "toSWV87bj8IfdNOCdjGbIF5s2WIMHyyz4y4ojMsnsJg=";
-    meta = with lib; {};
-  })
+  # (buildFirefoxXpiAddon {
+  #   pname = "amoled-black";
+  #   version = "1.0";
+  #   addonId = "{bc16b6e3-4935-42b3-bff7-b65b49434857}";
+  #   url = "https://addons.mozilla.org/firefox/downloads/file/2114250/amoled_black-1.0.xpi";
+  #   sha256 = "toSWV87bj8IfdNOCdjGbIF5s2WIMHyyz4y4ojMsnsJg=";
+  #   meta = with lib; {};
+  # })
 ]

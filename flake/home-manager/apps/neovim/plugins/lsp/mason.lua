@@ -23,6 +23,7 @@ mason_lspconfig.setup({
 		"phpactor",
 		"intelephense",
 		"hyprls",
+		"gopls",
 	},
 })
 

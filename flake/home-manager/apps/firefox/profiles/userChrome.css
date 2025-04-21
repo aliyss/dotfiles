@@ -14,6 +14,29 @@
 /*   -moz-appearance: none !important; */
 /* } */
 
+/* transparency */
+:root {
+  --tabpanel-background-color: transparent !important;
+  --toolbar-bgcolor: transparent !important;
+  --chrome-content-separator-color: transparent !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+}
+
+toolbox {
+  background: transparent !important;
+}
+
+#browser {
+  background: transparent !important;
+}
+
+/* Remove new tab background color added in 1.8b */
+.browserStack {
+  browser {
+    background-color: transparent !important;
+  }
+}
+
 #nav-bar {
   /* --navbar-margin: -44px; */
   /**/
@@ -22,7 +45,7 @@
   /* z-index: -100; */
   /* transition: all 0.3s ease !important; */
   /* opacity: 0; */
-  background-color: rgba(0, 0, 0, 1) !important;
+  background: transparent !important;
 }
 
 /* #navigator-toolbox:focus-within > #nav-bar, */

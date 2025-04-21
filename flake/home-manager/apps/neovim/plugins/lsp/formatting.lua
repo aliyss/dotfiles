@@ -14,21 +14,22 @@ conform.setup({
 		typescriptreact = { "prettierd" },
 		php = { "php-cs-fixer" },
 		blade = { "blade-formatter" },
+		go = { "gofumpt" },
 	},
 	formatters = {
-		["php-cs-fixer"] = {
-			meta = {
-				url = "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer",
-				description = "The PHP Coding Standards Fixer.",
-			},
-			command = util.find_executable({
-				"tools/php-cs-fixer/vendor/bin/php-cs-fixer",
-				"vendor/bin/php-cs-fixer",
-			}, "php-cs-fixer"),
-			args = { "fix", "$FILENAME", "--allow-risky=yes" },
-			stdin = false,
-			cwd = util.root_file({ "composer.json" }),
-		},
+		-- ["php-cs-fixer"] = {
+		-- 	meta = {
+		-- 		url = "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer",
+		-- 		description = "The PHP Coding Standards Fixer.",
+		-- 	},
+		-- 	command = util.find_executable({
+		-- 		"tools/php-cs-fixer/vendor/bin/php-cs-fixer",
+		-- 		"vendor/bin/php-cs-fixer",
+		-- 	}, "php-cs-fixer"),
+		-- 	args = { "fix", "$FILENAME", "--allow-risky=yes" },
+		-- 	stdin = false,
+		-- 	cwd = util.root_file({ "composer.json" }),
+		-- },
 		["blade-formatter"] = {
 			meta = {
 				url = "https://github.com/shufo/blade-formatter",

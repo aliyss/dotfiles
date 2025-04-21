@@ -1,6 +1,7 @@
 {
   pkgs,
   spicetify-nix,
+  zen-browser,
   ...
 }: let
   work-packages = import ./work-packages.nix {inherit pkgs;};
@@ -11,7 +12,9 @@
     sha256 = "sha256-yWOU2ob52fnvfKLS7h8vCYDCm3qlyUtDwCxQQ1289T8=";
   };
 in {
-  imports = [spicetify-nix.homeManagerModules.default];
+  imports = [
+    spicetify-nix.homeManagerModules.default
+  ];
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs;
@@ -68,7 +71,13 @@ in {
       ani-cli
 
       ## Audio
+      vscode
       cli-visualizer
+
+      ## SSH
+      sshpass
+
+      zen-browser.packages."${system}".default
     ]
     ++ work-packages.packages
     ++ broken-packages.packages;

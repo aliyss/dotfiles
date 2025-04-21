@@ -32,6 +32,7 @@
     bind bw fillcmdline tabopen -c Work
     bind bo fillcmdline tabopen
     bind br recontain Work
+    bind bx recontain
     bind bs tabsort --containers
 
     unbind --mode=normal t

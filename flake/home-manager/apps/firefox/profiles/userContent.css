@@ -1,0 +1,16 @@
+@-moz-document url-prefix(about:home), url-prefix(about:newtab), url-prefix(about:blank) {
+  background: transparent !important;
+}
+
+:root {
+  --newtab-background-color: transparent !important;
+  --background-color-canvas: transparent !important;
+  --color-gray-80: transparent !important;
+  --xhUGwc: transparent !important;
+  background: transparent !important;
+}
+
+html,
+body {
+  background: transparent !important;
+}

@@ -157,4 +157,25 @@
       sha256 = "sha256-+x29Ma1N4tNBcCOGTox4XucFFMQzFqgEo03APajoa/Q=";
     };
   };
+  augment-vim = pkgs.vimUtils.buildVimPlugin {
+    name = "augment-vim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/augmentcode/augment.vim";
+      rev = "a50e362f6c16a0c43da20f613e337a6dfd3fb94a";
+      sha256 = "sha256-+TbnXjAEugCCpoi4axbPhbTeSGAwASj/MLzzI2N0NtQ=";
+    };
+  };
+  gopher-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "gopher-nvim";
+    dependencies = with pkgs.vimPlugins; [
+      plenary-nvim
+      nvim-treesitter
+      nvim-dap
+    ];
+    src = pkgs.fetchgit {
+      url = "https://github.com/olexsmir/gopher.nvim";
+      rev = "0ed14a40d9799ac8d92aaf9eb1cd9be22ffd6b14";
+      sha256 = "sha256-5UpNPRh4YdAtpiFTazqCSLeJ0TMmPCm8lVyNFsIJ3lE=";
+    };
+  };
 }

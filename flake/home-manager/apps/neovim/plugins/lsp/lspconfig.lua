@@ -115,6 +115,23 @@ lspconfig["basedpyright"].setup({
 	},
 })
 
+lspconfig["gopls"].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+	cmd = { "gopls" },
+	filetypes = { "go", "gomod", "gowork", "gotmpl" },
+	root_dir = util.root_pattern("go.mod", "go.work", ".git"),
+	settings = {
+		gopls = {
+			completeUnimported = true,
+			usePlaceholders = true,
+			analyses = {
+				unusedparams = true,
+			},
+		},
+	},
+})
+
 lspconfig["phpactor"].setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
