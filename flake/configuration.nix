@@ -210,10 +210,6 @@
     mpv
 
     # Language Support
-    ## PHP
-    php
-    ### Globally installed PHP Packages
-    phpPackages.composer
     ## NodeJS
     nodejs_20
     ### Globally installed Node Packages
