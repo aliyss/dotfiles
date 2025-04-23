@@ -19,6 +19,8 @@
   --tabpanel-background-color: transparent !important;
   --toolbar-bgcolor: transparent !important;
   --chrome-content-separator-color: transparent !important;
+  --toolbar-field-focus-background-color: black !important;
+  --arrowpanel-background: black !important;
   background: rgba(0, 0, 0, 0.85) !important;
 }
 
