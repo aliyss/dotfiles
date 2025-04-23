@@ -18,10 +18,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
 	end,
 })
 
-vim.keymap.set("n", "<leader>l", function()
-	lint.try_lint()
-end, { desc = "Lint file" })
-
 local util = require("lspconfig/util")
 local path = util.path
 local function get_python_path(workspace)
@@ -44,3 +40,5 @@ end
 
 lint.linters.pylint.cmd = get_python_path(vim.fn.getcwd())
 lint.linters.pylint.args = { "-m", "pylint", "-f", "json" }
+
+lint.linters.eslint_d.cmd = "eslint_d"

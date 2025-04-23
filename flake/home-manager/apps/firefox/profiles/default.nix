@@ -57,7 +57,7 @@ in {
 
     "autoadmin.global_config_url" = "file:///home/aliyss/.config/flake/home-manager/apps/firefox/config/autoconfig.js";
   };
-  extensions = with pkgs.nur.repos.rycee.firefox-addons;
+  extensions.packages = with pkgs.nur.repos.rycee.firefox-addons;
     [ublock-origin bitwarden darkreader tridactyl multi-account-containers] ++ customExtensions;
   search = {
     force = true;
