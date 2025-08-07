@@ -43,6 +43,7 @@ in {
         pylint
         pylyzer
         postgresql_16
+        postgres-lsp
         phpactor
         nodePackages.intelephense
         # phpPackages.php-cs-fixer
@@ -50,6 +51,7 @@ in {
         black
         isort
         vim-language-server
+        vue-language-server
         alejandra
         prettierd
         nodePackages_latest.jsonlint
@@ -222,10 +224,10 @@ in {
         config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
         type = "lua";
       }
-      ## Errors
+      ## Diagnostics
       {
         plugin = trouble-nvim;
-        config = builtins.readFile ./neovim/plugins/trouble.lua;
+        config = builtins.readFile ./neovim/plugins/diagnostics/trouble.lua;
         type = "lua";
       }
       ## Debugging
@@ -346,12 +348,14 @@ in {
           src = pkgs.fetchFromGitHub {
             owner = "yetone";
             repo = "avante.nvim";
-            rev = "eb1cd44731783024621beafe4e46204cbc9a4320";
-            sha256 = "sha256-BzRFgcBG4vn7mamwLvviMl4erTPwg+1AkAb3Ss4Kq8E=";
+            rev = "db39f5fe1b920fee493a76fb1f717d7c1c73ab6d";
+            sha256 = "sha256-GaQwBOxPOqj7h8AgR3ySCN+1fc9reKT5+vcv5vfzKhk=";
           };
           nvimSkipModules = [
             "avante.providers.vertex_claude"
+            "avante.providers.vertex"
             "avante.providers.copilot"
+            "avante.providers.gemini"
             "avante.providers.azure"
             "avante.providers.ollama"
           ];
@@ -374,6 +378,8 @@ in {
       ${builtins.readFile ./neovim/options.lua}
       ${builtins.readFile ./neovim/colorscheme.lua}
       ${builtins.readFile ./neovim/tmux.lua}
+
+      vim.g.vue_ls_path = "${pkgs.vue-language-server}";
 
       vim.opt.runtimepath:append("~/Projects/vim-himalaya-ui")
 

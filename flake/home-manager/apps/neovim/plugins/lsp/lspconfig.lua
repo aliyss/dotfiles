@@ -102,15 +102,22 @@ lspconfig["lua_ls"].setup({
 local util = require("lspconfig/util")
 
 lspconfig["basedpyright"].setup({
-	on_attach = function(client, bufnr)
-		vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-		-- vim.cmd(":PyrightSetPythonPath " .. get_python_path(client["config"].root_dir))
-	end,
+	on_attach = on_attach,
 	capabilities = capabilities,
-	before_init = function(_, config) end,
 	settings = {
 		basedpyright = {
-			typeCheckingMode = "standard",
+			typeCheckingMode = "recommended",
+			analysis = {
+				autoSearchPaths = true,
+				useLibraryCodeForTypes = true,
+				autoSearchPaths = true,
+				diagnosticMode = "workspace",
+				diagnosticSeverityOverrides = {
+					reportUnusedCallResult = "none",
+					reportUnknownMemberType = "none",
+					reportUntypedFunctionDecorator = "none",
+				},
+			},
 		},
 	},
 })
@@ -156,6 +163,27 @@ lspconfig["vimls"].setup({
 lspconfig["ts_ls"].setup({
 	on_attach = on_attach,
 	capabilities = capabilities,
+	init_options = {
+		plugins = {
+			{
+				name = "@vue/typescript-plugin",
+				location = vim.g.vue_ls_path,
+				languages = { "javascript", "typescript", "vue" },
+			},
+		},
+	},
+})
+
+lspconfig["volar"].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+})
+
+lspconfig["postgres_lsp"].setup({
+	on_attach = on_attach,
+	capabilities = capabilities,
+	cmd = { "postgrestools", "lsp-proxy", "--log-path", "./output.log" },
+	single_file_support = true,
 })
 
 lspconfig["tailwindcss"].setup({

@@ -3,6 +3,7 @@
     ./programs/adb.nix
     ./programs/hyprlock.nix
     ./services/redis.nix
+    ./programs/barracuda.nix
     # ./services/llama-cpp.nix
     ./services/ollama.nix
     # ./services/neo4j.nix

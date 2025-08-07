@@ -66,6 +66,15 @@
 
   # SERVICES
   services = {
+    # VPN
+    # openvpn = {
+    #   servers = {
+    #     ewuVPN = {
+    #       config = ''config /root/nixos/openvpn/ewuVPN.conf '';
+    #       # updateResolvConf = true;
+    #     };
+    #   };
+    # };
     # Sound
     pipewire = {
       enable = true;
@@ -95,13 +104,13 @@
     # Bluetooth
     blueman.enable = true;
     # Display
+    displayManager.gdm = {
+      enable = false;
+      wayland = true;
+    };
     xserver = {
       enable = true;
       videoDrivers = ["nvidia"];
-      displayManager.gdm = {
-        enable = false;
-        wayland = true;
-      };
       # Keymaps
       xkb = {
         variant = "colemak_dh_iso";
@@ -126,6 +135,9 @@
     gvfs.enable = true;
     udisks2.enable = true;
     pcscd.enable = true;
+    teamviewer = {
+      enable = true;
+    };
 
     # hardware.openrgb = {
     #   enable = true;
@@ -174,6 +186,10 @@
     };
   };
 
+  virtualisation.waydroid = {
+    enable = true;
+  };
+
   # DEFAULT USER ACCOUNT
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.aliyss = {
@@ -215,7 +231,7 @@
     ### Globally installed PHP Packages
     phpPackages.composer
     ## NodeJS
-    nodejs_20
+    nodejs_24
     ### Globally installed Node Packages
     nodePackages.typescript
     nodePackages.typescript-language-server
@@ -271,6 +287,7 @@
     # Theme
     ## Wallpaper for Hyprland
     swww
+
     ## Cursor
     hyprcursor
     ## Clipboard

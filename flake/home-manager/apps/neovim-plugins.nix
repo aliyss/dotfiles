@@ -10,7 +10,7 @@
     name = "nyoom-oxocarbon";
     src = pkgs.fetchgit {
       url = "https://github.com/nyoom-engineering/oxocarbon.nvim";
-      sha256 = "sha256-Hi/nATEvZ4a6Yxc66KtuJqss6kQV19cmtIlhCw6alOI=";
+      sha256 = "sha256-fjA1Qj+R8dlgPQo2ziIeCmTebqGt7DGpQvc7GYJZSKQ=";
     };
   };
   # harpoon = pkgs.vimUtils.buildVimPlugin {
@@ -73,8 +73,8 @@
     name = "wookayin-semshi";
     src = pkgs.fetchgit {
       url = "https://github.com/wookayin/semshi";
-      rev = "0182447e2ff4dfa04cd2dfe5f189e012c581ca45";
-      sha256 = "sha256-gQy8rQBTzODp8OfnHdggxSq275/9T8feJAkWzH+CdvU=";
+      rev = "fa32fbc5faf0b46f2e7a981a90b87ee54bcca42a";
+      sha256 = "sha256-a0iOAX0VlcpM+LOIHYOPIl2S2YDAesmL9a/ruB6RftM=";
     };
   };
   git-rest-nvim = pkgs.vimUtils.buildVimPlugin {
@@ -176,6 +176,14 @@
       url = "https://github.com/olexsmir/gopher.nvim";
       rev = "0ed14a40d9799ac8d92aaf9eb1cd9be22ffd6b14";
       sha256 = "sha256-5UpNPRh4YdAtpiFTazqCSLeJ0TMmPCm8lVyNFsIJ3lE=";
+    };
+  };
+  workspace-diagnostics = pkgs.vimUtils.buildVimPlugin {
+    name = "workspace-diagnostics";
+    src = pkgs.fetchgit {
+      url = "https://github.com/artemave/workspace-diagnostics.nvim";
+      rev = "573ff93c47898967efdfbc6587a1a39e3c2d365e";
+      sha256 = "sha256-lBj4KUPmmhtpffYky/HpaTwY++d/Q9socp/Ys+4VeX0=";
     };
   };
 }

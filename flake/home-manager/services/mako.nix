@@ -1,8 +1,10 @@
 {
   services.mako = {
     enable = true;
-    defaultTimeout = 4000;
-    backgroundColor = "#000000";
-    borderRadius = 0;
+    settings = {
+      default-timeout = 4000;
+      background-color = "#000000";
+      border-radius = 0;
+    };
   };
 }
