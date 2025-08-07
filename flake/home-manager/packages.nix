@@ -71,11 +71,15 @@ in {
       ani-cli
 
       ## Audio
-      vscode
-      cli-visualizer
+
+      ## Music
+      youtube-music
 
       ## SSH
       sshpass
+
+      ## Zoxide
+      zoxide
 
       zen-browser.packages."${system}".default
     ]

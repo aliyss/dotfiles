@@ -16,7 +16,7 @@
       start-camera = "scrcpy --video-source=camera --no-audio --camera-id=1 --v4l2-sink=/dev/video0 --no-video-playback";
     };
     sessionVariables = {ZSH_TMUX_AUTOSTART = "true";};
-    initExtra = ''
+    initContent = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh;
       bindkey '^f' autosuggest-accept;
       bindkey -v

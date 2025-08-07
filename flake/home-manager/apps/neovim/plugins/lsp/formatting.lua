@@ -7,6 +7,7 @@ conform.setup({
 		python = { "isort", "black" },
 		nix = { "alejandra" },
 		json = { "prettierd" },
+		-- jsonc = { "prettierd" },
 		css = { "prettierd" },
 		javascript = { "prettierd" },
 		javascriptreact = { "prettierd" },

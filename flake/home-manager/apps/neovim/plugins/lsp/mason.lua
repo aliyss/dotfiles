@@ -24,6 +24,7 @@ mason_lspconfig.setup({
 		"intelephense",
 		"hyprls",
 		"gopls",
+		"postgres_lsp",
 	},
 })
 
