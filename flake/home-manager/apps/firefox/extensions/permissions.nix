@@ -1120,6 +1120,7 @@
         "<all_urls>"
         "*://*/*"
         "webNavigation"
+        "notifications"
       ];
     };
     "darkreader" = {

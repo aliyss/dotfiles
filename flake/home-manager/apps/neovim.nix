@@ -342,27 +342,27 @@ in {
         config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
         type = "lua";
       }
-      {
-        plugin = avante-nvim.overrideAttrs (old: {
-          version = "git";
-          src = pkgs.fetchFromGitHub {
-            owner = "yetone";
-            repo = "avante.nvim";
-            rev = "db39f5fe1b920fee493a76fb1f717d7c1c73ab6d";
-            sha256 = "sha256-GaQwBOxPOqj7h8AgR3ySCN+1fc9reKT5+vcv5vfzKhk=";
-          };
-          nvimSkipModules = [
-            "avante.providers.vertex_claude"
-            "avante.providers.vertex"
-            "avante.providers.copilot"
-            "avante.providers.gemini"
-            "avante.providers.azure"
-            "avante.providers.ollama"
-          ];
-        });
-        config = builtins.readFile ./neovim/plugins/llm/avante.lua;
-        type = "lua";
-      }
+      # {
+      #   plugin = avante-nvim.overrideAttrs (old: {
+      #     version = "git";
+      #     src = pkgs.fetchFromGitHub {
+      #       owner = "yetone";
+      #       repo = "avante.nvim";
+      #       rev = "db39f5fe1b920fee493a76fb1f717d7c1c73ab6d";
+      #       sha256 = "sha256-GaQwBOxPOqj7h8AgR3ySCN+1fc9reKT5+vcv5vfzKhk=";
+      #     };
+      #     nvimSkipModules = [
+      #       "avante.providers.vertex_claude"
+      #       "avante.providers.vertex"
+      #       "avante.providers.copilot"
+      #       "avante.providers.gemini"
+      #       "avante.providers.azure"
+      #       "avante.providers.ollama"
+      #     ];
+      #   });
+      #   config = builtins.readFile ./neovim/plugins/llm/avante.lua;
+      #   type = "lua";
+      # }
       # {
       #   plugin = augment-vim;
       #   config = builtins.readFile ./neovim/plugins/llm/augment.lua;
