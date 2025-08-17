@@ -5,7 +5,7 @@
     ./services/redis.nix
     ./programs/barracuda.nix
     # ./services/llama-cpp.nix
-    ./services/ollama.nix
+    # ./services/ollama.nix
     # ./services/neo4j.nix
   ];
 
