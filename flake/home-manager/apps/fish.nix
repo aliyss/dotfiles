@@ -45,7 +45,8 @@ in {
       direnv hook fish | source
     '';
     shellAliases = {
-      update-system = "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta";
+      update-system-bequitta = "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta";
+      update-system-blade = "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-blade";
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
       upgrade-flake = "nix flake update ~/.config/flake";
       start-camera = "scrcpy --video-source=camera --no-audio --camera-id=1 --v4l2-sink=/dev/video0 --no-video-playback";

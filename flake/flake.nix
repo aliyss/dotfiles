@@ -2,10 +2,6 @@
   description = "Aliyss' flake.nix configuration file!";
 
   inputs = {
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
@@ -42,6 +38,12 @@
     };
 
     lib = nixpkgs.lib;
+
+    sharedConfigurationModules = [
+      ./configuration.nix
+      ./shared/configuration.nix
+      home-manager.nixosModules.home-manager
+    ];
   in {
     # NIXOS CONFIGURATIONS
     nixosConfigurations = {
@@ -51,11 +53,12 @@
           inherit system;
           inherit inputs;
         };
-        modules = [
-          ./configuration.nix
-          ./bequitta/configuration.nix
-          home-manager.nixosModules.home-manager
-        ];
+        modules =
+          [
+            ./hosts/bequitta/hardware-configuration.nix
+            ./hosts/bequitta/configuration.nix
+          ]
+          ++ sharedConfigurationModules;
       };
       # Laptop: Not yet merged
       aliyss-blade = lib.nixosSystem {
@@ -63,7 +66,12 @@
           inherit system;
           inherit inputs;
         };
-        modules = [./configuration.nix];
+        modules =
+          [
+            ./hosts/blade/hardware-configuration.nix
+            ./hosts/blade/configuration.nix
+          ]
+          ++ sharedConfigurationModules;
       };
     };
     # HOME CONFIGURATIONS

@@ -8,11 +8,6 @@
   lib,
   ...
 }: {
-  imports = [
-    # Untouched hardware configuration file
-    ./hardware-configuration.nix
-  ];
-
   # BOOTLOADER
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -27,9 +22,6 @@
   boot.extraModulePackages = [
     pkgs.linuxPackages.v4l2loopback # Webcam loopback
   ];
-
-  # HOSTNAME
-  networking.hostName = "aliyss-bequitta";
 
   # NETWORKING
   networking.networkmanager.enable = true;
@@ -122,8 +114,8 @@
       enable = true;
       settings = {
         default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
-          # command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
+          # command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
           # command = "${config.programs.hyprland.package}/bin/Hyprland";
           user = "greeter";
         };
@@ -207,7 +199,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     # Lock
-    greetd.tuigreet
+    tuigreet
 
     # Terminal
     foot
@@ -319,12 +311,6 @@
     winetricks
     ## native wayland support (unstable)
     wineWowPackages.waylandFull
-
-    (lutris.override {
-      extraPkgs = pkgs: [
-        # List package dependencies here
-      ];
-    })
 
     # Camera (DroidCam)
     v4l-utils

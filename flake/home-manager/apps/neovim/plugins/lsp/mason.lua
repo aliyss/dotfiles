@@ -26,6 +26,21 @@ mason_lspconfig.setup({
 		"gopls",
 		"postgres_lsp",
 	},
+	automatic_enable = {
+		exclude = {
+			"ts_ls",
+			"html",
+			"lua_ls",
+			"basedpyright",
+			"nil_ls",
+			"vimls",
+			"phpactor",
+			"intelephense",
+			"hyprls",
+			"gopls",
+			"postgres_lsp",
+		},
+	},
 })
 
 mason_tool_installer.setup({

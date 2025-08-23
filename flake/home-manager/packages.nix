@@ -1,7 +1,6 @@
 {
   pkgs,
   spicetify-nix,
-  zen-browser,
   ...
 }: let
   work-packages = import ./work-packages.nix {inherit pkgs;};
@@ -15,6 +14,7 @@ in {
   imports = [
     spicetify-nix.homeManagerModules.default
   ];
+
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs;
@@ -25,18 +25,26 @@ in {
       # (pkgs.writeShellScriptBin "my-hello" ''
       #   echo "Hello, ${config.home.username}!"
       # '')
-      atool
-      httpie
-      tmux
-      stremio
-      tridactyl-native
-      prismlauncher
-      heroic
-      # nyxt
+
+      # ---------------------------------- #
+      # Isaac Sekei
+      # ---------------------------------- #
+
+      ## Development
       bun
       jq
-      lynx
 
+      # ---------------------------------- #
+      # Yara Seraci
+      # ---------------------------------- #
+
+      ## Movies / Series / Anime
+      stremio
+      ani-cli
+
+      ## Gaming
+      prismlauncher
+      heroic
       (pkgs.minecraft-server.overrideAttrs (old: {
         name = "minecraft-server-${minecraftServerInfo.version}";
         version = minecraftServerInfo.version;
@@ -46,42 +54,51 @@ in {
         };
       }))
 
-      btop
+      ## Music
+      youtube-music
 
-      aw-server-rust
+      # ---------------------------------- #
+      # Lowe Söderberg
+      # ---------------------------------- #
 
-      speedtest-cli
+      ## Secret Management
+      bitwarden-cli
 
       ## Email
       mutt-wizard
       neomutt
       pass
-      lynx
       notmuch
       abook
       cronie
       isync
-
-      ## Himalaya
       himalaya
-      chawan
+      mhonarc
+
+      # ---------------------------------- #
+      # Other
+      # ---------------------------------- #
+
+      ## Images
       libsixel
 
-      ## Anime
-      ani-cli
-
-      ## Audio
-
-      ## Music
-      youtube-music
-
-      ## SSH
+      ## Terminal
       sshpass
+      httpie
+      tmux
 
-      ## Zoxide
-      zoxide
+      ## Browser
+      tridactyl-native
+      chawan
 
-      zen-browser.packages."${system}".default
+      ## Monitoring
+      btop
+      aw-server-rust
+
+      # ---------------------------------- #
+      # Deprecated / Unused
+      # ---------------------------------- #
+      # atool
     ]
     ++ work-packages.packages
     ++ broken-packages.packages;

@@ -16,7 +16,7 @@
   };
 
   # Read the .env file safely
-  envFile = builtins.readFile "${config.home.homeDirectory}/.config/.env";
+  envFile = ./.env;
 
   envVars = builtins.foldl' (
     acc: line: let
