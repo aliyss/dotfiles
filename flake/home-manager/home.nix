@@ -16,8 +16,6 @@
   };
 
   # Read the .env file safely
-  envFile = ./.env;
-
   envVars = builtins.foldl' (
     acc: line: let
       parts = lib.splitString "=" line;
@@ -25,7 +23,7 @@
       if builtins.length parts == 2
       then acc // {"${(builtins.elemAt parts 0)}" = "${(builtins.elemAt parts 1)}";}
       else acc
-  ) {} (lib.splitString "\n" envFile);
+  ) {} (lib.splitString "\n" "");
 in {
   imports = [
     ./packages.nix
