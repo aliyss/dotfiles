@@ -2,4 +2,4 @@
 images = true
 
 [display]
-image-mode = "sixel"
+image-mode = "auto"

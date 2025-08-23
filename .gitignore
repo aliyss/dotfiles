@@ -35,6 +35,7 @@
 
 # Flake
 !/flake/
+# /flake/*/.env
 
 # Foot
 !/foot/
