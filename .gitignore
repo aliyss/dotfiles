@@ -15,8 +15,8 @@
 # Images
 !/images/
 
-# Tridactyl
-!/chawan/
+# Chawan
+!/chawan/config.toml
 
 # Emacs
 !/emacs/
