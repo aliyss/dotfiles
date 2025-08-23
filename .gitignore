@@ -15,8 +15,8 @@
 # Images
 !/images/
 
-# Chawan
-!/chawan/config.toml
+# Tridactyl
+!/chawan/
 
 # Emacs
 !/emacs/
@@ -35,7 +35,7 @@
 
 # Flake
 !/flake/
-# /flake/*/.env
+/flake/*/.env
 
 # Foot
 !/foot/
