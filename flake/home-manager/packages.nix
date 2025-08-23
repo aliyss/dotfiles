@@ -33,6 +33,9 @@ in {
       ## Development
       bun
       jq
+      ripgrep
+      fd
+      gh
 
       # ---------------------------------- #
       # Yara Seraci
@@ -41,6 +44,9 @@ in {
       ## Movies / Series / Anime
       stremio
       ani-cli
+
+      ## Social
+      gurk-rs
 
       ## Gaming
       prismlauncher
@@ -63,6 +69,7 @@ in {
 
       ## Secret Management
       bitwarden-cli
+      rbw # Rust Bitwarden CLI - Faster than bitwarden-cli and uses memory storage
 
       ## Email
       mutt-wizard

@@ -50,11 +50,19 @@ in {
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
       upgrade-flake = "nix flake update ~/.config/flake";
       start-camera = "scrcpy --video-source=camera --no-audio --camera-id=1 --v4l2-sink=/dev/video0 --no-video-playback";
+      bw-unlock = "export BW_SESSION=$(command bw unlock --raw)";
+      bw = "[ -z \"$BW_SESSION\" ] && bw-unlock; command bw";
+      rbw = "DISPLAY= command rbw";
+      no-console-rbw = "command rbw";
     };
     plugins = [
+      # {
+      #   name = "fzf";
+      #   src = pkgs.fishPlugins.fzf.src;
+      # }
       {
         name = "fzf";
-        src = pkgs.fishPlugins.fzf.src;
+        src = pkgs.fishPlugins.fzf-fish.src;
       }
       {
         name = "catppuccin-fish";
@@ -82,5 +90,11 @@ in {
         src = pkgs.fishPlugins.z.src;
       }
     ];
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    enableFishIntegration = true;
   };
 }

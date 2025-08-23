@@ -10,6 +10,7 @@
   - [[#zsh][ZSH]]
   - [[#tmux][Tmux]]
   - [[#emacs][Emacs]]
+  - [[#neovim][Neovim]]
   - [[#spotify][Spotify]]
   - [[#tridactyl][Tridactyl]]
   - [[#other][Other]]
@@ -99,20 +100,17 @@ Need to configure Ressurect & Continuum, so I can restart from where I left off.
 ** Emacs
 *Configuration:* [[./emacs/config.org][config.org]]
 
-I switched from NeoVim to Emacs. No regrets. Stuck in the same configuration hell.
+~I switched from Neovim to Emacs. No regrets. Stuck in the same configuration hell.~
 
 [[./images/emacs.png]]
+** Neovim
+*Configuration:* [[./flake/home-manager/apps/neovim.nix][neovim.nix]]
+
+I switched back to Neovim. No regrets. Stuck in the same configuration hell.
 
 *** Installation
-**** Configure Org-Gcal
-1. Make sure you are using GnuPG 2.4.0 since 2.4.1 has [[https://github.com/kidd/org-gcal.el/issues/236#issuecomment-1646443501][issues]].
-2. Create Configuration Files:
-   - [[~/.config/emacs/.local/org-gcal/org-gcal-client-id]]
-   - [[~/.config/emacs/.local/org-gcal/org-gcal-client-secret]]
-3. Fill data after following the [[https://github.com/kidd/org-gcal.el#installation][Org-Gcal Installation]].
-
-**** Install LSP Modes
-Install the lsp-servers you need with ~M-x lsp-server-install~.
+**** Semshi complaining
+Run the following command in Neovim: `UpdateRemotePlugins`
 
 ** Spotify
 *Configuration:* [[./flake/home-manager/apps/spicetify.nix][spicetify.nix]]

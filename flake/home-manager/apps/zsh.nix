@@ -15,6 +15,10 @@
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
       upgrade-flake = "nix flake update ~/.config/flake";
       start-camera = "scrcpy --video-source=camera --no-audio --camera-id=1 --v4l2-sink=/dev/video0 --no-video-playback";
+      bw-unlock = "export BW_SESSION=$(command bw unlock --raw)";
+      bw = "[ -z \"$BW_SESSION\" ] && bw-unlock; command bw";
+      rbw = "DISPLAY= command rbw";
+      no-console-rbw = "command rbw";
     };
     sessionVariables = {ZSH_TMUX_AUTOSTART = "true";};
     initContent = ''
@@ -37,10 +41,5 @@
       fi
 
     '';
-  };
-
-  programs.fzf = {
-    enable = true;
-    enableZshIntegration = true;
   };
 }
