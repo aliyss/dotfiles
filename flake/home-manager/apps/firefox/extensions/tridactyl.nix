@@ -21,7 +21,7 @@
     set newtab about:newtab
     set allowautofocus false
     set smoothscroll true
-    set editorcmd emacsclient -a \"\" -c -e '(progn (find-file "%f") (forward-line (1- %l)) (forward-char %c))'
+    set editorcmd nvim
 
     unbind --mode=normal b
     bind bb tabprev

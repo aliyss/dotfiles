@@ -1,33 +1,47 @@
 #!/bin/bash
 
-# This script will randomly go through the files of a directory, setting it
-# up as the wallpaper at regular intervals
-#
-# NOTE: this script is in bash (not posix shell), because the RANDOM variable
-# we use is not defined in posix
+# Random wallpaper switcher for light/day and dark/night themes
+# Usage: ./wallpaper.sh <light_images_dir> <dark_images_dir>
 
-if [[ $# -lt 1 ]] || [[ ! -d $1   ]] || [[ ! -d $2   ]]; then
-	echo "Usage:
-	$0 <dir containing images>"
-	exit 1
+if [[ $# -lt 2 ]] || [[ ! -d $1 ]] || [[ ! -d $2 ]]; then
+    echo "Usage:"
+    echo "  $0 <light_images_dir> <dark_images_dir>"
+    exit 1
 fi
 
-# Edit below to control the images transition
+LIGHT_DIR="$1"
+DARK_DIR="$2"
+
+# Transition settings for swww
 export SWWW_TRANSITION_FPS=60
 export SWWW_TRANSITION_STEP=2
 
-# This controls (in seconds) when to switch to the next image
+# Interval between wallpapers (seconds)
 INTERVAL=60
 
+# Define day/night hours
+DAY_START=7    # 07:00
+NIGHT_START=19  # 19:00
+
 while true; do
-	find "$1" \
-		| while read -r img; do
-			echo "$((RANDOM % 1000)):$img"
-		done \
-		| sort -n | cut -d':' -f2- \
-		| while read -r img; do
-			swww img "$img"
-			sleep $INTERVAL
-                        echo "$img"
-		done
+    HOUR=$(date +%H)
+
+    # Pick directory based on time of day
+    if (( HOUR >= DAY_START && HOUR < NIGHT_START )); then
+        IMG_DIR="$LIGHT_DIR"
+    else
+        IMG_DIR="$DARK_DIR"
+    fi
+
+    # Shuffle and cycle images
+    find "$IMG_DIR" -type f \
+        | while read -r img; do
+            echo "$((RANDOM % 1000)):$img"
+        done \
+        | sort -n | cut -d':' -f2- \
+        | while read -r img; do
+            swww img "$img"
+            echo "Set wallpaper: $img"
+            sleep $INTERVAL
+        done
 done

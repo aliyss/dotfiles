@@ -240,7 +240,7 @@ wk.add({
 	{
 		"<leader>me",
 		function()
-			vim.cmd(":HIMALAYAToggle")
+			vim.cmd(":HimalayaUIToggle")
 		end,
 		desc = "Toggle Himalaya",
 	},
