@@ -10,7 +10,7 @@
     name = "nyoom-oxocarbon";
     src = pkgs.fetchgit {
       url = "https://github.com/nyoom-engineering/oxocarbon.nvim";
-      sha256 = "sha256-fjA1Qj+R8dlgPQo2ziIeCmTebqGt7DGpQvc7GYJZSKQ=";
+      sha256 = "sha256-gfLEJrBidXv2EnFZXIzFLeBIBHfXN8XSkhX0LTaZTJo=";
     };
   };
   # harpoon = pkgs.vimUtils.buildVimPlugin {

@@ -100,7 +100,6 @@ in {
 
       ## Monitoring
       btop
-      aw-server-rust
 
       # ---------------------------------- #
       # Deprecated / Unused
