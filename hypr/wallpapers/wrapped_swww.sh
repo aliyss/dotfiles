@@ -6,7 +6,7 @@
 # NOTE: this script is in bash (not posix shell), because the RANDOM variable
 # we use is not defined in posix
 
-if [[ $# -lt 1 ]] || [[ ! -d $1   ]]; then
+if [[ $# -lt 1 ]] || [[ ! -d $1   ]] || [[ ! -d $2   ]]; then
 	echo "Usage:
 	$0 <dir containing images>"
 	exit 1
