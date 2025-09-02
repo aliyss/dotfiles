@@ -121,8 +121,8 @@
     name = "pipeline-nvim";
     src = pkgs.fetchgit {
       url = "https://github.com/topaxi/pipeline.nvim";
-      rev = "805d918b0ff0811611a40eaa7a662600900044e8";
-      sha256 = "sha256-R360qmXENRguzDzP3I7+vMRZ6aCeJm5YcdV51WfRDOQ=";
+      rev = "d14a27ba7f25ecb72e28bb9844672de99b151eaa";
+      sha256 = "sha256-Pl1HkXpnyAIVct3BjGtGTQf2M270Gq5wSh+KUKnL1Tk=";
     };
   };
   incline-nvim = pkgs.vimUtils.buildVimPlugin {

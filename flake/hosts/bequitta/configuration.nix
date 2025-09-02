@@ -18,4 +18,11 @@
     source = ./services/redis/release/timeseries.so;
     mode = "755";
   };
+
+  services = {
+    xserver = {
+      enable = true;
+      videoDrivers = ["nvidia"];
+    };
+  };
 }
