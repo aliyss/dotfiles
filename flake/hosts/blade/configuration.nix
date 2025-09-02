@@ -7,4 +7,11 @@
 
   # HOSTNAME
   networking.hostName = "aliyss-blade";
+
+  services = {
+    xserver = {
+      enable = true;
+      videoDrivers = ["intel" "modesetting"];
+    };
+  };
 }
