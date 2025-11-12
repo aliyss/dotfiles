@@ -1,6 +1,6 @@
 {
   pkgs,
-  spicetify-nix,
+  nixpkgs-for-stremio,
   ...
 }: let
   work-packages = import ./work-packages.nix {inherit pkgs;};
@@ -11,101 +11,104 @@
     sha256 = "sha256-yWOU2ob52fnvfKLS7h8vCYDCm3qlyUtDwCxQQ1289T8=";
   };
 in {
-  imports = [
-    spicetify-nix.homeManagerModules.default
-  ];
+  imports = [];
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = with pkgs;
-    [
-      # # You can also create simple shell scripts directly inside your
-      # # configuration. For example, this adds a command 'my-hello' to your
-      # # environment:
-      # (pkgs.writeShellScriptBin "my-hello" ''
-      #   echo "Hello, ${config.home.username}!"
-      # '')
+  home.packages = let
+    stremioPkgs = import nixpkgs-for-stremio {
+      inherit (pkgs) system;
+    };
+  in
+    with pkgs;
+      [
+        # # You can also create simple shell scripts directly inside your
+        # # configuration. For example, this adds a command 'my-hello' to your
+        # # environment:
+        # (pkgs.writeShellScriptBin "my-hello" ''
+        #   echo "Hello, ${config.home.username}!"
+        # '')
 
-      # ---------------------------------- #
-      # Isaac Sekei
-      # ---------------------------------- #
+        # ---------------------------------- #
+        # Isaac Sekei
+        # ---------------------------------- #
 
-      ## Development
-      bun
-      jq
-      ripgrep
-      fd
-      gh
+        ## Development
+        bun
+        jq
+        ripgrep
+        fd
+        gh
 
-      # ---------------------------------- #
-      # Yara Seraci
-      # ---------------------------------- #
+        # ---------------------------------- #
+        # Yara Seraci
+        # ---------------------------------- #
 
-      ## Movies / Series / Anime
-      stremio
-      ani-cli
+        ## Movies / Series / Anime
+        (stremioPkgs.stremio)
+        ani-cli
 
-      ## Social
-      gurk-rs
+        ## Social
+        gurk-rs
 
-      ## Gaming
-      prismlauncher
-      heroic
-      (pkgs.minecraft-server.overrideAttrs (old: {
-        name = "minecraft-server-${minecraftServerInfo.version}";
-        version = minecraftServerInfo.version;
-        src = pkgs.fetchurl {
-          url = minecraftServerInfo.url;
-          sha256 = minecraftServerInfo.sha256;
-        };
-      }))
+        ## Gaming
+        prismlauncher
+        heroic
+        (pkgs.minecraft-server.overrideAttrs (old: {
+          name = "minecraft-server-${minecraftServerInfo.version}";
+          version = minecraftServerInfo.version;
+          src = pkgs.fetchurl {
+            url = minecraftServerInfo.url;
+            sha256 = minecraftServerInfo.sha256;
+          };
+        }))
 
-      ## Music
-      youtube-music
+        ## Music
+        youtube-music
 
-      # ---------------------------------- #
-      # Lowe Söderberg
-      # ---------------------------------- #
+        # ---------------------------------- #
+        # Lowe Söderberg
+        # ---------------------------------- #
 
-      ## Secret Management
-      bitwarden-cli
-      rbw # Rust Bitwarden CLI - Faster than bitwarden-cli and uses memory storage
+        ## Secret Management
+        bitwarden-cli
+        rbw # Rust Bitwarden CLI - Faster than bitwarden-cli and uses memory storage
 
-      ## Email
-      mutt-wizard
-      neomutt
-      pass
-      notmuch
-      abook
-      cronie
-      isync
-      himalaya
-      mhonarc
+        ## Email
+        mutt-wizard
+        neomutt
+        pass
+        notmuch
+        abook
+        cronie
+        isync
+        himalaya
+        mhonarc
 
-      # ---------------------------------- #
-      # Other
-      # ---------------------------------- #
+        # ---------------------------------- #
+        # Other
+        # ---------------------------------- #
 
-      ## Images
-      libsixel
+        ## Images
+        libsixel
 
-      ## Terminal
-      sshpass
-      httpie
-      tmux
+        ## Terminal
+        sshpass
+        httpie
+        tmux
 
-      ## Browser
-      tridactyl-native
-      chawan
+        ## Browser
+        tridactyl-native
+        chawan
 
-      ## Monitoring
-      btop
+        ## Monitoring
+        btop
 
-      # ---------------------------------- #
-      # Deprecated / Unused
-      # ---------------------------------- #
-      # atool
-    ]
-    ++ work-packages.packages
-    ++ broken-packages.packages;
+        # ---------------------------------- #
+        # Deprecated / Unused
+        # ---------------------------------- #
+        # atool
+      ]
+      ++ work-packages.packages
+      ++ broken-packages.packages;
 }

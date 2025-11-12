@@ -100,6 +100,7 @@
       enable = false;
       wayland = true;
     };
+    # desktopManager.gnome.enable = true;
     xserver = {
       enable = true;
       videoDrivers = ["nvidia"];
@@ -109,13 +110,15 @@
         layout = "us";
       };
     };
+    # rtkit.enable = true;
+    # dbus.enable = true;
 
     greetd = {
       enable = true;
       settings = {
         default_session = {
           command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
-          # command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
+          # command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd niri";
           # command = "${config.programs.hyprland.package}/bin/Hyprland";
           user = "greeter";
         };
@@ -152,6 +155,7 @@
     useXkbConfig = true;
   };
 
+  security.rtkit.enable = true;
   security.pam.services.hyprlock = {
     # text = "auth include system-auth";
     text = "auth include login";
@@ -193,6 +197,9 @@
   # NIXPKGS CONFIG
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.cudaSupport = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "qtwebengine-5.15.19"
+  ];
   # nixpkgs.config.pulseaudio = true;
 
   # SYSTEM PROFILE PACKAGES
@@ -274,7 +281,7 @@
     pavucontrol
 
     # Browser
-    firefox-wayland
+    # firefox
 
     # Theme
     ## Wallpaper for Hyprland
@@ -284,10 +291,26 @@
     hyprcursor
     ## Clipboard
     clipse
+    # Keyboard
+    (wlr-which-key.overrideAttrs (oldAttrs: {
+      version = "1.3.0";
+      src = pkgs.fetchFromGitHub {
+        owner = "MaxVerevkin";
+        repo = "wlr-which-key";
+        rev = "v1.3.0";
+        hash = "sha256-2dVTN5aaXeGBUKhsuUyDfELyL4AcKoaPXD0gN7ydL/Y=";
+      };
+      cargoHash = "";
+    }))
 
     # Screenshots
     grim
     slurp
+
+    # Screencasting
+    # wlr-randr
+    # xwayland-satellite
+    # xdg-desktop-portal-gnome
 
     # Git
     git
@@ -345,13 +368,31 @@
   programs.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    # plugins = [
+    #   # inputs.hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace
+    # ];
+    # xwayland = {
+    #   enable = true;
+    # };
+  };
+
+  programs.niri = {
+    enable = false;
+    # package = pkgs.hyprland;
   };
 
   xdg.portal = {
     enable = true;
+    xdgOpenUsePortal = true;
+    config = {
+      common.default = ["gtk"];
+      hyprland.default = ["gtk" "hyprland"];
+      # niri.default = ["gnome" "gtk"];
+    };
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      xdg-desktop-portal-wlr
+      # xdg-desktop-portal-hyprland
+      # xdg-desktop-portal-gnome
     ];
   };
 
@@ -363,7 +404,7 @@
     enable = true;
     shellAliases = {
       ll = "ls -l";
-      screenshot = ''grim -g "$(slurp -d)"'';
+      screenshot = ''grim -g "$(slurp -d)" - | wl-copy'';
     };
   };
   ## Default Shell
@@ -413,7 +454,7 @@
     nerd-fonts.jetbrains-mono
     noto-fonts
     noto-fonts-cjk-sans
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     liberation_ttf
     fira-code
     fira-code-symbols

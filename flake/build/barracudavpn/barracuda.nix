@@ -9,7 +9,7 @@
 stdenv.mkDerivation rec {
   name = "barracudavpn-${version}";
   deb = "barracudavpn_${version}_amd64.deb";
-  version = "5.2.2";
+  version = "5.3.6";
   src = ./.;
 
   buildInputs = [dpkg];
@@ -23,10 +23,10 @@ stdenv.mkDerivation rec {
   '';
 
   meta = with lib; {
-    description = "Barracuda VPN Client 5.2.2 for Linux";
+    description = "Barracuda VPN Client 5.3.6 for Linux";
     homepage = https://dlportal.barracudanetworks.com/;
     license = licenses.mit;
-    maintainers = [];
+    maintainers = with stdenv.lib.maintainers; [];
     platforms = ["x86_64-linux"];
   };
 }
