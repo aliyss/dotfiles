@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  hyprland-plugins,
   ...
 }: let
   # Default session variables
@@ -30,7 +31,7 @@ in {
 
     ./apps/wayland.nix
     ./apps/tmux.nix
-    ./apps/spicetify.nix
+    # ./apps/spicetify.nix
     ./apps/yazi.nix
     ./apps/fish.nix
     ./apps/direnv.nix
@@ -85,4 +86,21 @@ in {
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  nixpkgs.config.permittedInsecurePackages = [
+    "qtwebengine-5.15.19"
+  ];
+
+  wayland.windowManager.hyprland = {
+    enable = true;
+    plugins = [
+      hyprland-plugins.packages.${pkgs.system}.hyprexpo
+      hyprland-plugins.packages.${pkgs.system}.hyprscrolling
+    ];
+    extraConfig = ''
+      source = ~/.config/hypr/hyprland_source.conf
+    '';
+  };
+
+  nixpkgs.config.allowUnfree = true;
 }

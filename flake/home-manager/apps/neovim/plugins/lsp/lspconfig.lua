@@ -1,4 +1,3 @@
-local lspconfig = require("lspconfig")
 local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
 vim.filetype.add({
@@ -18,7 +17,7 @@ vim.filetype.add({
 })
 
 vim.api.nvim_create_autocmd("LSPAttach", {
-	group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+	-- group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 	callback = function(ev)
 		local opts = { buffer = ev.buf, silent = true }
 
@@ -53,6 +52,25 @@ vim.api.nvim_create_autocmd("LSPAttach", {
 		bufmap("<leader>lS", require("telescope.builtin").lsp_dynamic_workspace_symbols, opts)
 
 		bufmap("K", vim.lsp.buf.hover)
+
+		-- local bufnr = ev.buf
+		-- local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
+		--
+		-- if client:supports_method(vim.lsp.protocol.Methods.textDocument_inlineCompletion, bufnr) then
+		-- 	vim.lsp.inline_completion.enable(true, { bufnr = bufnr })
+		-- 	vim.keymap.set(
+		-- 		'i',
+		-- 		'<C-F>',
+		-- 		vim.lsp.inline_completion.get,
+		-- 		{ desc = 'LSP: accept inline completion', buffer = bufnr }
+		-- 	)
+		-- 	vim.keymap.set(
+		-- 		'i',
+		-- 		'<C-G>',
+		-- 		vim.lsp.inline_completion.select,
+		-- 		{ desc = 'LSP: switch inline completion', buffer = bufnr }
+		-- 	)
+		-- end
 	end,
 })
 
@@ -68,7 +86,7 @@ for type, icon in pairs(signs) do
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
-lspconfig["lua_ls"].setup({
+vim.lsp.config("lua_ls", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 	settings = {
@@ -101,7 +119,7 @@ lspconfig["lua_ls"].setup({
 
 local util = require("lspconfig/util")
 
-lspconfig["basedpyright"].setup({
+vim.lsp.config("basedpyright", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 	settings = {
@@ -122,7 +140,7 @@ lspconfig["basedpyright"].setup({
 	},
 })
 
-lspconfig["gopls"].setup({
+vim.lsp.config("gopls", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 	cmd = { "gopls" },
@@ -139,28 +157,28 @@ lspconfig["gopls"].setup({
 	},
 })
 
-lspconfig["phpactor"].setup({
+vim.lsp.config("phpactor", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 })
 
-lspconfig["nil_ls"].setup({
+vim.lsp.config("nil_ls", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 })
 
-lspconfig["hyprls"].setup({
+vim.lsp.config("hyprls", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 })
 
-lspconfig["vimls"].setup({
+vim.lsp.config("vimls", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 	filetypes = { "vim" },
 })
 
-lspconfig["ts_ls"].setup({
+vim.lsp.config("ts_ls", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 	init_options = {
@@ -174,27 +192,30 @@ lspconfig["ts_ls"].setup({
 	},
 })
 
-lspconfig["volar"].setup({
+vim.lsp.config("volar", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 })
 
-lspconfig["postgres_lsp"].setup({
+vim.lsp.config("postgres_lsp", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 	cmd = { "postgrestools", "lsp-proxy", "--log-path", "./output.log" },
 	single_file_support = true,
 })
 
-lspconfig["tailwindcss"].setup({
+vim.lsp.config("tailwindcss", {
 	capabilities = capabilities,
 })
 
-lspconfig["rust_analyzer"].setup({
+vim.lsp.config("rust_analyzer", {
 	on_attach = on_attach,
 	capabilities = capabilities,
-	filetypes = { "rust" },
-	root_dir = util.root_pattern("Cargo.toml"),
+	cmd = { 'rust-analyzer' },
+	filetypes = { 'rust' },
+	root_markers = { "Cargo.toml", ".git" },
+	single_file_support = true,
+	-- root_dir = util.root_pattern("Cargo.toml"),
 	settings = {
 		["rust-analyzer"] = {
 			check = {
@@ -209,6 +230,38 @@ lspconfig["rust_analyzer"].setup({
 		},
 	},
 })
+
+vim.lsp.config("copilot", {
+	on_attach = on_attach,
+	capabilities = capabilities,
+})
+
+-- vim.lsp.config(
+-- 	"copilotlsp-nvim/copilot-lsp", {
+-- 		init = function()
+-- 			vim.g.copilot_nes_debounce = 500
+-- 			vim.lsp.enable("copilot_ls")
+--
+-- 			vim.keymap.set("n", "<tab>", function()
+-- 				local bufnr = vim.api.nvim_get_current_buf()
+-- 				local state = vim.b[bufnr].nes_state
+-- 				if state then
+-- 					-- Try to jump to the start of the suggestion edit.
+-- 					-- If already at the start, then apply the pending suggestion and jump to the end of the edit.
+-- 					local _ = require("copilot-lsp.nes").walk_cursor_start_edit()
+-- 						or (
+-- 							require("copilot-lsp.nes").apply_pending_nes()
+-- 							and require("copilot-lsp.nes").walk_cursor_end_edit()
+-- 						)
+-- 					return nil
+-- 				else
+-- 					-- Resolving the terminal's inability to distinguish between `TAB` and `<C-i>` in normal mode
+-- 					return "<C-i>"
+-- 				end
+-- 			end, { desc = "Accept Copilot NES suggestion", expr = true })
+-- 		end,
+-- 	}
+-- )
 
 local configs = require("lspconfig.configs")
 
@@ -229,7 +282,7 @@ configs.blade = {
 	},
 }
 
-lspconfig["blade"].setup({
+vim.lsp.config("blade", {
 	on_attach = on_attach,
 	capabilities = capabilities,
 })
@@ -237,3 +290,16 @@ lspconfig["blade"].setup({
 require("neodev").setup({
 	library = { plugins = { "nvim-dap-ui" }, types = true },
 })
+
+vim.lsp.enable({
+	"lua_ls",
+	"nil_ls",
+	"basedpyright",
+	"vim",
+	"blade",
+	"ts_ls",
+	"postgres_lsp",
+	"tailwindcss",
+	"rust_analyzer"
+})
+-- vim.lsp.enable("copilotlsp-nvim/copilot-lsp")
