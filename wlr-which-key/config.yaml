@@ -1,0 +1,270 @@
+# Theming
+font: JetBrainsMono Nerd Font 12
+background: "#282828d0"
+color: "#fbf1c7"
+border: "#8ec07c"
+separator: " ➜ "
+border_width: 1
+corner_r: 0
+padding: 15 # Defaults to corner_r
+rows_per_column: 5 # No limit by default
+column_padding: 25 # Defaults to padding
+
+# Anchor and margin
+anchor: center # One of center, left, right, top, bottom, bottom-left, top-left, etc.
+# Only relevant when anchor is not center
+margin_right: 0
+margin_bottom: 0
+margin_left: 0
+margin_top: 0
+
+# namespace to use for the layer shell surface
+# namespace: "wlr_which_key"
+
+# Permits key bindings that conflict with compositor key bindings.
+# Default is `false`.
+inhibit_compositor_keyboard_shortcuts: true
+
+# Try to guess the correct keyboard layout to use. Default is `false`.
+auto_kbd_layout: true
+
+menu:
+  - key: "p"
+    desc: Power
+    submenu:
+      - key: "s"
+        desc: Shutdown
+        cmd: shutdown -h 0
+      - key: "r"
+        desc: Reboot
+        cmd: reboot
+  - key: "l"
+    desc: Laptop Screen
+    submenu:
+      - key: "t"
+        desc: Toggle On/Off
+        cmd: toggle-laptop-display.sh
+  - key: ["B", "W"]
+    desc: Window Management
+    cmd: niri msg action open-overview; wlr-which-key -k "w"
+
+  - key: ["b", "w"]
+    desc: Window Management
+    submenu:
+      - key: "n"
+        desc: Next Window
+        cmd: niri msg action focus-column-right-or-first; niri msg action close-overview
+      - key: ["p", "b", "w"]
+        desc: Previous Window
+        cmd: niri msg action focus-column-left-or-last; niri msg action close-overview
+      - key: "l"
+        desc: Right Window
+        cmd: niri msg action focus-column-right-or-first; niri msg action close-overview
+      - key: "h"
+        desc: Left Window
+        cmd: niri msg action focus-column-left-or-last; niri msg action close-overview
+      - key: "j"
+        desc: Down Window
+        cmd: niri msg action focus-window-or-workspace-down; niri msg action close-overview
+      - key: "k"
+        desc: Up Window
+        cmd: niri msg action focus-window-or-workspace-up; niri msg action close-overview
+      - key: "f"
+        desc: Fullscreen Window
+        cmd: niri msg action fullscreen-window; niri msg action close-overview
+      - key: "q"
+        desc: Close Window
+        cmd: niri msg action close-window; niri msg action close-overview
+      - key: "c"
+        desc: Close Window
+        cmd: niri msg action close-window; niri msg action close-overview
+      - key: ["o", "a", "e"]
+        desc: Open Overview
+        cmd: wlr-which-key -k "e"
+      # Open Variants
+      - key: "N"
+        desc: Next Window
+        keep_open: true
+        cmd: niri msg action focus-column-right-or-first
+      - key: ["B", "P", "W"]
+        desc: Previous Window
+        keep_open: true
+        cmd: niri msg action focus-column-left-or-last
+      - key: "L"
+        desc: Right Window
+        keep_open: true
+        cmd: niri msg action focus-column-right-or-first
+      - key: "H"
+        desc: Left Window
+        keep_open: true
+        cmd: niri msg action focus-column-left-or-last
+      - key: "J"
+        desc: Down Window
+        keep_open: true
+        cmd: niri msg action focus-window-or-workspace-down
+      - key: "K"
+        desc: Up Window
+        keep_open: true
+        cmd: niri msg action focus-window-or-workspace-up
+      - key: "F"
+        desc: Fullscreen Window
+        keep_open: true
+        cmd: niri msg action fullscreen-window
+      - key: "Q"
+        desc: Close Window
+        keep_open: true
+        cmd: niri msg action close-window
+      - key: "C"
+        desc: Close Window
+        keep_open: true
+        cmd: niri msg action close-window
+      - key: ["O", "A", "E"]
+        desc: Launch Application
+        cmd: niri msg action open-overview; wlr-which-key -k "e"
+
+      # Move Window Variants
+      - key: "Left"
+        desc: Move Window to Left
+        keep_open: true
+        cmd: niri msg action move-column-left
+      - key: "Right"
+        desc: Move Window to Right
+        keep_open: true
+        cmd: niri msg action move-column-right
+      - key: "Down"
+        desc: Move Window Down
+        keep_open: true
+        cmd: niri msg action move-column-to-workspace-down
+      - key: "Up"
+        desc: Move Window Up
+        keep_open: true
+        cmd: niri msg action move-column-to-workspace-up
+      - key: "\""
+        desc: Split Vertically
+        keep_open: true
+        cmd: niri msg action consume-or-expel-window-left; niri msg action close-overview
+      - key: "%"
+        desc: Split Horizontally
+        keep_open: true
+        cmd: niri msg action consume-or-expel-window-right; niri msg action close-overview
+
+      # Reset Overview on Escape
+      - key: ["Escape", "Return"]
+        desc: Close Overview
+        cmd: niri msg action close-overview
+
+
+  - key: ["T"]
+    desc: Workspace Management
+    cmd: niri msg action open-overview; wlr-which-key -k "t"
+
+  - key: "t"
+    desc: Workspace Management
+    submenu: 
+      - key: "n"
+        desc: Next Workspace
+        cmd: niri msg action focus-workspace-down; niri msg action close-overview
+      - key: "p"
+        desc: Previous Workspace
+        cmd: niri msg action focus-workspace-previous; niri msg action close-overview
+      - key: "t"
+        desc: Previous Workspace
+        cmd: niri msg action focus-workspace-up; niri msg action close-overview
+      - key: "o"
+        desc: Toggle Overview
+        cmd: niri msg action toggle-overview
+      # Open Variants
+      - key: "N"
+        desc: Next Workspace
+        keep_open: true
+        cmd: niri msg action focus-workspace-down
+      - key: ["P"]
+        desc: Previous Workspace
+        keep_open: true
+        cmd: niri msg action focus-workspace-previous
+      - key: "T"
+        desc: Previous Workspace
+        keep_open: true
+        cmd: niri msg action focus-workspace-up
+      - key: ["O", "J"]
+        desc: Toggle Overview
+        keep_open: true
+        cmd: niri msg action toggle-overview
+
+
+
+      # Reset Overview on Escape
+      - key: ["Escape", "Return"]
+        desc: Close Overview
+        cmd: niri msg action close-overview
+      # - key: "Shift+Space"
+      #   desc: Toggle Overview
+      #   cmd: niri msg action toggle-overview
+  # - key: "Return"
+  #   desc: Launch Terminal
+  #   cmd: foot
+
+  - key: "E"
+    desc: Launch Applications
+    cmd: niri msg action open-overview; wlr-which-key -k "e"
+
+
+  - key: ["e"]
+    desc: Open Applications
+    submenu:
+      - key: "t"
+        desc: Launch Terminal
+        cmd: niri msg action close-overview; foot
+      - key: "w"
+        desc: Launch Slack
+        cmd: niri msg action close-overview; slack
+      - key: "c"
+        desc: Launch Browser
+        cmd: niri msg action close-overview; firefox
+      - key: "e"
+        desc: Launch Neovim in Tmux
+        cmd: niri msg action close-overview; foot -e tmux new -A -s nvim-screen
+      - key: "y"
+        desc: Launch Yazi in Tmux
+        cmd: niri msg action close-overview; foot -e tmux new -A -s yazi-screen ~/.config/niri/scripts/yazi.sh
+      - key: "s"
+        desc: Launch Youtube Music
+        cmd: niri msg action close-overview; youtube-music
+      - key: "m"
+        desc: Launch Stremio
+        cmd: niri msg action close-overview; stremio
+      # Open Variants
+      - key: "T"
+        desc: Launch Terminal
+        keep_open: true
+        cmd: foot
+      - key: "W"
+        desc: Launch Slack
+        keep_open: true
+        cmd: slack
+      - key: "C"
+        desc: Launch Browser
+        keep_open: true
+        cmd: firefox
+      - key: "E"
+        desc: Launch Neovim in Tmux
+        keep_open: true
+        cmd: foot -e tmux new -A -s nvim-screen
+      - key: "Y"
+        desc: Launch Yazi in Tmux
+        keep_open: true
+        cmd: foot -e tmux new -A -s yazi-screen ~/.config/niri/scripts/yazi.sh
+      - key: "S"
+        desc: Launch Youtube Music
+        keep_open: true
+        cmd: youtube-music
+      - key: "M"
+        desc: Launch Stremio
+        keep_open: true
+        cmd: stremio
+
+      # Reset Overview on Escape
+      - key: ["Escape", "Return"]
+        desc: Close Overview
+        cmd: niri msg action close-overview
+

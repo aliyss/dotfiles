@@ -2,16 +2,12 @@
   description = "Aliyss' flake.nix configuration file!";
 
   inputs = {
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    spicetify-nix = {
-      url = "github:Gerg-L/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixpkgs-for-stremio.url = "nixpkgs/5135c59491985879812717f4c9fea69604e7f26f";
     playit-nixos-module.url = "github:pedorich-n/playit-nixos-module";
     prismlauncher.url = "github:Diegiwg/PrismLauncher-Cracked";
     nur = {
@@ -21,6 +17,16 @@
     tridactyl-native-messenger = {
       url = "github:tridactyl/native_messenger";
       flake = false;
+    };
+    hyprland = {
+      type = "git";
+      url = "https://github.com/hyprwm/Hyprland";
+      submodules = true;
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
     };
   };
 
