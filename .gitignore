@@ -42,6 +42,7 @@
 
 # Hyprland
 !/hypr/
+/hypr/hyprland.conf
 /hypr/device_settings.conf
 
 # Niri
