@@ -36,6 +36,7 @@ in {
         luajitPackages.luacheck
         luajitPackages.lua-lsp
         luajitPackages.lua-curl
+        copilot-language-server
         xclip
         wl-clipboard
         stylua
@@ -43,7 +44,7 @@ in {
         pylint
         pylyzer
         postgresql_16
-        postgres-lsp
+        postgres-language-server
         phpactor
         nodePackages.intelephense
         # phpPackages.php-cs-fixer
@@ -65,6 +66,7 @@ in {
         hyprls
         lolcrab
         nil
+        sqlite
       ]
       ++ [
       ];
@@ -104,11 +106,11 @@ in {
         config = builtins.readFile ./neovim/plugins/neo-tree.lua;
         type = "lua";
       }
-      {
-        plugin = project-nvim;
-        config = builtins.readFile ./neovim/plugins/project.lua;
-        type = "lua";
-      }
+      # {
+      #   plugin = project-nvim;
+      #   config = builtins.readFile ./neovim/plugins/project.lua;
+      #   type = "lua";
+      # }
       ## Treesitter
       nvim-ts-autotag
 
@@ -171,6 +173,8 @@ in {
       luasnip
       friendly-snippets
       lspkind-nvim
+      colorful-menu-nvim
+      blink-cmp
       {
         plugin = nvim-cmp;
         config = builtins.readFile ./neovim/plugins/cmp.lua;
@@ -182,6 +186,44 @@ in {
         config = builtins.readFile ./neovim/plugins/autopairs.lua;
         type = "lua";
       }
+      ## LLM
+      copilot-lsp
+      {
+        plugin = copilot-lua;
+        config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
+        type = "lua";
+      }
+      # {
+      #   plugin = avante-nvim.overrideAttrs (old: {
+      #     version = "git";
+      #     src = pkgs.fetchFromGitHub {
+      #       owner = "yetone";
+      #       repo = "avante.nvim";
+      #       rev = "db39f5fe1b920fee493a76fb1f717d7c1c73ab6d";
+      #       sha256 = "sha256-GaQwBOxPOqj7h8AgR3ySCN+1fc9reKT5+vcv5vfzKhk=";
+      #     };
+      #     nvimSkipModules = [
+      #       "avante.providers.vertex_claude"
+      #       "avante.providers.vertex"
+      #       "avante.providers.copilot"
+      #       "avante.providers.gemini"
+      #       "avante.providers.azure"
+      #       "avante.providers.ollama"
+      #     ];
+      #   });
+      #   config = builtins.readFile ./neovim/plugins/llm/avante.lua;
+      #   type = "lua";
+      # }
+      # {
+      #   plugin = augment-vim;
+      #   config = builtins.readFile ./neovim/plugins/llm/augment.lua;
+      #   type = "lua";
+      # }
+      # {
+      #   plugin = minuet-ai-nvim;
+      #   config = builtins.readFile ./neovim/plugins/llm/minuet.lua;
+      #   type = "lua";
+      # }
       ## LSP
       mason-lspconfig-nvim
       mason-tool-installer-nvim
@@ -335,44 +377,6 @@ in {
       ## Email
       notmuch-vim
       # himalaya-custom-vim
-
-      ## LLM
-      {
-        plugin = copilot-vim;
-        config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
-        type = "lua";
-      }
-      # {
-      #   plugin = avante-nvim.overrideAttrs (old: {
-      #     version = "git";
-      #     src = pkgs.fetchFromGitHub {
-      #       owner = "yetone";
-      #       repo = "avante.nvim";
-      #       rev = "db39f5fe1b920fee493a76fb1f717d7c1c73ab6d";
-      #       sha256 = "sha256-GaQwBOxPOqj7h8AgR3ySCN+1fc9reKT5+vcv5vfzKhk=";
-      #     };
-      #     nvimSkipModules = [
-      #       "avante.providers.vertex_claude"
-      #       "avante.providers.vertex"
-      #       "avante.providers.copilot"
-      #       "avante.providers.gemini"
-      #       "avante.providers.azure"
-      #       "avante.providers.ollama"
-      #     ];
-      #   });
-      #   config = builtins.readFile ./neovim/plugins/llm/avante.lua;
-      #   type = "lua";
-      # }
-      # {
-      #   plugin = augment-vim;
-      #   config = builtins.readFile ./neovim/plugins/llm/augment.lua;
-      #   type = "lua";
-      # }
-      # {
-      #   plugin = minuet-ai-nvim;
-      #   config = builtins.readFile ./neovim/plugins/llm/minuet.lua;
-      #   type = "lua";
-      # }
     ];
     extraLuaConfig = ''
       ${builtins.readFile ./neovim/options.lua}
