@@ -19,13 +19,14 @@
       flake = false;
     };
     hyprland = {
-      type = "git";
-      url = "https://github.com/hyprwm/Hyprland";
-      submodules = true;
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:hyprwm/Hyprland/71a1216abcc7031776630a6d88f105605c4dc1c9";
     };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+    hyprland-dynamic-cursors = {
+      url = "github:VirtCode/hypr-dynamic-cursors";
       inputs.hyprland.follows = "hyprland";
     };
   };
@@ -40,7 +41,9 @@
     pkgs = import nixpkgs {
       localSystem = {inherit system;};
       config.allowUnfree = true;
-      overlays = [nur.overlays.default];
+      overlays = [
+        nur.overlays.default
+      ];
     };
 
     lib = nixpkgs.lib;

@@ -25,6 +25,7 @@ mason_lspconfig.setup({
 		"hyprls",
 		"gopls",
 		"postgres_lsp",
+		"marksman"
 	},
 	automatic_enable = {
 		exclude = {
@@ -39,6 +40,7 @@ mason_lspconfig.setup({
 			"hyprls",
 			"gopls",
 			"postgres_lsp",
+			"marksman"
 		},
 	},
 })

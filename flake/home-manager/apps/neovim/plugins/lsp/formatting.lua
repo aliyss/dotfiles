@@ -14,7 +14,7 @@ conform.setup({
 		typescript = { "prettierd" },
 		typescriptreact = { "prettierd" },
 		php = { "php-cs-fixer" },
-		blade = { "blade-formatter" },
+		-- blade = { "blade-formatter" },
 		go = { "gofumpt" },
 	},
 	formatters = {
@@ -31,16 +31,16 @@ conform.setup({
 		-- 	stdin = false,
 		-- 	cwd = util.root_file({ "composer.json" }),
 		-- },
-		["blade-formatter"] = {
-			meta = {
-				url = "https://github.com/shufo/blade-formatter",
-				description = "An opinionated blade template formatter for Laravel that respects readability.",
-			},
-			command = "blade-formatter",
-			args = { "--stdin" },
-			stdin = true,
-			cwd = util.root_file({ "composer.json", "composer.lock" }),
-		},
+		-- ["blade-formatter"] = {
+		-- 	meta = {
+		-- 		url = "https://github.com/shufo/blade-formatter",
+		-- 		description = "An opinionated blade template formatter for Laravel that respects readability.",
+		-- 	},
+		-- 	command = "blade-formatter",
+		-- 	args = { "--stdin" },
+		-- 	stdin = true,
+		-- 	cwd = util.root_file({ "composer.json", "composer.lock" }),
+		-- },
 	},
 	format_on_save = {
 		lsp_fallback = true,

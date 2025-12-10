@@ -10,9 +10,10 @@ vim.filetype.add({
 		["requirement.*.txt"] = "config",
 		["gitconf.*"] = "gitconfig",
 		[".*.http"] = "http",
-		[".*%.blade%.php"] = "blade",
+		-- [".*%.blade%.php"] = "blade",
 		[".*.hl"] = "hyprlang",
 		["hypr.*.conf"] = "hyprlang",
+		-- [".*.md"] = "marksman",
 	},
 })
 
@@ -157,6 +158,11 @@ vim.lsp.config("gopls", {
 	},
 })
 
+vim.lsp.config("marksman", {
+	on_attach = on_attach,
+	capabilities = capabilities,
+})
+
 vim.lsp.config("phpactor", {
 	on_attach = on_attach,
 	capabilities = capabilities,
@@ -265,27 +271,27 @@ vim.lsp.config("copilot", {
 
 local configs = require("lspconfig.configs")
 
-configs.blade = {
-	default_config = {
-		cmd = { "/home/aliyss/Sources/laravel-dev-tools/laravel-dev-tools", "lsp" },
-		filetypes = { "blade" },
-		root_dir = function(pattern)
-			local cwd = vim.loop.cwd()
-			vim.notify(cwd)
-			local root = util.root_pattern("composer.json", ".git")(pattern)
-			vim.notify(root)
+-- configs.blade = {
+-- 	default_config = {
+-- 		cmd = { "/home/aliyss/Sources/laravel-dev-tools/laravel-dev-tools", "lsp" },
+-- 		filetypes = { "blade" },
+-- 		root_dir = function(pattern)
+-- 			local cwd = vim.loop.cwd()
+-- 			vim.notify(cwd)
+-- 			local root = util.root_pattern("composer.json", ".git")(pattern)
+-- 			vim.notify(root)
+--
+-- 			-- prefer cwd if root is a descendant
+-- 			return util.path.is_descendant(cwd, root) and cwd or root
+-- 		end,
+-- 		settings = {},
+-- 	},
+-- }
 
-			-- prefer cwd if root is a descendant
-			return util.path.is_descendant(cwd, root) and cwd or root
-		end,
-		settings = {},
-	},
-}
-
-vim.lsp.config("blade", {
-	on_attach = on_attach,
-	capabilities = capabilities,
-})
+-- vim.lsp.config("blade", {
+-- 	on_attach = on_attach,
+-- 	capabilities = capabilities,
+-- })
 
 require("neodev").setup({
 	library = { plugins = { "nvim-dap-ui" }, types = true },
@@ -296,10 +302,11 @@ vim.lsp.enable({
 	"nil_ls",
 	"basedpyright",
 	"vim",
-	"blade",
+	-- "blade",
 	"ts_ls",
 	"postgres_lsp",
 	"tailwindcss",
-	"rust_analyzer"
+	"rust_analyzer",
+	"marksman"
 })
 -- vim.lsp.enable("copilotlsp-nvim/copilot-lsp")

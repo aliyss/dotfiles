@@ -4,7 +4,6 @@
 {
   pkgs,
   inputs,
-  config,
   lib,
   ...
 }: {
@@ -100,7 +99,6 @@
       enable = false;
       wayland = true;
     };
-    # desktopManager.gnome.enable = true;
     xserver = {
       enable = true;
       # Keymaps
@@ -109,16 +107,12 @@
         layout = "us";
       };
     };
-    # rtkit.enable = true;
-    # dbus.enable = true;
 
     greetd = {
       enable = true;
       settings = {
         default_session = {
           command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
-          # command = "${pkgs.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd niri";
-          # command = "${config.programs.hyprland.package}/bin/Hyprland";
           user = "greeter";
         };
       };
@@ -132,12 +126,8 @@
     teamviewer = {
       enable = true;
     };
-
-    # hardware.openrgb = {
-    #   enable = true;
-    #   package = pkgs.openrgb-with-all-plugins;
-    # };
   };
+  services.hardware.openrgb.enable = true;
 
   systemd.services.greetd.serviceConfig = {
     Type = "idle";
@@ -265,7 +255,6 @@
     (python311.withPackages (ps:
       with ps; [
         pip
-        # python-openstackclient
       ]))
     ## Go
     go
@@ -344,6 +333,15 @@
     pinentry-gtk2
 
     openrgb-with-all-plugins
+    (heroic.override {
+      extraPkgs = pkgs: [
+        pkgs.gamescope
+      ];
+    })
+    mangohud
+    lutris
+    bottles
+    protonup-qt
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -354,6 +352,12 @@
   #   enableSSHSupport = true;
   # };
 
+  programs.steam = {
+    enable = true;
+  };
+  programs.gamescope.enable = true;
+  programs.gamemode.enable = true;
+
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
@@ -362,17 +366,14 @@
 
   # NIX_LD
   programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    icu
+  ];
 
   # HYPRLAND
   programs.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    # plugins = [
-    #   # inputs.hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace
-    # ];
-    # xwayland = {
-    #   enable = true;
-    # };
   };
 
   programs.niri = {
@@ -382,16 +383,13 @@
 
   xdg.portal = {
     enable = true;
-    xdgOpenUsePortal = true;
+    # xdgOpenUsePortal = true;
     config = {
       common.default = ["gtk"];
       hyprland.default = ["gtk" "hyprland"];
-      # niri.default = ["gnome" "gtk"];
     };
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      # xdg-desktop-portal-hyprland
-      # xdg-desktop-portal-gnome
     ];
   };
 
@@ -484,35 +482,16 @@
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
-    # GBM_BACKEND = "nvidia-drm";
   };
-
-  # environment.etc = let
-  #   mkEglFile = n: library: let
-  #     suffix = lib.optionalString (library != "wayland") ".1";
-  #     pkg =
-  #       if library != "wayland"
-  #       then config.hardware.nvidia.package
-  #       else pkgs.egl-wayland;
-  #
-  #     fileName = "${toString n}_nvidia_${library}.json";
-  #     library_path = "${pkg}/lib/libnvidia-egl-${library}.so${suffix}";
-  #   in {
-  #     "egl/egl_external_platform.d/${fileName}".source = pkgs.writeText fileName (builtins.toJSON {
-  #       file_format_version = "1.0.0";
-  #       ICD = {inherit library_path;};
-  #     });
-  #   };
-  # in
-  #   {"egl/egl_external_platform.d".enable = false;}
-  #   // mkEglFile 10 "wayland"
-  #   // mkEglFile 15 "gbm"
-  #   // mkEglFile 20 "xcb"
-  #   // mkEglFile 20 "xlib";
 
   # FLAKE
   nix = {
-    settings.experimental-features = ["nix-command" "flakes"];
+    settings = {
+      experimental-features = ["nix-command" "flakes"];
+      substituters = ["https://hyprland.cachix.org"];
+      trusted-substituters = ["https://hyprland.cachix.org"];
+      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    };
     registry.nixpkgs.flake = inputs.nixpkgs;
     nixPath = ["nixpkgs=${inputs.nixpkgs}"];
   };
