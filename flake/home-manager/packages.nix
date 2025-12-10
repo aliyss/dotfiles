@@ -53,7 +53,6 @@ in {
 
         ## Gaming
         prismlauncher
-        heroic
         (pkgs.minecraft-server.overrideAttrs (old: {
           name = "minecraft-server-${minecraftServerInfo.version}";
           version = minecraftServerInfo.version;
@@ -103,6 +102,10 @@ in {
 
         ## Monitoring
         btop
+
+        ## Utilities
+        yarn-berry
+        qbittorrent
 
         # ---------------------------------- #
         # Deprecated / Unused

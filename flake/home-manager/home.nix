@@ -2,7 +2,10 @@
   pkgs,
   config,
   lib,
+  hyprland,
   hyprland-plugins,
+  hyprland-dynamic-cursors,
+  hyprland-hyprspace,
   ...
 }: let
   # Default session variables
@@ -93,9 +96,12 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
+    package = hyprland.packages.${pkgs.system}.hyprland;
     plugins = [
-      hyprland-plugins.packages.${pkgs.system}.hyprexpo
-      hyprland-plugins.packages.${pkgs.system}.hyprscrolling
+      # hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo
+      hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
+      hyprland-dynamic-cursors.packages.${pkgs.stdenv.hostPlatform.system}.hypr-dynamic-cursors
+      # hyprland-hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace
     ];
     extraConfig = ''
       source = ~/.config/hypr/hyprland_source.conf

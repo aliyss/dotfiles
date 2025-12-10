@@ -1,31 +1,15 @@
+local presets = require("markview.presets")
+
 require("markview").setup({
+	preview = {
+		enable = true,
+		enable_hybrid_mode = true,
+		-- linewise_hybrid_mode = true,
+		hybrid_modes = { "n" },
+	},
 	markdown = {
-		headings = {
-			enable = true,
-			heading_1 = {
-				style = "icon",
-				hl = "@function",
-			},
-			heading_2 = {
-				style = "icon",
-				hl = "@function",
-			},
-			heading_3 = {
-				style = "icon",
-				hl = "@function",
-			},
-			heading_4 = {
-				style = "icon",
-				hl = "@function",
-			},
-			heading_5 = {
-				style = "icon",
-				hl = "@function",
-			},
-			heading_6 = {
-				style = "icon",
-				hl = "@function",
-			},
-		},
+		headings = presets.headings.glow,
 	},
 })
+
+vim.g.markview_blink_loaded = true;

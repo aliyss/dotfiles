@@ -67,6 +67,7 @@ in {
         lolcrab
         nil
         sqlite
+        marksman
       ]
       ++ [
       ];
@@ -158,34 +159,6 @@ in {
         config = builtins.readFile ./neovim/plugins/modes/orgmode.lua;
         type = "lua";
       }
-      ## Markdown
-      {
-        plugin = markview-nvim;
-        config = builtins.readFile ./neovim/plugins/modes/markview.lua;
-        type = "lua";
-      }
-      ## CMP
-      neodev-nvim
-      cmp-buffer
-      cmp-path
-      cmp-nvim-lsp
-      cmp_luasnip
-      luasnip
-      friendly-snippets
-      lspkind-nvim
-      colorful-menu-nvim
-      blink-cmp
-      {
-        plugin = nvim-cmp;
-        config = builtins.readFile ./neovim/plugins/cmp.lua;
-        type = "lua";
-      }
-      ## Autopairs
-      {
-        plugin = nvim-autopairs;
-        config = builtins.readFile ./neovim/plugins/autopairs.lua;
-        type = "lua";
-      }
       ## LLM
       copilot-lsp
       {
@@ -224,6 +197,29 @@ in {
       #   config = builtins.readFile ./neovim/plugins/llm/minuet.lua;
       #   type = "lua";
       # }
+      ## CMP
+      neodev-nvim
+      cmp-buffer
+      cmp-path
+      cmp-nvim-lsp
+      cmp_luasnip
+      luasnip
+      friendly-snippets
+      lspkind-nvim
+      colorful-menu-nvim
+      blink-cmp
+      blink-cmp-copilot
+      {
+        plugin = nvim-cmp;
+        config = builtins.readFile ./neovim/plugins/cmp.lua;
+        type = "lua";
+      }
+      ## Autopairs
+      {
+        plugin = nvim-autopairs;
+        config = builtins.readFile ./neovim/plugins/autopairs.lua;
+        type = "lua";
+      }
       ## LSP
       mason-lspconfig-nvim
       mason-tool-installer-nvim
@@ -312,7 +308,17 @@ in {
       #   type = "lua";
       # }
       ## Themes
-      nyoom-oxocarbon
+      {
+        plugin = nyoom-oxocarbon;
+        config = builtins.readFile ./neovim/colorscheme.lua;
+        type = "lua";
+      }
+      ## Markdown
+      {
+        plugin = markview-nvim;
+        config = builtins.readFile ./neovim/plugins/modes/markview.lua;
+        type = "lua";
+      }
       {
         plugin = modes-nvim;
         config = builtins.readFile ./neovim/plugins/themes/modes.lua;
@@ -380,7 +386,6 @@ in {
     ];
     extraLuaConfig = ''
       ${builtins.readFile ./neovim/options.lua}
-      ${builtins.readFile ./neovim/colorscheme.lua}
       ${builtins.readFile ./neovim/tmux.lua}
 
       vim.g.vue_ls_path = "${pkgs.vue-language-server}";

@@ -1,115 +1,57 @@
--- local cmp = require("cmp")
 local luasnip = require("luasnip")
-local lspkind = require("lspkind")
 
 require("luasnip.loaders.from_vscode").lazy_load()
 
 luasnip.config.setup({})
 
--- cmp.setup({
--- 	experimental = {
--- 		ghost_text = true,
--- 	},
--- 	snippet = {
--- 		expand = function(args)
--- 			luasnip.lsp_expand(args.body)
--- 		end,
--- 	},
--- 	mapping = cmp.mapping.preset.insert({
--- 		["<C-n>"] = cmp.mapping.select_next_item(),
--- 		["<C-p>"] = cmp.mapping.select_prev_item(),
--- 		["<C-d>"] = cmp.mapping.scroll_docs(-4),
--- 		["<C-f>"] = cmp.mapping.scroll_docs(4),
--- 		["<C-Space>"] = cmp.mapping.complete({}),
--- 		["<CR>"] = cmp.mapping.confirm({
--- 			behavior = cmp.ConfirmBehavior.Replace,
--- 			select = true,
--- 		}),
--- 		["<Tab>"] = cmp.mapping(function(fallback)
--- 			if cmp.visible() then
--- 				cmp.select_next_item()
--- 			elseif luasnip.expand_or_locally_jumpable() then
--- 				luasnip.expand_or_jump()
--- 			else
--- 				fallback()
--- 			end
--- 		end, { "i", "s" }),
--- 		["<S-Tab>"] = cmp.mapping(function(fallback)
--- 			if cmp.visible() then
--- 				cmp.select_prev_item()
--- 			elseif luasnip.locally_jumpable(-1) then
--- 				luasnip.jump(-1)
--- 			else
--- 				fallback()
--- 			end
--- 		end, { "i", "s" }),
--- 	}),
--- 	sources = {
--- 		{ name = "orgmode" },
--- 		{ name = "nvim_lsp" },
--- 		{ name = "luasnip" },
--- 		{ name = "buffer" },
--- 		{ name = "path" },
--- 		{ name = "avante_commands" },
--- 		{ name = "avante_mentions" },
--- 		{ name = "avante_prompt_mentions" },
--- 	},
--- 	formatting = {
--- 		format = lspkind.cmp_format({
--- 			maxwidth = 50,
--- 			ellipsis_char = "...",
--- 		}),
--- 	},
--- 	appearance = {
--- 		menu = {
--- 			direction = 'above'
--- 		}
--- 	}
--- })
-
--- cmp.setup.filetype({
--- 	{ "sql" },
--- 	{
--- 		sources = {
--- 			{ name = "vim-dadbod-completion" },
--- 			{ name = "buffer" },
--- 		},
--- 	},
--- })
-
 require("blink-cmp").setup({
     appearance = {
         nerd_font_variant = 'mono'
     },
+    snippets = {
+        preset = 'luasnip',
+        expand = function(snippet)
+            luasnip.lsp_expand(snippet)
+        end,
+        active = function(filter)
+            if filter and filter.direction then
+                return luasnip.jumpable(filter.direction)
+            end
+            return luasnip.in_snippet()
+        end,
+        jump = function(direction)
+            luasnip.jump(direction)
+        end,
+    },
     sources = {
-        default = { "lsp", "path", "snippets", "buffer" },
+        default = { "lsp", "path", "snippets", "buffer", "copilot", "dadbod" },
         providers = {
+            copilot = {
+                name = "copilot",
+                enabled = true,
+                module = "blink-cmp-copilot",
+                score_offset = 1200,
+                async = true,
+                max_items = 3,
+            },
+            dadbod = {
+                name = "dadbod",
+                enabled = true,
+                module = "vim_dadbod_completion.blink",
+                score_offset = 1100,
+            },
             lsp = {
                 name = "lsp",
                 enabled = true,
                 module = "blink.cmp.sources.lsp",
                 score_offset = 1000,
             },
-            copilot = {
-                name = "copilot",
-                enabled = true,
-                module = "blink.cmp.sources.copilot",
-                score_offset = -100,
-                async = true
-            }
         }
     },
     keymap = {
         preset = "super-tab",
         ["<Tab>"] = {
             function(cmp)
-                if vim.b[vim.api.nvim_get_current_buf()].nes_state then
-                    cmp.hide()
-                    return (
-                        require("copilot-lsp.nes").apply_pending_nes()
-                        and require("copilot-lsp.nes").walk_cursor_end_edit()
-                    )
-                end
                 if cmp.snippet_active() then
                     return cmp.accept()
                 else
