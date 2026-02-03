@@ -1,7 +1,7 @@
 local lint = require("lint")
 
 lint.linters_by_ft = {
-	json = { "jsonlint" },
+	-- json = { "jsonlint" },
 	python = { "pylint" },
 	javascript = { "eslint_d" },
 	javascriptreact = { "eslint_d" },

@@ -55,7 +55,7 @@ in {
         vue-language-server
         alejandra
         prettierd
-        nodePackages_latest.jsonlint
+        # nodePackages_latest.jsonlint
         python311Packages.pynvim
         rust-analyzer
         hyprlang
@@ -96,6 +96,7 @@ in {
       #   config = builtins.readFile ./neovim/plugins/dashboard.lua;
       #   type = "lua";
       # }
+      fidget-nvim
       plenary-nvim
       {
         plugin = harpoon;
@@ -115,44 +116,16 @@ in {
       ## Treesitter
       nvim-ts-autotag
 
-      (nvim-treesitter.withPlugins (_:
-        nvim-treesitter.allGrammars
-        ++ [
-          (pkgs.tree-sitter.buildGrammar {
-            language = "just";
-            version = "8af0aab";
-            src = pkgs.fetchFromGitHub {
-              owner = "IndianBoy42";
-              repo = "tree-sitter-just";
-              rev = "8af0aab79854aaf25b620a52c39485849922f766";
-              sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
-            };
-          })
-          (pkgs.tree-sitter.buildGrammar {
-            language = "blade";
-            version = "dead019";
-            src = pkgs.fetchgit {
-              url = "https://github.com/EmranMR/tree-sitter-blade";
-              rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
-              sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
-            };
-          })
-        ]))
-      {
-        plugin = nvim-treesitter;
-        config = builtins.readFile ./neovim/plugins/treesitter.lua;
-        type = "lua";
-      }
       ## SQL Grammar
       vim-dadbod
       vim-dadbod-ui
       vim-dadbod-completion
       ## Rest Client
-      {
-        plugin = rest-nvim;
-        config = builtins.readFile ./neovim/plugins/modes/rest.lua;
-        type = "lua";
-      }
+      # {
+      #   plugin = rest-nvim;
+      #   config = builtins.readFile ./neovim/plugins/modes/rest.lua;
+      #   type = "lua";
+      # }
       ## OrgMode Grammar
       {
         plugin = orgmode;
@@ -164,6 +137,11 @@ in {
       {
         plugin = copilot-lua;
         config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
+        type = "lua";
+      }
+      {
+        plugin = p99;
+        config = builtins.readFile ./neovim/plugins/llm/p99.lua;
         type = "lua";
       }
       # {
@@ -238,11 +216,11 @@ in {
         config = builtins.readFile ./neovim/plugins/lsp/lsp_lines.lua;
         type = "lua";
       }
-      {
-        plugin = gopher-nvim;
-        config = builtins.readFile ./neovim/plugins/lsp/langs/gopher.lua;
-        type = "lua";
-      }
+      # {
+      #   plugin = gopher-nvim;
+      #   config = builtins.readFile ./neovim/plugins/lsp/langs/gopher.lua;
+      #   type = "lua";
+      # }
       ## Formatting
       guess-indent-nvim
       {
@@ -257,6 +235,61 @@ in {
         type = "lua";
       }
       ## Highlighting
+      nvim-treesitter-parsers.tsx
+      nvim-treesitter-parsers.typescript
+      nvim-treesitter-parsers.nix
+      nvim-treesitter-parsers.lua
+      nvim-treesitter-parsers.luadoc
+      nvim-treesitter-parsers.vim
+      nvim-treesitter-parsers.vimdoc
+      nvim-treesitter-parsers.bash
+      nvim-treesitter-parsers.fish
+      nvim-treesitter-parsers.json
+      nvim-treesitter-parsers.yaml
+      nvim-treesitter-parsers.toml
+      nvim-treesitter-parsers.rust
+      nvim-treesitter-parsers.c
+      nvim-treesitter-parsers.tsx
+      nvim-treesitter-parsers.python
+      nvim-treesitter-parsers.go
+      nvim-treesitter-parsers.zig
+      nvim-treesitter-parsers.html
+      nvim-treesitter-parsers.css
+      nvim-treesitter-parsers.gpg
+      nvim-treesitter-parsers.dockerfile
+      nvim-treesitter-parsers.gitattributes
+      nvim-treesitter-parsers.regex
+      nvim-treesitter-parsers.gitcommit
+      nvim-treesitter-parsers.gitignore
+      nvim-treesitter-parsers.markdown
+      nvim-treesitter-parsers.markdown_inline
+      nvim-treesitter-parsers.latex
+      (nvim-treesitter.withPlugins (_:
+        nvim-treesitter.allGrammars
+        ++ [
+          # (pkgs.tree-sitter.buildGrammar {
+          #   language = "just";
+          #   version = "8af0aab";
+          #   src = pkgs.fetchFromGitHub {
+          #     owner = "IndianBoy42";
+          #     repo = "tree-sitter-just";
+          #     rev = "8af0aab79854aaf25b620a52c39485849922f766";
+          #     sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
+          #   };
+          # })
+          # (pkgs.tree-sitter.buildGrammar {
+          #   language = "blade";
+          #   version = "dead019";
+          #   src = pkgs.fetchgit {
+          #     url = "https://github.com/EmranMR/tree-sitter-blade";
+          #     rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
+          #     sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
+          #   };
+          # })
+        ]))
+      {
+        plugin = nvim-treesitter;
+      }
       {
         plugin = wookayin-semshi;
         config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
@@ -309,7 +342,9 @@ in {
       # }
       ## Themes
       {
-        plugin = nyoom-oxocarbon;
+        plugin = nvim-tokyonight.overrideAttrs {
+          doCheck = false;
+        };
         config = builtins.readFile ./neovim/colorscheme.lua;
         type = "lua";
       }
@@ -391,7 +426,6 @@ in {
       vim.g.vue_ls_path = "${pkgs.vue-language-server}";
 
       vim.opt.runtimepath:append("~/Projects/vim-himalaya-ui")
-
     '';
   };
 

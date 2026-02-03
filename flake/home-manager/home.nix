@@ -99,8 +99,8 @@ in {
     package = hyprland.packages.${pkgs.system}.hyprland;
     plugins = [
       # hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo
-      hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
-      hyprland-dynamic-cursors.packages.${pkgs.stdenv.hostPlatform.system}.hypr-dynamic-cursors
+      # hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling
+      # hyprland-dynamic-cursors.packages.${pkgs.stdenv.hostPlatform.system}.hypr-dynamic-cursors
       # hyprland-hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace
     ];
     extraConfig = ''

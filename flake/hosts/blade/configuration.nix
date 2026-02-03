@@ -1,6 +1,6 @@
 {...}: {
   imports = [
-    ./programs/adb.nix
+    # ./programs/adb.nix
     ./programs/hyprlock.nix
     ./services/openssh.nix
   ];

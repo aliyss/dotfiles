@@ -40,6 +40,9 @@ in {
         fd
         gh
 
+        ## Terminal
+        opencode
+
         # ---------------------------------- #
         # Yara Seraci
         # ---------------------------------- #
@@ -63,7 +66,7 @@ in {
         }))
 
         ## Music
-        youtube-music
+        pear-desktop
 
         # ---------------------------------- #
         # Lowe Söderberg

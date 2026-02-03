@@ -1,7 +1,7 @@
 local c = vim.cmd
 local a = vim.api
 
-c.colorscheme("oxocarbon")
+c.colorscheme("tokyonight")
 
 a.nvim_set_hl(0, "Normal", { bg = "none" })
 a.nvim_set_hl(0, "NormalNC", { bg = "none" })
