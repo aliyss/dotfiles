@@ -225,7 +225,7 @@
     nodePackages.typescript-language-server
     nodePackages.eslint
     nodePackages.eslint_d
-    nodePackages.jsonlint
+    # nodePackages.jsonlint
     nodePackages.tailwindcss
     nodePackages.vercel
     nodePackages."@tailwindcss/language-server"

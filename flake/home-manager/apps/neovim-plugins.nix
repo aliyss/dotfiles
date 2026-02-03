@@ -13,6 +13,13 @@
       sha256 = "sha256-BZiFM/V0UDv1IyJ70w5U0TpFqCKS4pnnK8GqzUrYd5M=";
     };
   };
+  nvim-tokyonight = pkgs.vimUtils.buildVimPlugin {
+    name = "nvim-tokyonight";
+    src = pkgs.fetchgit {
+      url = "https://github.com/folke/tokyonight.nvim";
+      sha256 = "sha256-4zfkv3egdWJ/GCWUehV0MAIXxsrGT82Wd1Qqj1SCGOk=";
+    };
+  };
   # harpoon = pkgs.vimUtils.buildVimPlugin {
   #   name = "harpoon";
   #   src = pkgs.fetchgit {
@@ -165,25 +172,34 @@
       sha256 = "sha256-+TbnXjAEugCCpoi4axbPhbTeSGAwASj/MLzzI2N0NtQ=";
     };
   };
-  gopher-nvim = pkgs.vimUtils.buildVimPlugin {
-    name = "gopher-nvim";
-    dependencies = with pkgs.vimPlugins; [
-      plenary-nvim
-      nvim-treesitter
-      nvim-dap
-    ];
-    src = pkgs.fetchgit {
-      url = "https://github.com/olexsmir/gopher.nvim";
-      rev = "0ed14a40d9799ac8d92aaf9eb1cd9be22ffd6b14";
-      sha256 = "sha256-5UpNPRh4YdAtpiFTazqCSLeJ0TMmPCm8lVyNFsIJ3lE=";
-    };
-  };
+  # gopher-nvim = pkgs.vimUtils.buildVimPlugin {
+  #   name = "gopher-nvim";
+  #   dependencies = with pkgs.vimPlugins; [
+  #     plenary-nvim
+  #     nvim-treesitter
+  #     nvim-dap
+  #   ];
+  #   src = pkgs.fetchgit {
+  #     url = "https://github.com/olexsmir/gopher.nvim";
+  #     rev = "0ed14a40d9799ac8d92aaf9eb1cd9be22ffd6b14";
+  #     sha256 = "sha256-5UpNPRh4YdAtpiFTazqCSLeJ0TMmPCm8lVyNFsIJ3lE=";
+  #   };
+  # };
   workspace-diagnostics = pkgs.vimUtils.buildVimPlugin {
     name = "workspace-diagnostics";
     src = pkgs.fetchgit {
       url = "https://github.com/artemave/workspace-diagnostics.nvim";
       rev = "573ff93c47898967efdfbc6587a1a39e3c2d365e";
       sha256 = "sha256-lBj4KUPmmhtpffYky/HpaTwY++d/Q9socp/Ys+4VeX0=";
+    };
+  };
+  p99 = pkgs.vimUtils.buildVimPlugin {
+    name = "99";
+    src = pkgs.fetchFromGitHub {
+      owner = "theprimeagen";
+      repo = "99";
+      rev = "2c771814e1d95280ee99545de61b28dfa773c5fa";
+      hash = "sha256-Gzh7YMWJtBzacy1ivOZhGrTVXhwMI2Yz3SiEWzET+PM=";
     };
   };
 }

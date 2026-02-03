@@ -233,7 +233,7 @@ menu:
         cmd: foot -e tmux new -A -s gaming-screen ~/.config/hypr/scripts/gaming.sh
       - key: "y"
         desc: Youtube Music
-        cmd: youtube-music
+        cmd: pear-desktop
       - key: "h"
         desc: Heroic
         cmd: heroic
