@@ -50,7 +50,7 @@ in {
 
     # "browser.display.background_color.dark" = "#FFFFFFFD";
     "layout.css.prefers-color-scheme.content-override" = 0;
-    "browser.display.use_document_fonts" = 0;
+    # "browser.display.use_document_fonts" = 0;
     "font.name.monospace.x-western" = "JetBrainsMono Nerd Font Mono";
     "font.name.sans-serif.x-western" = "JetBrainsMono Nerd Font";
     "font.name.serif.x-western" = "JetBrainsMono Nerd Font";

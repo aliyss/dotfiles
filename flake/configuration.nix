@@ -73,6 +73,7 @@
         enable = true;
         support32Bit = true;
       };
+      jack.enable = true;
       pulse.enable = true;
       wireplumber = {
         enable = true;
@@ -221,16 +222,15 @@
     ## NodeJS
     nodejs_24
     ### Globally installed Node Packages
-    nodePackages.typescript
-    nodePackages.typescript-language-server
-    nodePackages.eslint
-    nodePackages.eslint_d
+    typescript
+    typescript-language-server
+    eslint
+    eslint_d
     # nodePackages.jsonlint
-    nodePackages.tailwindcss
-    nodePackages.vercel
-    nodePackages."@tailwindcss/language-server"
-    nodePackages.prettier
-    nodePackages.localtunnel
+    tailwindcss
+    tailwindcss-language-server
+    prettier
+    localtunnel
     ## TailwindCSS
     tailwindcss
     ## Typescript
@@ -251,8 +251,8 @@
     ## Flutter
     flutter
     ## Python
-    python311
-    (python311.withPackages (ps:
+    python3
+    (python3.withPackages (ps:
       with ps; [
         pip
       ]))
@@ -263,7 +263,7 @@
     ## Configuration Files
     nil
     ## Nix
-    nixfmt-classic
+    nixfmt
 
     # Hardware
     pavucontrol
@@ -273,7 +273,7 @@
 
     # Theme
     ## Wallpaper for Hyprland
-    swww
+    awww
 
     ## Cursor
     hyprcursor
@@ -317,11 +317,11 @@
     ## Minecraft Editor
     mcaselector
     ## wine-staging (version with experimental features)
-    wineWowPackages.staging
+    wineWow64Packages.staging
     ## winetricks (all versions)
     winetricks
     ## native wayland support (unstable)
-    wineWowPackages.waylandFull
+    wineWow64Packages.waylandFull
 
     # Camera (DroidCam)
     v4l-utils
@@ -373,7 +373,7 @@
   # HYPRLAND
   programs.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
   };
 
   programs.niri = {

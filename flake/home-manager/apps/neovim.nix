@@ -21,12 +21,15 @@
       };
     };
   plugins = pkgs.vimPlugins // pkgs.callPackage ./neovim-plugins.nix {};
+  myGhc = pkgs.haskellPackages.ghcWithPackages (p: [p.tidal]);
 in {
   programs.neovim = {
     enable = true;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
+    withPython3 = true;
+    withRuby = true;
     extraPackages = with pkgs;
       [
         eslint_d
@@ -46,7 +49,7 @@ in {
         postgresql_16
         postgres-language-server
         phpactor
-        nodePackages.intelephense
+        intelephense
         # phpPackages.php-cs-fixer
         blade-formatter
         black
@@ -56,7 +59,7 @@ in {
         alejandra
         prettierd
         # nodePackages_latest.jsonlint
-        python311Packages.pynvim
+        python3Packages.pynvim
         rust-analyzer
         hyprlang
         go
@@ -68,6 +71,7 @@ in {
         nil
         sqlite
         marksman
+        myGhc
       ]
       ++ [
       ];
@@ -142,6 +146,11 @@ in {
       {
         plugin = p99;
         config = builtins.readFile ./neovim/plugins/llm/p99.lua;
+        type = "lua";
+      }
+      {
+        plugin = opencode-nvim;
+        config = builtins.readFile ./neovim/plugins/llm/opencode.lua;
         type = "lua";
       }
       # {
@@ -235,6 +244,35 @@ in {
         type = "lua";
       }
       ## Highlighting
+      (nvim-treesitter.withPlugins (_:
+        nvim-treesitter.allGrammars
+        ++ [
+          # (pkgs.tree-sitter.buildGrammar {
+          #   language = "just";
+          #   version = "8af0aab";
+          #   src = pkgs.fetchFromGitHub {
+          #     owner = "IndianBoy42";
+          #     repo = "tree-sitter-just";
+          #     rev = "8af0aab79854aaf25b620a52c39485849922f766";
+          #     sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
+          #   };
+          # })
+          # (pkgs.tree-sitter.buildGrammar {
+          #   language = "blade";
+          #   version = "dead019";
+          #   src = pkgs.fetchgit {
+          #     url = "https://github.com/EmranMR/tree-sitter-blade";
+          #     rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
+          #     sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
+          #   };
+          # })
+        ]))
+      {
+        plugin = nvim-treesitter;
+        config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
+        type = "lua";
+      }
+
       nvim-treesitter-parsers.tsx
       nvim-treesitter-parsers.typescript
       nvim-treesitter-parsers.nix
@@ -264,37 +302,7 @@ in {
       nvim-treesitter-parsers.markdown
       nvim-treesitter-parsers.markdown_inline
       nvim-treesitter-parsers.latex
-      (nvim-treesitter.withPlugins (_:
-        nvim-treesitter.allGrammars
-        ++ [
-          # (pkgs.tree-sitter.buildGrammar {
-          #   language = "just";
-          #   version = "8af0aab";
-          #   src = pkgs.fetchFromGitHub {
-          #     owner = "IndianBoy42";
-          #     repo = "tree-sitter-just";
-          #     rev = "8af0aab79854aaf25b620a52c39485849922f766";
-          #     sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
-          #   };
-          # })
-          # (pkgs.tree-sitter.buildGrammar {
-          #   language = "blade";
-          #   version = "dead019";
-          #   src = pkgs.fetchgit {
-          #     url = "https://github.com/EmranMR/tree-sitter-blade";
-          #     rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
-          #     sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
-          #   };
-          # })
-        ]))
-      {
-        plugin = nvim-treesitter;
-      }
-      {
-        plugin = wookayin-semshi;
-        config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
-        type = "lua";
-      }
+      wookayin-semshi
       ## Diagnostics
       {
         plugin = trouble-nvim;
@@ -342,9 +350,7 @@ in {
       # }
       ## Themes
       {
-        plugin = nvim-tokyonight.overrideAttrs {
-          doCheck = false;
-        };
+        plugin = nyoom-oxocarbon;
         config = builtins.readFile ./neovim/colorscheme.lua;
         type = "lua";
       }
@@ -415,11 +421,21 @@ in {
       ## Activity Watch
       aw-watcher-vim
 
+      ## Music
+      {
+        plugin = tidal-vim;
+        config = ''
+          " Tell tidal-vim to use our GHC with the tidal package included
+          let g:tidal_ghci = "${myGhc}/bin/ghci"
+        '';
+        type = "viml";
+      }
+
       ## Email
       notmuch-vim
       # himalaya-custom-vim
     ];
-    extraLuaConfig = ''
+    initLua = ''
       ${builtins.readFile ./neovim/options.lua}
       ${builtins.readFile ./neovim/tmux.lua}
 

@@ -12,9 +12,9 @@ fi
 LIGHT_DIR="$1"
 DARK_DIR="$2"
 
-# Transition settings for swww
-export SWWW_TRANSITION_FPS=60
-export SWWW_TRANSITION_STEP=2
+# Transition settings for awww
+export AWWW_TRANSITION_FPS=60
+export AWWW_TRANSITION_STEP=2
 
 # Interval between wallpapers (seconds)
 INTERVAL=60
@@ -40,7 +40,7 @@ while true; do
         done \
         | sort -n | cut -d':' -f2- \
         | while read -r img; do
-            swww img "$img"
+            awww img "$img"
             echo "Set wallpaper: $img"
             sleep $INTERVAL
         done

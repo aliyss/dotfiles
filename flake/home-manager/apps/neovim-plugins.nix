@@ -198,8 +198,16 @@
     src = pkgs.fetchFromGitHub {
       owner = "theprimeagen";
       repo = "99";
-      rev = "2c771814e1d95280ee99545de61b28dfa773c5fa";
+      rev = "0fb3b8b2d032289ea7088a37161e1c50bdfccfa9";
       hash = "sha256-Gzh7YMWJtBzacy1ivOZhGrTVXhwMI2Yz3SiEWzET+PM=";
+    };
+  };
+  tidal-vim = pkgs.vimUtils.buildVimPlugin {
+    name = "tidal-vim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/tidalcycles/vim-tidal";
+      rev = "e440fe5bdfe07f805e21e6872099685d38e8b761";
+      hash = "sha256-8gyk17YLeKpLpz3LRtxiwbpsIbZka9bb63nK5/9IUoA=";
     };
   };
 }

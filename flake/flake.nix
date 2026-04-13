@@ -29,12 +29,15 @@
       url = "github:VirtCode/hypr-dynamic-cursors";
       inputs.hyprland.follows = "hyprland";
     };
+    affinity-nix.url = "github:mrshmllow/affinity-nix";
+    tidalcycles.url = "github:mitchmindtree/tidalcycles.nix";
   };
 
   outputs = {
     nixpkgs,
     nur,
     home-manager,
+    tidalcycles,
     ...
   } @ inputs: let
     system = "x86_64-linux";
