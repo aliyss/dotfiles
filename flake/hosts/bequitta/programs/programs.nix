@@ -5,5 +5,7 @@
 
   environment.systemPackages = with pkgs; [
     barracudavpn
+    davinci-resolve
+    blender
   ];
 }

@@ -102,7 +102,6 @@ in {
 
         ## Images
         libsixel
-        blender
         affinity-nix.packages.${pkgs.stdenv.hostPlatform.system}.v3
 
         ## Terminal
@@ -127,7 +126,6 @@ in {
         # Deprecated / Unused
         # ---------------------------------- #
         # atool
-        davinci-resolve
 
         # Music
         (haskellPackages.ghcWithPackages (p: [p.tidal]))
