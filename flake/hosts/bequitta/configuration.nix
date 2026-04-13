@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   imports = [
     ./services/redis.nix
     ./programs/barracuda.nix
@@ -25,4 +25,10 @@
       videoDrivers = ["nvidia"];
     };
   };
+
+  environment.systemPackages = with pkgs; [
+    (distrho-ports.override {plugins = ["tal-vocoder-2"];})
+    carla # The host to run it live
+    vmpk # The keyboard to play the notes
+  ];
 }

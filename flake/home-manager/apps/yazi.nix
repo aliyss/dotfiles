@@ -11,6 +11,7 @@ in {
     # plugins = {
     #   "glow.yazi" = yazi-glow;
     # };
+    shellWrapperName = "y";
     enableZshIntegration = true;
   };
 }

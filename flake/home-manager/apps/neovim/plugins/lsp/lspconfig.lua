@@ -78,6 +78,9 @@ vim.api.nvim_create_autocmd("LSPAttach", {
 local capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 local on_attach = function(_, bufnr)
 	vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+	if not vim.treesitter.highlighter.active[vim.api.nvim_get_current_buf()] then
+		vim.treesitter.start()
+	end
 end
 
 local signs = { Error = " ", Warn = " ", Hint = "󰘥 ", Info = " " }
@@ -129,7 +132,6 @@ vim.lsp.config("basedpyright", {
 			analysis = {
 				autoSearchPaths = true,
 				useLibraryCodeForTypes = true,
-				autoSearchPaths = true,
 				diagnosticMode = "workspace",
 				diagnosticSeverityOverrides = {
 					reportUnusedCallResult = "none",
@@ -192,7 +194,7 @@ vim.lsp.config("ts_ls", {
 			{
 				name = "@vue/typescript-plugin",
 				location = vim.g.vue_ls_path,
-				languages = { "javascript", "typescript", "vue" },
+				languages = { "javascript", "typescript", "vue", },
 			},
 		},
 	},
@@ -242,57 +244,6 @@ vim.lsp.config("copilot", {
 	capabilities = capabilities,
 })
 
--- vim.lsp.config(
--- 	"copilotlsp-nvim/copilot-lsp", {
--- 		init = function()
--- 			vim.g.copilot_nes_debounce = 500
--- 			vim.lsp.enable("copilot_ls")
---
--- 			vim.keymap.set("n", "<tab>", function()
--- 				local bufnr = vim.api.nvim_get_current_buf()
--- 				local state = vim.b[bufnr].nes_state
--- 				if state then
--- 					-- Try to jump to the start of the suggestion edit.
--- 					-- If already at the start, then apply the pending suggestion and jump to the end of the edit.
--- 					local _ = require("copilot-lsp.nes").walk_cursor_start_edit()
--- 						or (
--- 							require("copilot-lsp.nes").apply_pending_nes()
--- 							and require("copilot-lsp.nes").walk_cursor_end_edit()
--- 						)
--- 					return nil
--- 				else
--- 					-- Resolving the terminal's inability to distinguish between `TAB` and `<C-i>` in normal mode
--- 					return "<C-i>"
--- 				end
--- 			end, { desc = "Accept Copilot NES suggestion", expr = true })
--- 		end,
--- 	}
--- )
-
-local configs = require("lspconfig.configs")
-
--- configs.blade = {
--- 	default_config = {
--- 		cmd = { "/home/aliyss/Sources/laravel-dev-tools/laravel-dev-tools", "lsp" },
--- 		filetypes = { "blade" },
--- 		root_dir = function(pattern)
--- 			local cwd = vim.loop.cwd()
--- 			vim.notify(cwd)
--- 			local root = util.root_pattern("composer.json", ".git")(pattern)
--- 			vim.notify(root)
---
--- 			-- prefer cwd if root is a descendant
--- 			return util.path.is_descendant(cwd, root) and cwd or root
--- 		end,
--- 		settings = {},
--- 	},
--- }
-
--- vim.lsp.config("blade", {
--- 	on_attach = on_attach,
--- 	capabilities = capabilities,
--- })
-
 require("neodev").setup({
 	library = { plugins = { "nvim-dap-ui" }, types = true },
 })
@@ -309,4 +260,3 @@ vim.lsp.enable({
 	"rust_analyzer",
 	"marksman"
 })
--- vim.lsp.enable("copilotlsp-nvim/copilot-lsp")

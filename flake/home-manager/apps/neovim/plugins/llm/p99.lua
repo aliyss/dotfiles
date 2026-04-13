@@ -11,7 +11,7 @@ _99.setup({
         path = "/tmp/" .. basename .. ".99.debug",
         print_on_error = true,
     },
-    model = "opencode/kimi-k2.5-free",
+    model = "github-copilot/gemini-3-flash-preview",
     --- A new feature that is centered around tags
     completion = {
         --- Defaults to .cursor/rules
@@ -67,12 +67,16 @@ end)
 --
 -- likely ill add a mode check and assert on required visual mode
 -- so just prepare for it now
-vim.keymap.set("v", "<leader>9v", function()
-    _99.visual()
+vim.keymap.set("v", "<leader>9p", function()
+    _99.visual_prompt()
+end)
+
+vim.keymap.set("v", "<leader>9e", function()
+    _99.explain_code()
 end)
 
 --- if you have a request you dont want to make any changes, just cancel it
-vim.keymap.set("v", "<leader>9s", function()
+vim.keymap.set("n", "<leader>9s", function()
     _99.stop_all_requests()
 end)
 

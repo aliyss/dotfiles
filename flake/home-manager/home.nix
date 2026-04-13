@@ -96,7 +96,7 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = hyprland.packages.${pkgs.system}.hyprland;
+    package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     plugins = [
       # hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo
       # hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprscrolling

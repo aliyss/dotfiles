@@ -7,7 +7,7 @@ separator: " ➜ "
 border_width: 1
 corner_r: 0
 padding: 15 # Defaults to corner_r
-rows_per_column: 10 # No limit by default
+rows_per_column: 14 # No limit by default
 column_padding: 25 # Defaults to padding
 
 # Anchor and margin
@@ -219,6 +219,15 @@ menu:
       - key: "t"
         desc: Terminal
         cmd: foot
+      - key: "a"
+        desc: Affinity V3
+        cmd: affinity-v3
+      - key: "b"
+        desc: Blender
+        cmd: blender
+      - key: "d"
+        desc: Davinci Resolve
+        cmd: davinci-resolve
       - key: "w"
         desc: Slack
         cmd: slack
@@ -243,4 +252,6 @@ menu:
       - key: "m"
         desc: Stremio
         cmd: stremio
-
+      - key: "o"
+        desc: OBS
+        cmd: obs

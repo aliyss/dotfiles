@@ -60,5 +60,6 @@
     blacklistadd aliyss.vercel.app
     blacklistadd silyas.vercel.app
     blacklistadd http://localhost:8000/
+    blacklistadd anikai.to
   '';
 }
