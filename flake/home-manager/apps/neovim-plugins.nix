@@ -10,7 +10,7 @@
     name = "nyoom-oxocarbon";
     src = pkgs.fetchgit {
       url = "https://github.com/nyoom-engineering/oxocarbon.nvim";
-      sha256 = "sha256-BZiFM/V0UDv1IyJ70w5U0TpFqCKS4pnnK8GqzUrYd5M=";
+      sha256 = "sha256-6yADnRjAHNWF95OTYDWyIylogChsLO4IXWI0Cnep+zM=";
     };
   };
   nvim-tokyonight = pkgs.vimUtils.buildVimPlugin {
@@ -195,11 +195,10 @@
   };
   p99 = pkgs.vimUtils.buildVimPlugin {
     name = "99";
-    src = pkgs.fetchFromGitHub {
-      owner = "theprimeagen";
-      repo = "99";
-      rev = "0fb3b8b2d032289ea7088a37161e1c50bdfccfa9";
-      hash = "sha256-Gzh7YMWJtBzacy1ivOZhGrTVXhwMI2Yz3SiEWzET+PM=";
+    src = pkgs.fetchgit {
+      url = "https://github.com/ThePrimeagen/99";
+      rev = "0172d3caae2d8b967c9d47aa7557295f1481e5df";
+      sha256 = "sha256-ppFQaLSie9tSm2nlTrZPU47QyOaeqNMQjJf4vaIXgFo=";
     };
   };
   tidal-vim = pkgs.vimUtils.buildVimPlugin {
@@ -208,6 +207,14 @@
       url = "https://github.com/tidalcycles/vim-tidal";
       rev = "e440fe5bdfe07f805e21e6872099685d38e8b761";
       hash = "sha256-8gyk17YLeKpLpz3LRtxiwbpsIbZka9bb63nK5/9IUoA=";
+    };
+  };
+  strudel-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "strudel-nvim";
+    src = pkgs.fetchgit {
+      url = "https://github.com/gruvw/strudel.nvim";
+      rev = "3a7e62c9048a318281328ad08d6269e50b884cd3";
+      hash = "sha256-qMcZYfQQiFWc+4gie4HncyL5+WJl3ojy+zB1dXlCrgA=";
     };
   };
 }

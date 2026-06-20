@@ -6,6 +6,7 @@
   hyprland-plugins,
   hyprland-dynamic-cursors,
   hyprland-hyprspace,
+  tidalcycles-nix,
   ...
 }: let
   # Default session variables
@@ -20,6 +21,11 @@
   };
 
   # Read the .env file safely
+  envFile = ../.env;
+  envFileContent =
+    if builtins.pathExists envFile
+    then builtins.readFile envFile
+    else "";
   envVars = builtins.foldl' (
     acc: line: let
       parts = lib.splitString "=" line;
@@ -27,9 +33,10 @@
       if builtins.length parts == 2
       then acc // {"${(builtins.elemAt parts 0)}" = "${(builtins.elemAt parts 1)}";}
       else acc
-  ) {} (lib.splitString "\n" "");
+  ) {} (lib.splitString "\n" envFileContent);
 in {
   imports = [
+    tidalcycles-nix.homeManagerModules.default
     ./packages.nix
 
     ./apps/wayland.nix
@@ -40,6 +47,7 @@ in {
     ./apps/direnv.nix
     ./apps/neovim.nix
     ./apps/firefox.nix
+    ./apps/tidalcycles.nix
 
     ./services/mako.nix
     ./services/activity-watcher.nix
@@ -88,7 +96,9 @@ in {
   };
 
   # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  programs.home-manager = {
+    enable = true;
+  };
 
   nixpkgs.config.permittedInsecurePackages = [
     "qtwebengine-5.15.19"

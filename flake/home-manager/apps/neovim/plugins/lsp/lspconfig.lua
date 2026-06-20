@@ -13,6 +13,7 @@ vim.filetype.add({
 		-- [".*%.blade%.php"] = "blade",
 		[".*.hl"] = "hyprlang",
 		["hypr.*.conf"] = "hyprlang",
+		[".*.str"] = "strudel",
 		-- [".*.md"] = "marksman",
 	},
 })

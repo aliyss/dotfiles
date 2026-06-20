@@ -1,10 +1,8 @@
 {
   pkgs,
-  audio-plugins,
   nixpkgs-for-stremio,
   affinity-nix,
   prismlauncher,
-  tidalcycles,
   ...
 }: let
   work-packages = import ./work-packages.nix {inherit pkgs;};
@@ -13,10 +11,6 @@
     version = "1.21";
     url = "https://piston-data.mojang.com/v1/objects/450698d1863ab5180c25d7c804ef0fe6369dd1ba/server.jar";
     sha256 = "sha256-yWOU2ob52fnvfKLS7h8vCYDCm3qlyUtDwCxQQ1289T8=";
-  };
-  tidalcycles-packages = import pkgs.path {
-    inherit (pkgs) system;
-    overlays = [tidalcycles.overlays.default];
   };
 in {
   imports = [];
@@ -63,6 +57,9 @@ in {
         ## Social
         gurk-rs
 
+        ## Browsers
+        puppeteer-cli
+
         ## Gaming
         prismlauncher.packages.${stdenv.hostPlatform.system}.default
         (pkgs.minecraft-server.overrideAttrs (old: {
@@ -102,7 +99,8 @@ in {
 
         ## Images
         libsixel
-        affinity-nix.packages.${pkgs.stdenv.hostPlatform.system}.v3
+
+        affinity-v3
 
         ## Terminal
         sshpass
@@ -128,8 +126,6 @@ in {
         # atool
 
         # Music
-        (haskellPackages.ghcWithPackages (p: [p.tidal]))
-        supercollider-with-sc3-plugins
       ]
       ++ work-packages.packages
       ++ broken-packages.packages;

@@ -3,7 +3,7 @@
     ./services/redis.nix
     ./programs/programs.nix
     # ./services/llama-cpp.nix
-    ./services/ollama.nix
+    # ./services/ollama.nix
     # ./services/neo4j.nix
   ];
 
@@ -31,4 +31,10 @@
     carla # The host to run it live
     vmpk # The keyboard to play the notes
   ];
+
+  programs.steam = {
+    enable = true;
+  };
+  programs.gamescope.enable = true;
+  programs.gamemode.enable = true;
 }

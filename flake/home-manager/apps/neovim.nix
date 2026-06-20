@@ -1,27 +1,24 @@
 {pkgs, ...}: let
-  lolcrab =
-    pkgs.rustPlatform.buildRustPackage
-    rec {
-      name = "lolcrab";
-      pname = "lolcrab";
+  lolcrab = pkgs.rustPlatform.buildRustPackage rec {
+    name = "lolcrab";
+    pname = "lolcrab";
 
-      src = pkgs.fetchFromGitHub {
-        owner = "mazznoer";
-        rev = "00c06cdd1089e3f9256a44e18f83667f76820fe1";
-        repo = pname;
-        sha256 = "1q40HQaM9ozv1v9QKdNCsJShyuP+tvV/YL+YEkN9/90=";
-      };
+    src = pkgs.fetchFromGitHub {
+      owner = "mazznoer";
+      rev = "00c06cdd1089e3f9256a44e18f83667f76820fe1";
+      repo = pname;
+      sha256 = "1q40HQaM9ozv1v9QKdNCsJShyuP+tvV/YL+YEkN9/90=";
+    };
 
-      cargoLock = {
-        lockFile = ./dependencies/lolcrab/Cargo.lock;
-        outputHashes = {
-          "colorgrad-0.7.0" = "sha256-FUoTeXQkMajZI+9VpoJNqDe/pjeUWXyQGiIr96uH6tg=";
-          "csscolorparser-0.6.2" = "sha256-9HRS2Y+OJRYpzKMJ+ZdNHAHzuvDNMEcZZ4F+HAPpLhI=";
-        };
+    cargoLock = {
+      lockFile = ./dependencies/lolcrab/Cargo.lock;
+      outputHashes = {
+        "colorgrad-0.7.0" = "sha256-FUoTeXQkMajZI+9VpoJNqDe/pjeUWXyQGiIr96uH6tg=";
+        "csscolorparser-0.6.2" = "sha256-9HRS2Y+OJRYpzKMJ+ZdNHAHzuvDNMEcZZ4F+HAPpLhI=";
       };
     };
+  };
   plugins = pkgs.vimPlugins // pkgs.callPackage ./neovim-plugins.nix {};
-  myGhc = pkgs.haskellPackages.ghcWithPackages (p: [p.tidal]);
 in {
   programs.neovim = {
     enable = true;
@@ -71,7 +68,6 @@ in {
         nil
         sqlite
         marksman
-        myGhc
       ]
       ++ [
       ];
@@ -144,7 +140,11 @@ in {
         type = "lua";
       }
       {
-        plugin = p99;
+        plugin = p99.overrideAttrs {
+          nvimSkipModules = [
+            "99.editor.lsp"
+          ];
+        };
         config = builtins.readFile ./neovim/plugins/llm/p99.lua;
         type = "lua";
       }
@@ -153,27 +153,24 @@ in {
         config = builtins.readFile ./neovim/plugins/llm/opencode.lua;
         type = "lua";
       }
-      # {
-      #   plugin = avante-nvim.overrideAttrs (old: {
-      #     version = "git";
-      #     src = pkgs.fetchFromGitHub {
-      #       owner = "yetone";
-      #       repo = "avante.nvim";
-      #       rev = "db39f5fe1b920fee493a76fb1f717d7c1c73ab6d";
-      #       sha256 = "sha256-GaQwBOxPOqj7h8AgR3ySCN+1fc9reKT5+vcv5vfzKhk=";
-      #     };
-      #     nvimSkipModules = [
-      #       "avante.providers.vertex_claude"
-      #       "avante.providers.vertex"
-      #       "avante.providers.copilot"
-      #       "avante.providers.gemini"
-      #       "avante.providers.azure"
-      #       "avante.providers.ollama"
-      #     ];
-      #   });
-      #   config = builtins.readFile ./neovim/plugins/llm/avante.lua;
-      #   type = "lua";
-      # }
+      {
+        plugin = avante-nvim.overrideAttrs (old: {
+          nvimSkipModules = [
+            "avante.providers.vertex_claude"
+            "avante.providers.vertex"
+            "avante.providers.copilot"
+            "avante.providers.gemini"
+            "avante.providers.azure"
+          ];
+        });
+        config = builtins.readFile ./neovim/plugins/llm/avante.lua;
+        type = "lua";
+      }
+      {
+        plugin = render-markdown-nvim;
+        config = builtins.readFile ./neovim/plugins/llm/render-markdown.lua;
+        type = "lua";
+      }
       # {
       #   plugin = augment-vim;
       #   config = builtins.readFile ./neovim/plugins/llm/augment.lua;
@@ -244,29 +241,31 @@ in {
         type = "lua";
       }
       ## Highlighting
-      (nvim-treesitter.withPlugins (_:
-        nvim-treesitter.allGrammars
-        ++ [
-          # (pkgs.tree-sitter.buildGrammar {
-          #   language = "just";
-          #   version = "8af0aab";
-          #   src = pkgs.fetchFromGitHub {
-          #     owner = "IndianBoy42";
-          #     repo = "tree-sitter-just";
-          #     rev = "8af0aab79854aaf25b620a52c39485849922f766";
-          #     sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
-          #   };
-          # })
-          # (pkgs.tree-sitter.buildGrammar {
-          #   language = "blade";
-          #   version = "dead019";
-          #   src = pkgs.fetchgit {
-          #     url = "https://github.com/EmranMR/tree-sitter-blade";
-          #     rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
-          #     sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
-          #   };
-          # })
-        ]))
+      (nvim-treesitter.withPlugins (
+        _:
+          nvim-treesitter.allGrammars
+          ++ [
+            # (pkgs.tree-sitter.buildGrammar {
+            #   language = "just";
+            #   version = "8af0aab";
+            #   src = pkgs.fetchFromGitHub {
+            #     owner = "IndianBoy42";
+            #     repo = "tree-sitter-just";
+            #     rev = "8af0aab79854aaf25b620a52c39485849922f766";
+            #     sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
+            #   };
+            # })
+            # (pkgs.tree-sitter.buildGrammar {
+            #   language = "blade";
+            #   version = "dead019";
+            #   src = pkgs.fetchgit {
+            #     url = "https://github.com/EmranMR/tree-sitter-blade";
+            #     rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
+            #     sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
+            #   };
+            # })
+          ]
+      ))
       {
         plugin = nvim-treesitter;
         config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
@@ -424,11 +423,13 @@ in {
       ## Music
       {
         plugin = tidal-vim;
-        config = ''
-          " Tell tidal-vim to use our GHC with the tidal package included
-          let g:tidal_ghci = "${myGhc}/bin/ghci"
-        '';
+        config = "";
         type = "viml";
+      }
+      {
+        plugin = strudel-nvim;
+        config = builtins.readFile ./neovim/plugins/modes/strudel.lua;
+        type = "lua";
       }
 
       ## Email
