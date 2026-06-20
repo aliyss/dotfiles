@@ -30,14 +30,18 @@
       inputs.hyprland.follows = "hyprland";
     };
     affinity-nix.url = "github:mrshmllow/affinity-nix";
-    tidalcycles.url = "github:mitchmindtree/tidalcycles.nix";
+    tidalcycles-nix = {
+      url = "github:DivitMittal/tidalcycles-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     nixpkgs,
     nur,
     home-manager,
-    tidalcycles,
+    tidalcycles-nix,
+    affinity-nix,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -45,6 +49,7 @@
       localSystem = {inherit system;};
       config.allowUnfree = true;
       overlays = [
+        affinity-nix.overlays.default
         nur.overlays.default
       ];
     };
@@ -91,7 +96,9 @@
       # Aliyss' User Profile
       aliyss = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
-        modules = [./home-manager/home.nix];
+        modules = [
+          ./home-manager/home.nix
+        ];
         extraSpecialArgs = inputs;
       };
     };

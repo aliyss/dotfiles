@@ -7,5 +7,16 @@
     barracudavpn
     davinci-resolve
     blender
+
+    openrgb-with-all-plugins
+    (heroic.override {
+      extraPkgs = pkgs: [
+        pkgs.gamescope
+      ];
+    })
+    mangohud
+    lutris
+    bottles
+    protonup-qt
   ];
 }

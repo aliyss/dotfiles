@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 } @ args: let
   defaultProfile = import ./firefox/profiles/default.nix args;
@@ -72,5 +73,6 @@ in {
     enable = true;
     package = defaultFirefox;
     profiles = {default = defaultProfile;};
+    # configPath = "${config.xdg.configHome}/mozilla/firefox";
   };
 }

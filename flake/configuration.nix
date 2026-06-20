@@ -97,8 +97,7 @@
     blueman.enable = true;
     # Display
     displayManager.gdm = {
-      enable = false;
-      wayland = true;
+      enable = true;
     };
     xserver = {
       enable = true;
@@ -331,17 +330,6 @@
 
     # Mutt Wizard
     pinentry-gtk2
-
-    openrgb-with-all-plugins
-    (heroic.override {
-      extraPkgs = pkgs: [
-        pkgs.gamescope
-      ];
-    })
-    mangohud
-    lutris
-    bottles
-    protonup-qt
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -351,12 +339,6 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-
-  programs.steam = {
-    enable = true;
-  };
-  programs.gamescope.enable = true;
-  programs.gamemode.enable = true;
 
   programs.gnupg.agent = {
     enable = true;

@@ -228,9 +228,6 @@ menu:
       - key: "d"
         desc: Davinci Resolve
         cmd: davinci-resolve
-      - key: "w"
-        desc: Slack
-        cmd: slack
       - key: "c"
         desc: Browser
         cmd: firefox
@@ -255,3 +252,13 @@ menu:
       - key: "o"
         desc: OBS
         cmd: obs
+      - key: ["w"]
+        desc: Open Work Applications
+        submenu:
+          # Open Variants
+          - key: "t"
+            desc: Microsoft Teams
+            cmd: teams-for-linux
+          - key: "s"
+            desc: Slack
+            cmd: slack
