@@ -36,11 +36,13 @@
   ) {} (lib.splitString "\n" envFileContent);
 in {
   imports = [
+    ./options.nix
     tidalcycles-nix.homeManagerModules.default
     ./packages.nix
 
     ./apps/wayland.nix
     ./apps/tmux.nix
+    ./apps/wlr-which-key.nix
     # ./apps/spicetify.nix
     ./apps/yazi.nix
     ./apps/fish.nix
@@ -55,6 +57,7 @@ in {
     # ./services/mbsync.nix
     # ./apps/emacs.nix
     # ./services/emacs.nix
+    ../local.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should manage.

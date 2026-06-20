@@ -10,8 +10,9 @@
       theme = "dst";
     };
     shellAliases = {
-      update-system-bequitta = "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-bequitta";
-      update-system-blade = "sudo nixos-rebuild switch --flake ~/.config/flake#aliyss-blade";
+      update-system = "$HOME/.config/flake/update-system";
+      ubequitta = "$HOME/.config/flake/update-system -s bequitta";
+      ublade = "$HOME/.config/flake/update-system -s blade";
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
       upgrade-flake = "nix flake update ~/.config/flake";
       start-camera = "scrcpy --video-source=camera --no-audio --camera-id=1 --v4l2-sink=/dev/video0 --no-video-playback";

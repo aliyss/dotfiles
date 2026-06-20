@@ -787,21 +787,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-for-stremio": {
-      "locked": {
-        "lastModified": 1740560979,
-        "narHash": "sha256-Vr3Qi346M+8CjedtbyUevIGDZW8LcA1fTG0ugPY/Hic=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-        "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "rev": "5135c59491985879812717f4c9fea69604e7f26f",
-        "type": "indirect"
-      }
-    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1777168982,
@@ -1096,7 +1081,6 @@
         "hyprland-dynamic-cursors": "hyprland-dynamic-cursors",
         "hyprland-plugins": "hyprland-plugins",
         "nixpkgs": "nixpkgs_6",
-        "nixpkgs-for-stremio": "nixpkgs-for-stremio",
         "nur": "nur",
         "playit-nixos-module": "playit-nixos-module",
         "prismlauncher": "prismlauncher",

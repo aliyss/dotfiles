@@ -54,4 +54,5 @@
 
 # Keymappings
 !/wlr-which-key/
+/wlr-which-key/config.yaml
 !/xkb/

@@ -7,7 +7,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs-for-stremio.url = "nixpkgs/5135c59491985879812717f4c9fea69604e7f26f";
     playit-nixos-module.url = "github:pedorich-n/playit-nixos-module";
     prismlauncher.url = "github:Diegiwg/PrismLauncher-Cracked";
     nur = {
@@ -57,8 +56,7 @@
     lib = nixpkgs.lib;
 
     sharedConfigurationModules = [
-      ./configuration.nix
-      ./shared/configuration.nix
+      ./modules/default.nix
       home-manager.nixosModules.home-manager
     ];
   in {
@@ -91,6 +89,9 @@
           ++ sharedConfigurationModules;
       };
     };
+    # FORMATTER
+    formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
+
     # HOME CONFIGURATIONS
     homeConfigurations = {
       # Aliyss' User Profile
