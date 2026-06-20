@@ -1,132 +1,51 @@
-{
-  pkgs,
-  nixpkgs-for-stremio,
-  affinity-nix,
-  prismlauncher,
-  ...
-}: let
-  work-packages = import ./work-packages.nix {inherit pkgs;};
-  broken-packages = import ./broken-packages.nix {inherit pkgs;};
-  minecraftServerInfo = {
-    version = "1.21";
-    url = "https://piston-data.mojang.com/v1/objects/450698d1863ab5180c25d7c804ef0fe6369dd1ba/server.jar";
-    sha256 = "sha256-yWOU2ob52fnvfKLS7h8vCYDCm3qlyUtDwCxQQ1289T8=";
-  };
+{ config, lib, pkgs, prismlauncher, ... }:
+with lib;
+let
+  cfg = config.aliyss.profiles;
+  standalone = config.aliyss.standaloneApps;
+  isaac = import ./packages/isaac.nix { inherit pkgs; };
+  yara = import ./packages/yara.nix { inherit pkgs; };
+  lowe = import ./packages/lowe.nix { inherit pkgs; };
+  work = import ./packages/work.nix { inherit pkgs; };
+  other = with pkgs; [
+    libsixel
+    sshpass
+    httpie
+    tmux
+    tridactyl-native
+    chawan
+    chromium
+    google-chrome
+    btop
+    yarn-berry
+    qbittorrent
+  ];
 in {
-  imports = [];
-
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
-  home.packages = let
-    stremioPkgs = import nixpkgs-for-stremio {
-      inherit (pkgs) system;
-    };
-  in
-    with pkgs;
-      [
-        # # You can also create simple shell scripts directly inside your
-        # # configuration. For example, this adds a command 'my-hello' to your
-        # # environment:
-        # (pkgs.writeShellScriptBin "my-hello" ''
-        #   echo "Hello, ${config.home.username}!"
-        # '')
-
-        # ---------------------------------- #
-        # Isaac Sekei
-        # ---------------------------------- #
-
-        ## Development
-        bun
-        jq
-        ripgrep
-        fd
-        gh
-
-        ## Terminal
-        opencode
-
-        # ---------------------------------- #
-        # Yara Seraci
-        # ---------------------------------- #
-
-        ## Movies / Series / Anime
-        # (stremioPkgs.stremio)
-        stremio-linux-shell
-        ani-cli
-
-        ## Social
-        gurk-rs
-
-        ## Browsers
-        puppeteer-cli
-
-        ## Gaming
-        prismlauncher.packages.${stdenv.hostPlatform.system}.default
-        (pkgs.minecraft-server.overrideAttrs (old: {
-          name = "minecraft-server-${minecraftServerInfo.version}";
-          version = minecraftServerInfo.version;
-          src = pkgs.fetchurl {
-            url = minecraftServerInfo.url;
-            sha256 = minecraftServerInfo.sha256;
-          };
-        }))
-
-        ## Music
-        pear-desktop
-
-        # ---------------------------------- #
-        # Lowe Söderberg
-        # ---------------------------------- #
-
-        ## Secret Management
-        bitwarden-cli
-        rbw # Rust Bitwarden CLI - Faster than bitwarden-cli and uses memory storage
-
-        ## Email
-        mutt-wizard
-        neomutt
-        pass
-        notmuch
-        abook
-        cronie
-        isync
-        himalaya
-        mhonarc
-
-        # ---------------------------------- #
-        # Other
-        # ---------------------------------- #
-
-        ## Images
-        libsixel
-
-        affinity-v3
-
-        ## Terminal
-        sshpass
-        httpie
-        tmux
-
-        ## Browser
-        tridactyl-native
-        chawan
-        chromium
-        google-chrome
-
-        ## Monitoring
-        btop
-
-        ## Utilities
-        yarn-berry
-        qbittorrent
-
-        # ---------------------------------- #
-        # Deprecated / Unused
-        # ---------------------------------- #
-        # atool
-
-        # Music
-      ]
-      ++ work-packages.packages
-      ++ broken-packages.packages;
+  home.packages =
+    isaac
+    ++ yara
+    ++ lowe
+    ++ work
+    ++ other
+    # Creative
+    ++ optionals (cfg.creative || elem "affinity" standalone) (with pkgs; [ affinity-v3 ])
+    ++ optionals (cfg.creative || elem "blender" standalone) (with pkgs; [ blender ])
+    ++ optionals (cfg.creative || elem "davinci" standalone) (with pkgs; [ davinci-resolve ])
+    # Gaming - individual
+    ++ optionals (cfg.gaming || elem "heroic" standalone) (with pkgs; [
+      (heroic.override { extraPkgs = pkgs: [pkgs.gamescope]; })
+    ])
+    # Gaming - full suite
+    ++ optionals (cfg.gaming || elem "gaming" standalone) (import ./packages/gaming.nix {
+      inherit pkgs prismlauncher;
+    })
+    ++ optionals (cfg.gaming || elem "gaming" standalone) (with pkgs; [
+      mangohud lutris bottles protonup-qt
+      wineWow64Packages.staging winetricks wineWow64Packages.waylandFull
+    ])
+    # Audio
+    ++ optionals cfg.audio (with pkgs; [
+      (distrho-ports.override {plugins = ["tal-vocoder-2"];})
+      carla vmpk
+    ]);
 }

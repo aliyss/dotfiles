@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  echo "Usage: $(basename "$0") -s <host> [-p <profiles>] [-a <apps>]"
+  echo ""
+  echo "Build and switch NixOS configuration with optional profile/app flags."
+  echo ""
+  echo "  -s <host>       Host to build (bequitta, blade)"
+  echo "  -p <profiles>   Comma-separated profiles to toggle"
+  echo "                  +profile  adds a profile"
+  echo "                  -profile  removes a profile"
+  echo "                  llm,creative  sets exact set"
+  echo "  -a <apps>       Comma-separated standalone apps to toggle"
+  echo "                  +app      adds an app"
+  echo "                  -app      removes an app"
+  echo "                  affinity,blender  sets exact set"
+  echo ""
+  echo "Examples:"
+  echo "  $(basename "$0") -s bequitta                      # default build"
+  echo "  $(basename "$0") -s bequitta -p +creative         # add creative"
+  echo "  $(basename "$0") -s bequitta -a +affinity         # add affinity app only"
+  echo "  $(basename "$0") -s bequitta -p +creative -a +heroic"
+  exit 1
+}
+
+host=""
+profiles=""
+apps=""
+
+while getopts "s:p:a:" opt; do
+  case $opt in
+    s) host="$OPTARG" ;;
+    p) profiles="$OPTARG" ;;
+    a) apps="$OPTARG" ;;
+    *) usage ;;
+  esac
+done
+
+[ -z "$host" ] && usage
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOCAL_NIX="$SCRIPT_DIR/local.nix"
+
+# Map short hostname to flake configuration name
+case "$host" in
+  bequitta) host="aliyss-bequitta" ;;
+  blade)    host="aliyss-blade" ;;
+  *)
+    echo "Unknown host: $host (valid: bequitta, blade)"
+    exit 1
+    ;;
+esac
+
+ensure_local_nix() {
+  if [ ! -f "$LOCAL_NIX" ]; then
+    cat > "$LOCAL_NIX" << 'EOF'
+{ ... }: {
+  aliyss.profiles = {
+  };
+  aliyss.standaloneApps = [];
+}
+EOF
+  fi
+}
+
+ensure_standalone_field() {
+  if ! grep -q "aliyss.standaloneApps" "$LOCAL_NIX"; then
+    sed -i "/aliyss.profiles = {/a\  };" "$LOCAL_NIX"
+    sed -i "s/\(aliyss.profiles = {\)/\1\n  aliyss.standaloneApps = [];/" "$LOCAL_NIX"
+  fi
+}
+
+toggle_profile() {
+  local name="$1"
+  local value="$2"
+  if grep -q "^\s*$name\s*=" "$LOCAL_NIX"; then
+    sed -i "s/\($name\s*=\).*/\1 $value;/" "$LOCAL_NIX"
+  else
+    sed -i "/aliyss.profiles = {/a\    $name = $value;" "$LOCAL_NIX"
+  fi
+}
+
+toggle_standalone_add() {
+  local name="$1"
+  if grep -q "aliyss.standaloneApps = \[\]" "$LOCAL_NIX"; then
+    sed -i "s/aliyss.standaloneApps = \[\];/aliyss.standaloneApps = [\"$name\"];/" "$LOCAL_NIX"
+  elif grep -q "\"$name\"" "$LOCAL_NIX"; then
+    echo "→ $name already in standalone apps"
+    return
+  else
+    sed -i "s/aliyss.standaloneApps = \[\(.*\)\];/aliyss.standaloneApps = [\1 \"$name\"];/" "$LOCAL_NIX"
+  fi
+}
+
+toggle_standalone_remove() {
+  local name="$1"
+  sed -i "s/ \"$name\"//g; s/\"$name\" //g; s/\"$name\"//g" "$LOCAL_NIX"
+  sed -i "s/aliyss.standaloneApps = \[ \];/aliyss.standaloneApps = [];/" "$LOCAL_NIX"
+}
+
+build() {
+  echo "→ Building flake for: $host"
+  sudo nixos-rebuild switch --flake "$SCRIPT_DIR#$host"
+  if [ -n "$profiles" ] || [ -n "$apps" ]; then
+    echo "→ Updating home-manager..."
+    home-manager switch --flake "$SCRIPT_DIR#aliyss"
+  fi
+}
+
+ensure_local_nix
+ensure_standalone_field
+
+# Handle profiles
+if [ -n "$profiles" ]; then
+  IFS=',' read -ra PROFILE_LIST <<< "$profiles"
+  first="${PROFILE_LIST[0]}"
+
+  if [[ "$first" == +* ]]; then
+    for p in "${PROFILE_LIST[@]}"; do
+      name="${p#+}"
+      toggle_profile "$name" true
+      echo "→ Added profile: $name"
+    done
+  elif [[ "$first" == -* ]]; then
+    for p in "${PROFILE_LIST[@]}"; do
+      name="${p#-}"
+      toggle_profile "$name" false
+      echo "→ Removed profile: $name"
+    done
+  else
+    standalone_line=$(grep "aliyss.standaloneApps" "$LOCAL_NIX" || echo "  aliyss.standaloneApps = [];")
+    {
+      echo "{ ... }: {"
+      echo "  aliyss.profiles = {"
+      for p in "${PROFILE_LIST[@]}"; do
+        echo "    $p = true;"
+      done
+      echo "  };"
+      echo "  $standalone_line"
+      echo "}"
+    } > "$LOCAL_NIX"
+    echo "→ Enabled profiles: $profiles"
+  fi
+fi
+
+# Handle standalone apps
+if [ -n "$apps" ]; then
+  IFS=',' read -ra APP_LIST <<< "$apps"
+  first="${APP_LIST[0]}"
+
+  if [[ "$first" == +* ]]; then
+    for a in "${APP_LIST[@]}"; do
+      name="${a#+}"
+      toggle_standalone_add "$name"
+      echo "→ Added standalone app: $name"
+    done
+  elif [[ "$first" == -* ]]; then
+    for a in "${APP_LIST[@]}"; do
+      name="${a#-}"
+      toggle_standalone_remove "$name"
+      echo "→ Removed standalone app: $name"
+    done
+  else
+    apps_json="["
+    for a in "${APP_LIST[@]}"; do
+      apps_json+="\"$a\" "
+    done
+    apps_json="${apps_json% }]"
+    sed -i "s/aliyss.standaloneApps = \[.*\];/aliyss.standaloneApps = $apps_json;/" "$LOCAL_NIX"
+    echo "→ Set standalone apps: $apps"
+  fi
+fi
+
+build
