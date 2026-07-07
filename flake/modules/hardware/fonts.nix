@@ -1,5 +1,9 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+let
+  localFonts = pkgs.callPackage ../../packages/fonts { };
+in {
   fonts.packages = with pkgs; [
+    localFonts
     nerd-fonts.jetbrains-mono
     noto-fonts
     noto-fonts-cjk-sans

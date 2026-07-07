@@ -211,7 +211,7 @@ with lib; let
             {
               key = "t";
               desc = "Terminal";
-              cmd = "foot";
+              cmd = "foot -e tmux new -A -s foot";
             }
             {
               key = "c";

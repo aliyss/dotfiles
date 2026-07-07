@@ -73,20 +73,15 @@ in {
   # release notes.
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
-  home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
+  home.file = {};
 
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-  };
+  home.activation.linkLocalFonts = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    mkdir -p "$HOME/.local/share/fonts"
+    for f in "$HOME/.config/fonts/"*.{ttf,otf,woff}; do
+      [ -f "$f" ] && ln -sf "$f" "$HOME/.local/share/fonts/"
+    done
+    ${pkgs.fontconfig}/bin/fc-cache "$HOME/.local/share/fonts" 2>/dev/null || true
+  '';
 
   home.sessionVariables =
     lib.attrsets.recursiveUpdate defaultSessionVars envVars

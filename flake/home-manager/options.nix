@@ -1,4 +1,4 @@
-{ lib, ... }: {
+{lib, ...}: {
   options.aliyss = {
     profiles = {
       llm = lib.mkEnableOption "LLM tools";
