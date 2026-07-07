@@ -14,8 +14,12 @@ in {
       fish_vi_key_bindings
 
       if status is-interactive
-        and not set -q TMUX
-            exec tmux attach || tmux new
+        and not set -q HERDR_ENV
+            exec herdr
+      end
+
+      if set -q HERDR_ENV
+        command herdr terminal title set "herdr" >/dev/null 2>&1
       end
 
       if [ "$INSIDE_EMACS" = 'vterm' ]

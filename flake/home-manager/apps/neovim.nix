@@ -78,11 +78,6 @@ in {
       pkgs.nvim-nio
     ];
     plugins = with plugins; [
-      {
-        plugin = nvim-tmux-navigation;
-        config = builtins.readFile ./neovim/plugins/tmux-navigator.lua;
-        type = "lua";
-      }
       nvim-ts-context-commentstring
       todo-comments-nvim
       {
@@ -439,6 +434,7 @@ in {
     initLua = ''
       ${builtins.readFile ./neovim/options.lua}
       ${builtins.readFile ./neovim/tmux.lua}
+      ${builtins.readFile ./neovim/plugins/tmux-navigator.lua}
 
       vim.g.vue_ls_path = "${pkgs.vue-language-server}";
 

@@ -36,14 +36,7 @@
       sha256 = "sha256-JhnERZfma2JHFEn/DElVmrSU5KxM2asx3SJ+86lCfoo=";
     };
   };
-  nvim-tmux-navigation = pkgs.vimUtils.buildVimPlugin {
-    name = "nvim-tmux-navigation";
-    src = pkgs.fetchgit {
-      url = "https://github.com/alexghergh/nvim-tmux-navigation";
-      rev = "4898c98702954439233fdaf764c39636681e2861";
-      sha256 = "sha256-CxAgQSbOrg/SsQXupwCv8cyZXIB7tkWO+Y6FDtoR8xk=";
-    };
-  };
+
   # ibl = pkgs.vimUtils.buildVimPlugin {
   #   name = "ibl";
   #   src = pkgs.fetchgit {
