@@ -41,7 +41,7 @@ in {
     ./packages.nix
 
     ./apps/wayland.nix
-    ./apps/tmux.nix
+    ./apps/herdr.nix
     ./apps/wlr-which-key.nix
     # ./apps/spicetify.nix
     ./apps/yazi.nix

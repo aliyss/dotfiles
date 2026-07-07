@@ -56,3 +56,14 @@
 !/wlr-which-key/
 /wlr-which-key/config.yaml
 !/xkb/
+
+# Opencode
+!/opencode/
+/opencode/.gitignore
+/opencode/package.json
+/opencode/package-lock.json
+/opencode/bun.lock
+!/opencode/opencode.jsonc
+!/opencode/plugins/
+!/opencode/themes/
+!/opencode/tui.json

@@ -11,7 +11,6 @@ let
     libsixel
     sshpass
     httpie
-    tmux
     tridactyl-native
     chawan
     chromium

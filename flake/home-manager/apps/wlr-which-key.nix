@@ -211,7 +211,7 @@ with lib; let
             {
               key = "t";
               desc = "Terminal";
-              cmd = "foot -e tmux new -A -s foot";
+              cmd = "herdr-launch Terminal";
             }
             {
               key = "c";
@@ -221,7 +221,7 @@ with lib; let
             {
               key = "e";
               desc = "Neovim Screen";
-              cmd = "foot -e tmux new -A -s nvim-screen";
+              cmd = "herdr-launch Neovim";
             }
             {
               key = "y";
@@ -236,7 +236,7 @@ with lib; let
             {
               key = "g";
               desc = "Gaming Mode";
-              cmd = "foot -e tmux new -A -s gaming-screen ~/.config/hypr/scripts/gaming.sh";
+              cmd = "herdr-launch Gaming";
             }
             {
               key = ["w"];
