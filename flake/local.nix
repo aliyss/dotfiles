@@ -2,5 +2,5 @@
   aliyss.profiles = {
     creative = false;
   };
-  aliyss.standaloneApps = [];
+  aliyss.standaloneApps = ["affinity" "obs"];
 }

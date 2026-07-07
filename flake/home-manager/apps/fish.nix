@@ -49,7 +49,7 @@ in {
       ubequitta = "$HOME/.config/flake/update-system -s bequitta";
       ublade = "$HOME/.config/flake/update-system -s blade";
       update-home = "home-manager switch --flake ~/.config/flake#aliyss";
-      upgrade-flake = "nix flake update ~/.config/flake";
+      upgrade-flake = "nix flake update --flake ~/.config/flake";
       start-camera = "scrcpy --video-source=camera --no-audio --camera-id=1 --v4l2-sink=/dev/video0 --no-video-playback";
       bw-unlock = "export BW_SESSION=$(command bw unlock --raw)";
       bw = "[ -z \"$BW_SESSION\" ] && bw-unlock; command bw";

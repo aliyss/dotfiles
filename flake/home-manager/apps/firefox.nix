@@ -73,6 +73,6 @@ in {
     enable = true;
     package = defaultFirefox;
     profiles = {default = defaultProfile;};
-    # configPath = "${config.xdg.configHome}/mozilla/firefox";
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
   };
 }
