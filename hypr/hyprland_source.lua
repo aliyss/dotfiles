@@ -177,6 +177,7 @@ hl.window_rule({
 })
 
 hl.on("hyprland.start", function()
+    hl.exec_cmd("hyprlock --immediate-render")
     hl.exec_cmd("awww-daemon")
     hl.exec_cmd("sh ~/.config/hypr/wallpapers/wrapped_awww.sh ~/.config/images/wallpapers/light/ ~/.config/images/wallpapers/dark/")
     hl.exec_cmd("clipse -listen")

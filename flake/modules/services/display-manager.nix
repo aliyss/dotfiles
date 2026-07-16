@@ -1,13 +1,18 @@
-{ ... }: {
+{ pkgs, ... }: {
   services.displayManager.gdm = {
-    enable = true;
+    enable = false;
   };
 
   services.xserver = {
     enable = true;
     xkb = {
-      variant = "colemak_dh_iso";
-      layout = "us";
+      layout = "ga,de";
+      options = "grp:alt_space_toggle";
+    };
+    xkb.extraLayouts.ga = {
+      description = "German (Geniusnessness)";
+      languages = [ "de" ];
+      symbolsFile = ./xkb/ga;
     };
   };
 }

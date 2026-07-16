@@ -1,0 +1,66 @@
+default partial alphanumeric_keys
+xkb_symbols "basic" {
+
+    include "latin"
+    name[Group1]= "German (Geniusnessness)";
+
+    key <CAPS> {
+        [Escape, ISO_Level3_Shift ]
+    };
+
+    key <TLDE> { [    section,     degree                           ] };
+    key <AE01> { [          1,       plus,          bar, exclamdown ] };
+    key <AE02> { [          2,   quotedbl,           at, oneeighth  ] };
+    key <AE03> { [          3,   asterisk,   numbersign             ] };
+    key <AE04> { [          4,   ccedilla                           ] };
+    key <AE05> { [          5,    percent                           ] };
+    key <AE06> { [          6,  ampersand,      notsign             ] };
+    key <AE07> { [          7,      slash,          bar             ] };
+    key <AE08> { [          8,  parenleft,         cent             ] };
+    key <AE09> { [          9, parenright                           ] };
+    key <AE10> { [          0,      equal                           ] };
+    key <AE11> { [ apostrophe,   question,   dead_acute             ] };
+    key <AE12> { [ dead_circumflex, dead_grave, dead_tilde          ] };
+
+    key <AD01>	{ [         q,          Q,           at,  Greek_OMEGA ]	};
+    key <AD02>	{ [         w,          W,        U017F,      section ]	};
+    key <AD03>	{ [         f,          F,      dstroke,  ordfeminine ]	};
+    key <AD04>	{ [         p,          P,        thorn,        THORN ]	};
+    key <AD05>	{ [         b,          B,  leftdoublequotemark, leftsinglequotemark ] };
+    key <AD06>	{ [         j,          J,    dead_hook,    dead_horn ] };
+    key <AD07>	{ [         l,          L,      lstroke,      1     ] };
+    key <AD08>	{ [         u,          U,    downarrow,      2     ] };
+    key <AD09> { [          y,          Y,    uparrow,        3     ] };
+    key <AD10> { [ odiaeresis,     eacute                           ] };
+    key <AD11> { [ udiaeresis,     egrave,  bracketleft             ] };
+    key <AD12> { [ dead_diaeresis, exclam, bracketright             ] };
+
+    key <AC01>	{ [         a,          A,           ae,           AE ]	};
+    key <AC02>	{ [         r,          R,    paragraph,   registered ]	};
+    key <AC03>	{ [         s,          S,       ssharp,        U1E9E ]	};
+    key <AC04>	{ [         t,          T,       tslash,       Tslash ]	};
+    key <AC05>	{ [         g,          G,          eng,          ENG ]	};
+    key <AC06>	{ [         m,          M,           mu,    masculine ]	};
+    key <AC07>	{ [         n,          N, rightdoublequotemark, 4    ]	};
+    key <AC08>	{ [         e,          E,     EuroSign,        5            ]	};
+    key <AC09>	{ [         i,          I,   rightarrow,     6        ]	};
+    key <AC10>  { [         o,          O,           oe,           OE ] };
+    key <AC11>  { [ adiaeresis,     agrave,    braceleft              ] };
+    key <BKSL> { [     dollar,   sterling,   braceright             ] };
+
+    key <LSGT>  { [       less,    greater,    backslash, brokenbar  ] };
+    key <AB01>	{ [         z,          Z, guillemotleft,        less ]	};
+    key <AB02>	{ [         x,          X, guillemotright,    greater ]	};
+    key <AB03>	{ [         c,          C,         cent,    copyright ]	};
+    key <AB04>	{ [         d,          D,          eth,          ETH ]	};
+    key <AB05>	{ [         v,          V,   doublelowquotemark, singlelowquotemark ]	};
+    key <AB06>	{ [         k,          K,          kra,    7         ]	};
+    key <AB07>	{ [         h,          H,      hstroke,    8         ]	};
+    key <AB08>  { [      comma,  semicolon, Hstroke,        9         ] };
+    key <AB09>  { [     period,      colon                            ] };
+    key <AB10>  { [      minus, underscore                            ] };
+
+    key <ESC> { [Caps_Lock] };
+
+    include "level3(ralt_switch)"
+};
