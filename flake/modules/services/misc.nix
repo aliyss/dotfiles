@@ -9,11 +9,11 @@
   services.hardware.openrgb.enable = true;
 
   # Mosh for resilient phone roaming (Wi-Fi ↔ LTE handoff without dropping
-  # herdr). `services.mosh.openFirewall` defaults to true; we set it
+  # herdr). `programs.mosh.openFirewall` defaults to true; we set it
   # explicitly so UDP 60000-61000 is opened by the firewall even if NixOS
   # ever flips the default. See `./phone-remote-access.md`.
-  services.mosh.enable = true;
-  services.mosh.openFirewall = true;
+  programs.mosh.enable = true;
+  programs.mosh.openFirewall = true;
 
   # Phone SSH backdoor. Port 22922 is already allowed by networking.nix.
   # PasswordAuthentication is left enabled so the phone can connect while

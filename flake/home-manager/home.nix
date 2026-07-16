@@ -109,6 +109,7 @@ in {
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = true;
+    configType = "lua";
     package = hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     plugins = [
       # hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo
@@ -116,12 +117,8 @@ in {
       # hyprland-dynamic-cursors.packages.${pkgs.stdenv.hostPlatform.system}.hypr-dynamic-cursors
       # hyprland-hyprspace.packages.${pkgs.stdenv.hostPlatform.system}.Hyprspace
     ];
-    # configType = "lua";
-    # extraConfig = ''
-    #   require("~/.config/hypr/lua_config/hyprland_source.lua")
-    # '';
     extraConfig = ''
-      source = ~/.config/hypr/hyprland_source.conf
+      require("hyprland_source")
     '';
   };
 
