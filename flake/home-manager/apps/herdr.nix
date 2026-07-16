@@ -211,12 +211,7 @@ in {
     [terminal]
     default_shell = "fish"
 
-    [theme]
-    name = "catppuccin"
-
-    [theme.custom]
-    panel_bg = "reset"
-    surface0 = "reset"
+    ${config.aliyss.themeGenerators.herdr}
 
     [advanced]
     scrollback_limit_bytes = 10485760

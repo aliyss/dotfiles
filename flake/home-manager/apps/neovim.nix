@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{config, pkgs, lib, ...}: let
   lolcrab = pkgs.rustPlatform.buildRustPackage rec {
     name = "lolcrab";
     pname = "lolcrab";
@@ -345,7 +345,8 @@ in {
       ## Themes
       {
         plugin = nyoom-oxocarbon;
-        config = builtins.readFile ./neovim/colorscheme.lua;
+        config = builtins.readFile ./neovim/colorscheme.lua
+          + config.aliyss.themeGenerators.neovim;
         type = "lua";
       }
       ## Markdown
