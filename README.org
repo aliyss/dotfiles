@@ -8,7 +8,6 @@
   - [[#hyprland][Hyprland]]
   - [[#foot][Foot]]
   - [[#zsh][ZSH]]
-  - [[#tmux][Tmux]]
   - [[#emacs][Emacs]]
   - [[#neovim][Neovim]]
   - [[#spotify][Spotify]]
@@ -52,6 +51,28 @@ I'm using NixOS to manage most of my stuff. There are other configurations store
 *Configuration (System):* [[./flake/configuration.nix][configuration.nix]]
 *Configuration (Home):* [[./flake/home-manager/home.nix][home.nix]]
 
+** Herdr
+*Configuration:* [[./flake/home-manager/apps/herdr.nix][herdr.nix]]
+Fish wrapper helper: `herdr-workspace "main"` (defined in the same file). It starts the per-user herdr daemon on demand and lands the new shell on the `main` workspace — what every desktop pane and every SSH-from-phone session runs.
+
+** Phone Access
+*Guide:* [[./phone-remote-access.md][phone-remote-access.md]]
+
+The desktop runs one per-user herdr daemon. Every interactive fish —
+desktop panes, every fresh SSH session from the phone — execs
+`herdr-workspace "main"` and becomes a herdr client on that same daemon.
+So when the phone `ssh -p 22922`'s in, it sees the same workspace,
+panes, and agents the desktop sees. No tmux wrap; herdr's own daemon
+does the equivalent (and the herdr docs explicitly say to install any
+SSH client on the phone and run `herdr` there).
+
+*Rebuild order after editing this repo:*
+
+#+begin_src bash
+  update-home                     # fish + herdr-workspace hookup
+  sudo update-system -s bequitta  # openssh + firewall (rebases HM if needed)
+#+end_src
+
 *** Updating System
 #+begin_src bash
   update-system
@@ -86,16 +107,7 @@ Styling is mostly ok, since most of it is managed via ZSH. Just added the bit of
 [[./images/zsh.png]]
 
 *** Styling
-Need to add additional styling for what information to hide and what to show. Since some information can be offloaded to tmux.
-
-** Tmux
-*Configuration:* [[./flake/home-manager/apps/tmux.nix][tmux.nix]]
-
-*** TODO Styling
-Need to add additional styling for bars, so I can differentiate between the current and the ssh terminal.
-
-*** TODO Ressurect & Continuum
-Need to configure Ressurect & Continuum, so I can restart from where I left off.
+Need to add additional styling for what information to hide and what to show.
 
 ** Emacs
 *Configuration:* [[./emacs/config.org][config.org]]

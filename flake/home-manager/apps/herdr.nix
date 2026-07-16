@@ -172,11 +172,51 @@ in {
     command = "vim-herdr-navigation.right"
     description = "navigate right (vim/herdr)"
 
+    [[keys.command]]
+    key = "prefix+f"
+    type = "plugin_action"
+    command = "herdr-file-viewer.open-file-viewer"
+    description = "open file viewer"
+
+    [[keys.command]]
+    key = "prefix+shift+f"
+    type = "plugin_action"
+    command = "herdr-file-viewer.open-file-viewer-tab"
+    description = "open file viewer (tab)"
+
+    [[keys.command]]
+    key = "prefix+p"
+    type = "plugin_action"
+    command = "jt.command-palette.open"
+    description = "command palette"
+
+    [[keys.command]]
+    key = "prefix+o"
+    type = "plugin_action"
+    command = "cloudmanic.herdr-plus.projects"
+    description = "herdr-plus: projects"
+
+    [[keys.command]]
+    key = "prefix+shift+o"
+    type = "plugin_action"
+    command = "cloudmanic.herdr-plus.quick-actions"
+    description = "herdr-plus: quick actions"
+
+    [[keys.command]]
+    key = "prefix+slash"
+    type = "plugin_action"
+    command = "persiyanov.reviewr.toggle"
+    description = "reviewr: toggle code review sidebar"
+
     [terminal]
     default_shell = "fish"
 
     [theme]
     name = "catppuccin"
+
+    [theme.custom]
+    panel_bg = "reset"
+    surface0 = "reset"
 
     [advanced]
     scrollback_limit_bytes = 10485760
