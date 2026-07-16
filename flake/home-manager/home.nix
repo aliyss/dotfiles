@@ -37,6 +37,7 @@
 in {
   imports = [
     ./options.nix
+    ./themes/default.nix
     tidalcycles-nix.homeManagerModules.default
     ./packages.nix
 
@@ -47,6 +48,7 @@ in {
     ./apps/yazi.nix
     ./apps/fish.nix
     ./apps/direnv.nix
+    ./apps/foot/default.nix
     ./apps/neovim.nix
     ./apps/firefox.nix
     ./apps/tidalcycles.nix
