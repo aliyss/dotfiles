@@ -68,3 +68,9 @@
 !/opencode/plugins/
 !/opencode/themes/
 !/opencode/tui.json
+
+# YouTube Music
+# !/YouTube Music/
+# /Youtube Music/*
+# /Youtube Music/*/
+!/YouTube Music/config.json

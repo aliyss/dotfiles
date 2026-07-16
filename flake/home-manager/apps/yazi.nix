@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{config, pkgs, ...}: let
   yazi-glow = pkgs.fetchFromGitHub {
     owner = "Reledia";
     repo = "glow.yazi";
@@ -13,5 +13,9 @@ in {
     # };
     shellWrapperName = "y";
     enableZshIntegration = true;
+  };
+
+  xdg.configFile."yazi/theme.toml" = {
+    text = config.aliyss.themeGenerators.yazi;
   };
 }

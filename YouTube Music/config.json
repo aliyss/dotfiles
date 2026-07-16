@@ -1,0 +1,108 @@
+{
+	"__internal__": {
+		"migrations": {
+			"version": "3.11.0"
+		}
+	},
+	"options": {
+		"alwaysOnTop": false,
+		"appVisible": true,
+		"autoResetAppCache": false,
+		"autoUpdates": true,
+		"disableHardwareAcceleration": false,
+		"hideMenu": true,
+		"hideMenuWarned": true,
+		"likeButtons": "",
+		"overrideUserAgent": false,
+		"proxy": "",
+		"removeUpgradeButton": false,
+		"restartOnConfigChanges": false,
+		"resumeOnStart": true,
+		"startAtLogin": false,
+		"startingPage": "",
+		"themes": [
+			"/home/aliyss/.config/YouTube Music/theme.css"
+		],
+		"tray": false,
+		"trayClickPlayPause": false,
+		"usePodcastParticipantAsArtist": false
+	},
+	"plugins": {
+		"album-actions": {
+			"enabled": false
+		},
+		"album-color-theme": {
+			"enabled": true
+		},
+		"ambient-mode": {
+			"enabled": true
+		},
+		"blur-nav-bar": {
+			"enabled": true
+		},
+		"bypass-age-restrictions": {
+			"enabled": true
+		},
+		"discord": {
+			"activityTimeoutEnabled": true,
+			"activityTimeoutTime": 600000,
+			"autoReconnect": true,
+			"enabled": true,
+			"hideDurationLeft": false,
+			"hideGitHubButton": true,
+			"listenAlong": true,
+			"playOnYouTubeMusic": true,
+			"statusDisplayType": 2
+		},
+		"downloader": {
+			"enabled": true
+		},
+		"in-app-menu": {
+			"enabled": false
+		},
+		"navigation": {
+			"enabled": true
+		},
+		"notifications": {
+			"enabled": true
+		},
+		"precise-volume": {
+			"globalShortcuts": {}
+		},
+		"sponsorblock": {
+			"enabled": true
+		},
+		"synced-lyrics": {
+			"enabled": true
+		},
+		"unobtrusive-player": {
+			"enabled": true
+		},
+		"video-toggle": {
+			"align": "left",
+			"enabled": true,
+			"forceHide": false,
+			"hideVideo": true,
+			"mode": "custom"
+		},
+		"visualizer": {
+			"butterchurn": {
+				"blendTimeInSeconds": 2.7,
+				"preset": "martin [shadow harlequins shape code] - fata morgana",
+				"renderingFrequencyInMs": 500
+			},
+			"enabled": true,
+			"type": "butterchurn"
+		}
+	},
+	"url": "https://music.youtube.com",
+	"window-maximized": true,
+	"window-position": {
+		"x": 0,
+		"y": 0
+	},
+	"window-size": {
+		"height": 1440,
+		"width": 5120
+	}
+}
