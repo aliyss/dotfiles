@@ -13,9 +13,15 @@ in {
       set fish_greeting
       fish_vi_key_bindings
 
+      # Herdr is the multiplexer. Every interactive fish — desktop panes,
+      # every fresh SSH session from the phone — attaches to the same
+      # per-user herdr daemon over its Unix socket. `herdr-workspace`
+      # (defined in apps/herdr.nix) starts the daemon if it isn't running,
+      # lands on the "main" workspace, and execs the herdr client. See
+      # ../phone-remote-access.md for the phone-access path.
       if status is-interactive
         and not set -q HERDR_ENV
-            exec herdr
+          exec herdr-workspace "main"
       end
 
       if set -q HERDR_ENV
