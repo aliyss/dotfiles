@@ -47,10 +47,14 @@ in {
     # ./apps/spicetify.nix
     ./apps/yazi.nix
     ./apps/fish.nix
+    ./apps/btop.nix
+    ./apps/bat.nix
+    ./apps/hyprlock.nix
     ./apps/direnv.nix
     ./apps/foot/default.nix
     ./apps/neovim.nix
     ./apps/firefox.nix
+    ./apps/youtube-music.nix
     ./apps/tidalcycles.nix
 
     ./services/mako.nix

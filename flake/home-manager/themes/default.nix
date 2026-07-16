@@ -21,6 +21,30 @@ let
     inherit theme;
   };
 
+  mkFzfTheme = import ../../lib/themes/fzf.nix {
+    inherit theme;
+  };
+
+  mkBtopTheme = import ../../lib/themes/btop.nix {
+    inherit theme;
+  };
+
+  mkYaziTheme = import ../../lib/themes/yazi.nix {
+    inherit theme;
+  };
+
+  mkMakoTheme = import ../../lib/themes/mako.nix {
+    inherit theme;
+  };
+
+  mkHyprlockTheme = import ../../lib/themes/hyprlock.nix {
+    inherit theme;
+  };
+
+  mkYouTubeMusicTheme = import ../../lib/themes/youtube-music.nix {
+    inherit theme;
+  };
+
   openCodeThemeJSON = builtins.toJSON (mkOpenCodeTheme // {
     "$schema" = "https://opencode.ai/theme.json";
   });
@@ -39,6 +63,12 @@ in {
       herdr    = mkHerdrTheme;
       neovim   = mkNeovimHighlights;
       foot     = mkFootTheme;
+      fzf      = mkFzfTheme;
+      btop     = mkBtopTheme;
+      yazi     = mkYaziTheme;
+      mako     = mkMakoTheme;
+      hyprlock = mkHyprlockTheme;
+      youtube-music = mkYouTubeMusicTheme;
     };
     internal = true;
   };

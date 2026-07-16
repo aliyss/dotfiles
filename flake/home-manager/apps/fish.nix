@@ -100,5 +100,6 @@
     enable = true;
     enableZshIntegration = true;
     enableFishIntegration = true;
+    colors = config.aliyss.themeGenerators.fzf;
   };
 }

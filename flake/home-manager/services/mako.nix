@@ -1,9 +1,9 @@
-{
+{config, ...}: {
   services.mako = {
     enable = true;
+    extraConfig = config.aliyss.themeGenerators.mako;
     settings = {
       default-timeout = 4000;
-      background-color = "#000000";
       border-radius = 0;
     };
   };
