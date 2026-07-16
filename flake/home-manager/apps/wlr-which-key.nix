@@ -135,7 +135,7 @@ with lib; let
             {
               key = "l";
               desc = "Lock";
-              cmd = "hyprctl dispatch exit";
+              cmd = "hyprlock";
             }
           ]
           ++ lib.optionals isBlade [
