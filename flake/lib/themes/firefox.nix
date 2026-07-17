@@ -24,7 +24,16 @@ in {
       background-color: transparent !important;
       background: transparent !important;
       -moz-appearance: none !important;
-      font-family: "JetBrains Mono" !important;
+    }
+
+    *:not(
+      i,
+      span,
+      [class*="icon"],
+      [class*="fa-"],
+      .material-icons
+    ) {
+      font-family: 'JetBrains Mono' !important;
     }
 
     :root {
@@ -42,6 +51,7 @@ in {
 
     html|body {
       background-color: rgba(0, 0, 0, 0.9) !important;
+      font-family: "JetBrains Mono" !important;
     }
 
     .urlbar-background, #searchbar {
@@ -256,13 +266,10 @@ in {
       --color-gray-100: var(--oxocarbon-bg) !important;
     }
 
-    /* Scrollbar removal */
-    * {
-      scrollbar-width: none !important;
-    }
   '';
 
   content = ''
+
     @-moz-document url-prefix(about:home), url-prefix(about:newtab), url-prefix(about:blank), url-prefix(about:config) {
       #root,
       body,
@@ -275,7 +282,18 @@ in {
 
     html,
     body {
+      background: transparent !important;
       background-color: transparent !important;
+    }
+
+    *:not(
+      i,
+      span,
+      [class*="icon"],
+      [class*="fa-"],
+      .material-icons
+    ) {
+      font-family: 'JetBrains Mono' !important;
     }
 
 
@@ -312,9 +330,5 @@ in {
       --link-color-hover: var(--oxocarbon-teal) !important;
     }
 
-    /* Scrollbar removal */
-    * {
-      scrollbar-width: none !important;
-    }
   '';
 }

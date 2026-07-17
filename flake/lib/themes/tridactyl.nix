@@ -1,8 +1,6 @@
-{ theme }:
-let
+{theme}: let
   p = theme.palette;
-in
-''
+in ''
   :root {
     /* Oxocarbon Colors */
     --bg: #000000;
@@ -175,9 +173,5 @@ in
 
   span.TridactylHint {
     border-radius: 0 !important;
-  }
-
-  * {
-    font-family: "JetBrains Mono" !important;
   }
 ''
