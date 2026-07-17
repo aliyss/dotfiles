@@ -136,7 +136,6 @@ Need to style it so it has the same background like all the other applications.
 
 ** Tridactyl
 *Configuration:* [[./flake/home-manager/apps/firefox/extensions/tridactyl.nix][tridactyl.nix]]
-*Configuration (CSS):* [[./tridactyl/aliyss.css][aliyss.css]]
 
 [[./images/tridactyl.png]]
 
