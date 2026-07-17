@@ -22,6 +22,7 @@
   xdg.configFile."tridactyl/themes/aliyss.css".text = config.aliyss.themeGenerators.tridactyl;
 
   xdg.configFile."tridactyl/tridactylrc".text = ''
+    colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/master/tridactyl/themes/aliyss.css aliyss
     colourscheme aliyss
 
     set newtab about:newtab
@@ -67,5 +68,6 @@
     blacklistadd silyas.vercel.app
     blacklistadd http://localhost:8000/
     blacklistadd anikai.to
+
   '';
 }
