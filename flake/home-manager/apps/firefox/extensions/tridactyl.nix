@@ -22,7 +22,7 @@
   xdg.configFile."tridactyl/themes/aliyss.css".text = config.aliyss.themeGenerators.tridactyl;
 
   xdg.configFile."tridactyl/tridactylrc".text = ''
-    colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/master/tridactyl/themes/aliyss.css aliyss
+    native
     colourscheme aliyss
 
     set newtab about:newtab
