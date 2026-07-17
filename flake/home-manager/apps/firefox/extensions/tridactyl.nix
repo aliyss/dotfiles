@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   home.file.".mozilla/native-messaging-hosts/tridactyl.json".text = let
     tridactyl = pkgs.tridactyl-native;
   in
@@ -15,8 +19,10 @@
       ];
     };
 
+  xdg.configFile."tridactyl/themes/aliyss.css".text = config.aliyss.themeGenerators.tridactyl;
+
   xdg.configFile."tridactyl/tridactylrc".text = ''
-    colourscheme --url https://raw.githubusercontent.com/aliyss/dotfiles/master/tridactyl/aliyss.css aliyss
+    colourscheme aliyss
 
     set newtab about:newtab
     set allowautofocus false

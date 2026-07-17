@@ -45,6 +45,14 @@ let
     inherit theme;
   };
 
+  mkFirefoxTheme = import ../../lib/themes/firefox.nix {
+    inherit theme;
+  };
+
+  mkTridactylTheme = import ../../lib/themes/tridactyl.nix {
+    inherit theme;
+  };
+
   openCodeThemeJSON = builtins.toJSON (mkOpenCodeTheme // {
     "$schema" = "https://opencode.ai/theme.json";
   });
@@ -69,6 +77,8 @@ in {
       mako     = mkMakoTheme;
       hyprlock = mkHyprlockTheme;
       youtube-music = mkYouTubeMusicTheme;
+      firefox = mkFirefoxTheme;
+      tridactyl = mkTridactylTheme;
     };
     internal = true;
   };

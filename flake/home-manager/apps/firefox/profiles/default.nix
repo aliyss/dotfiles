@@ -27,6 +27,7 @@ in {
     "svg.context-properties.content.enabled" = true;
     "layers.acceleration.force-enabled" = true;
     "layout.css.backdrop-filter.enabled" = true;
+    "layout.css.backdrop-filter.force-enabled" = true;
     "layout.css.has-selector.enabled" = true;
     "layout.css.moz-document.content.enabled" = true;
     "layout.css.moz-document.url-prefix-hack.enabled" = true;
@@ -42,6 +43,11 @@ in {
     "dom.payments.defaults.saveAddress" = false;
 
     "media.ffmpeg.vaapi.enabled" = true;
+
+    "browser.tabs.allow_transparent_browser" = true;
+    "widget.wayland.use-move-to-rect" = true;
+    "widget.allow-client-side-decoration" = true;
+    "browser.tabs.opacity" = 0;
 
     "cookiebanners.ui.desktop.enabled" = true;
     "general.config.filename" = "config.js";
@@ -85,6 +91,6 @@ in {
       "wikipedia".metaData.hidden = true;
     };
   };
-  userChrome = builtins.readFile ./userChrome.css;
-  userContent = builtins.readFile ./userContent.css;
+  userChrome = config.aliyss.themeGenerators.firefox.chrome;
+  userContent = config.aliyss.themeGenerators.firefox.content;
 }
