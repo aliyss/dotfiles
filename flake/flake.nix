@@ -100,7 +100,7 @@
         };
         modules =
           [
-            # ./hosts/blisspla/hardware-configuration.nix
+            ./hosts/blisspla/hardware-configuration.nix
             ./hosts/blisspla/configuration.nix
           ]
           ++ sharedConfigurationModules;
