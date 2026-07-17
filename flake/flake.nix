@@ -92,6 +92,19 @@
           ]
           ++ sharedConfigurationModules;
       };
+      # Desktop
+      aliyss-blisspla = lib.nixosSystem {
+        specialArgs = {
+          inherit system;
+          inherit inputs;
+        };
+        modules =
+          [
+            # ./hosts/blisspla/hardware-configuration.nix
+            ./hosts/blisspla/configuration.nix
+          ]
+          ++ sharedConfigurationModules;
+      };
     };
     # FORMATTER
     formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
