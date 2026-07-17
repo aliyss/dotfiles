@@ -50,8 +50,6 @@
 !/niri/
 
 # Tridactyl
-!/tridactyl/
-/tridactyl/tridactylrc
 
 # Keymappings
 !/wlr-which-key/

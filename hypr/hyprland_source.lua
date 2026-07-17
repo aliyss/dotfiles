@@ -39,22 +39,22 @@ hl.env("XCURSOR_SIZE", "24")
 
 hl.config({
     general = {
-        gaps_in      = 5,
-        gaps_out     = 10,
-        border_size  = 1,
-        col = {
+        gaps_in     = 5,
+        gaps_out    = 10,
+        border_size = 1,
+        col         = {
             active_border   = { colors = { "rgba(008000ee)", "rgba(ffff99ee)" }, angle = 45 },
             inactive_border = { colors = { "rgba(00ff99aa)", "rgba(008000aa)" }, angle = 45 },
         },
-        layout = "dwindle",
+        layout      = "dwindle",
     },
 
     decoration = {
-        rounding       = 0,
+        rounding         = 0,
         inactive_opacity = 0.8,
-        dim_inactive   = false,
-        dim_strength   = 0.4,
-        blur = {
+        dim_inactive     = false,
+        dim_strength     = 0.4,
+        blur             = {
             size              = 10,
             passes            = 2,
             brightness        = 0.8,
@@ -93,12 +93,12 @@ hl.config({
 
 hl.curve("myBezier", { type = "bezier", points = { { 0.05, 0.9 }, { 0.1, 1.05 } } })
 
-hl.animation({ leaf = "windows",     enabled = true, speed = 7,   bezier = "myBezier" })
-hl.animation({ leaf = "windowsOut",  enabled = true, speed = 7,   bezier = "default",    style = "popin 80%" })
-hl.animation({ leaf = "border",     enabled = true, speed = 10,  bezier = "default" })
-hl.animation({ leaf = "borderangle", enabled = true, speed = 8,   bezier = "default" })
-hl.animation({ leaf = "fade",        enabled = true, speed = 7,   bezier = "default" })
-hl.animation({ leaf = "workspaces",  enabled = true, speed = 6,   bezier = "default" })
+hl.animation({ leaf = "windows", enabled = true, speed = 7, bezier = "myBezier" })
+hl.animation({ leaf = "windowsOut", enabled = true, speed = 7, bezier = "default", style = "popin 80%" })
+hl.animation({ leaf = "border", enabled = true, speed = 10, bezier = "default" })
+hl.animation({ leaf = "borderangle", enabled = true, speed = 8, bezier = "default" })
+hl.animation({ leaf = "fade", enabled = true, speed = 7, bezier = "default" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 6, bezier = "default" })
 
 hl.gesture({
     fingers   = 3,
@@ -113,7 +113,7 @@ hl.device({
 
 hl.window_rule({
     match = { class = "^(firefox)$" },
-    opacity = "1 1",
+    no_blur = true,
 })
 
 hl.window_rule({
@@ -179,7 +179,8 @@ hl.window_rule({
 hl.on("hyprland.start", function()
     hl.exec_cmd("hyprlock --immediate-render")
     hl.exec_cmd("awww-daemon")
-    hl.exec_cmd("sh ~/.config/hypr/wallpapers/wrapped_awww.sh ~/.config/images/wallpapers/light/ ~/.config/images/wallpapers/dark/")
+    hl.exec_cmd(
+        "sh ~/.config/hypr/wallpapers/wrapped_awww.sh ~/.config/images/wallpapers/light/ ~/.config/images/wallpapers/dark/")
     hl.exec_cmd("clipse -listen")
     hl.exec_cmd("systemctl --user start activitywatch-watcher-aw-watcher-window-wayland.service")
     hl.exec_cmd("systemctl --user start activitywatch-watcher-aw-watcher-afk.service")
