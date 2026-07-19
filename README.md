@@ -16,7 +16,6 @@ Welcome to my personal configuration repository! This is where I store my NixOS 
   - [Hyprland](#hyprland)
   - [Foot](#foot)
   - [ZSH](#zsh)
-  - [Emacs](#emacs)
   - [Neovim](#neovim)
   - [Spotify](#spotify)
   - [Tridactyl](#tridactyl)
@@ -101,13 +100,6 @@ Foot is my terminal of choice for its excellent performance and transparency sup
 ![ZSH Screenshot](./images/zsh.png)
 
 Most of my terminal styling is managed here. I'm still tweaking what information to show or hide for that perfect minimalist look.
-
-### Emacs
-*Configuration:* [`emacs/config.org`](./emacs/config.org)
-
-I switched from Neovim to Emacs. No regrets. Still stuck in the same configuration hell, though.
-
-![Emacs Screenshot](./images/emacs.png)
 
 ### Neovim
 *Configuration:* [`flake/home-manager/apps/neovim.nix`](./flake/home-manager/apps/neovim.nix)

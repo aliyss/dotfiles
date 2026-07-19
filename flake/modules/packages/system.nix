@@ -3,8 +3,6 @@
     tuigreet
     foot
     neovim
-    ((emacsPackagesFor emacs30-pgtk).emacsWithPackages
-      (epkgs: [epkgs.vterm epkgs.lsp-tailwindcss epkgs.dap-mode]))
     unzip
     gcc
     mpv

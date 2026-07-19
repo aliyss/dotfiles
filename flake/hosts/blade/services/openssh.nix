@@ -1,11 +1,13 @@
 {...}: {
+  # Reverting blade to standard SSH settings, handled by shared misc.nix if imported, 
+  # or kept standard here.
   services.openssh = {
     enable = true;
-    ports = [22922];
+    ports = [22];
     settings = {
-      PasswordAuthentication = true;
-      PermitRootLogin = "prohibit-password";
-      UseDns = true;
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+      UseDns = false;
       AllowUsers = ["aliyss"];
     };
   };

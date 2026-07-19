@@ -18,7 +18,7 @@ let
   };
 
   mkFootTheme = import ../../lib/themes/foot.nix {
-    inherit theme;
+    inherit theme lib;
   };
 
   mkFzfTheme = import ../../lib/themes/fzf.nix {
@@ -53,6 +53,14 @@ let
     inherit theme;
   };
 
+  mkTermuxTheme = import ../../lib/themes/termux.nix {
+    inherit theme lib;
+  };
+
+  mkPhoneFishConfig = import ../../lib/themes/phone-fish.nix {
+    inherit theme lib;
+  };
+
   openCodeThemeJSON = builtins.toJSON (mkOpenCodeTheme // {
     "$schema" = "https://opencode.ai/theme.json";
   });
@@ -79,6 +87,7 @@ in {
       youtube-music = mkYouTubeMusicTheme;
       firefox = mkFirefoxTheme;
       tridactyl = mkTridactylTheme;
+      termux = mkTermuxTheme;
     };
     internal = true;
   };
@@ -88,5 +97,9 @@ in {
     xdg.configFile."opencode/themes/catppuccin.json" = {
       text = openCodeThemeJSON;
     };
+
+    # ── aliyss-phone sync targets ──────────────────────────────────
+    home.file.".config/aliyss-phone/colors.properties".text = mkTermuxTheme;
+    home.file.".config/aliyss-phone/config.fish".text = mkPhoneFishConfig;
   };
 }
