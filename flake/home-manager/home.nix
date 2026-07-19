@@ -60,9 +60,6 @@ in {
     ./services/mako.nix
     ./services/activity-watcher.nix
 
-    # ./services/mbsync.nix
-    # ./apps/emacs.nix
-    # ./services/emacs.nix
     ../local.nix
   ];
 

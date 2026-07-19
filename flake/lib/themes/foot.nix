@@ -2,39 +2,38 @@
   # ─── Foot terminal theme generator ───────────────────────────────
   # Produces the [colors-dark] block for foot.ini.
   # Conventional ANSI mapping using oxocarbon palette colors.
-
   theme,
+  lib,
   ...
 }: let
   p = theme.palette;
   # oxocarbon has no yellow — use IBM Carbon's official yellow
-  carbonYellow = "#f1c21b";
 in ''
   [colors-dark]
   alpha=0.85
   background=000000
-  selection-background=${p.surface2}
-  selection-foreground=${p.text}
-  search-box-no-match=${p.surface0} ${p.red}
-  search-box-match=${p.surface0} ${p.green}
-  jump-labels=${p.surface0} ${carbonYellow}
-  scrollback-indicator=${p.surface0} ${p.blue}
-  urls=${p.blue}
-  foreground=${p.text}
-  regular0=${p.surface0}
-  regular1=${p.red}
-  regular2=${p.green}
-  regular3=${carbonYellow}
-  regular4=${p.blue}
-  regular5=${p.mauve}
-  regular6=${p.sky}
-  regular7=${p.text}
-  bright0=${p.surface2}
-  bright1=${p.red}
-  bright2=${p.green}
-  bright3=${carbonYellow}
-  bright4=${p.blue}
-  bright5=${p.mauve}
-  bright6=${p.teal}
-  bright7=#ffffff
+  selection-background=${lib.removePrefix "#" p.surface1}
+  selection-foreground=${lib.removePrefix "#" p.text}
+  search-box-no-match=${lib.removePrefix "#" p.surface0} ${lib.removePrefix "#" p.red}
+  search-box-match=${lib.removePrefix "#" p.surface0} ${lib.removePrefix "#" p.green}
+  jump-labels=${lib.removePrefix "#" p.surface0} ${lib.removePrefix "#" p.peach}
+  scrollback-indicator=${lib.removePrefix "#" p.surface0} ${lib.removePrefix "#" p.blue}
+  urls=${lib.removePrefix "#" p.blue}
+  foreground=${lib.removePrefix "#" p.text}
+  regular0=${lib.removePrefix "#" p.surface0}
+  regular1=${lib.removePrefix "#" p.red}
+  regular2=${lib.removePrefix "#" p.green}
+  regular3=${lib.removePrefix "#" p.peach}
+  regular4=${lib.removePrefix "#" p.blue}
+  regular5=${lib.removePrefix "#" p.mauve}
+  regular6=${lib.removePrefix "#" p.teal}
+  regular7=${lib.removePrefix "#" p.text}
+  bright0=${lib.removePrefix "#" p.surface1}
+  bright1=${lib.removePrefix "#" p.red}
+  bright2=${lib.removePrefix "#" p.green}
+  bright3=${lib.removePrefix "#" p.peach}
+  bright4=${lib.removePrefix "#" p.blue}
+  bright5=${lib.removePrefix "#" p.mauve}
+  bright6=${lib.removePrefix "#" p.teal}
+  bright7=ffffff
 ''

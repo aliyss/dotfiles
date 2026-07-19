@@ -11,7 +11,6 @@
 !/.gitignore
 !/README.md
 !/README.org
-!/phone-remote-access.md
 
 # Images
 !/images/
@@ -66,6 +65,11 @@
 !/opencode/plugins/
 !/opencode/themes/
 !/opencode/tui.json
+
+# Phone Management
+!/aliyss-phone/
+/aliyss-phone/colors.properties
+/aliyss-phone/config.fish
 
 # YouTube Music
 # !/YouTube Music/

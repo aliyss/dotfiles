@@ -7,7 +7,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    playit-nixos-module.url = "github:pedorich-n/playit-nixos-module";
+    # playit-nixos-module.url = "github:pedorich-n/playit-nixos-module";
     prismlauncher.url = "github:Diegiwg/PrismLauncher-Cracked";
     nur = {
       url = "github:nix-community/NUR";
