@@ -1,4 +1,11 @@
-{config, pkgs, lib, herdr, hyprland, ...}: let
+{
+  config,
+  pkgs,
+  lib,
+  herdr,
+  hyprland,
+  ...
+}: let
   herdrPkg = herdr.packages.${pkgs.stdenv.hostPlatform.system}.herdr;
   herdrPluginDir = "${config.xdg.configHome}/herdr/plugins/vim-herdr-navigation";
   hyprctl = "${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/hyprctl";

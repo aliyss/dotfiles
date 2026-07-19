@@ -11,13 +11,14 @@
 
 
       # Herdr is the multiplexer. Every interactive fish — desktop panes,
-      # every fresh SSH session — attaches to the same per-user herdr
-      # daemon over its Unix socket. `herdr-workspace` (defined in
-      # apps/herdr.nix) starts the daemon if it isn't running,
-      # lands on the "main" workspace, and execs the herdr client.
+      # every fresh SSH session from the phone — attaches to the same
+      # per-user herdr daemon over its Unix socket. `herdr-workspace`
+      # (defined in apps/herdr.nix) starts the daemon if it isn't running,
+      # lands on the "main" workspace, and execs the herdr client. See
+      # ../phone-remote-access.md for the phone-access path.
       if status is-interactive
         and not set -q HERDR_ENV
-          exec herdr-workspace "main"
+          exec herdr-workspace "aliyss-termux"
       end
 
       if set -q HERDR_ENV
