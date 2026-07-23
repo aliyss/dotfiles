@@ -252,6 +252,11 @@ with lib; let
                   desc = "Slack";
                   cmd = "slack";
                 }
+                {
+                  key = "r";
+                  desc = "RustDesk";
+                  cmd = "rustdesk";
+                }
               ];
             }
           ];
@@ -265,6 +270,27 @@ with lib; let
               submenu = disabledGated;
             }
           ];
+      }
+      {
+        key = ["v"];
+        desc = "VPN";
+        submenu = [
+          {
+            key = "l";
+            desc = "Launch VPN";
+            cmd = "foot --title 'VPN Launcher' vpn-launch";
+          }
+          {
+            key = "k";
+            desc = "Kill all VPNs";
+            cmd = "foot --title 'VPN Kill' sh -c 'sudo pkill -f openvpn && ${pkgs.libnotify}/bin/notify-send \"VPN\" \"All VPN connections closed\"'";
+          }
+        ];
+      }
+      {
+        key = ["r"];
+        desc = "Remote Desktop";
+        cmd = "foot --title 'RDP Launcher' rdp-launch";
       }
     ];
   };

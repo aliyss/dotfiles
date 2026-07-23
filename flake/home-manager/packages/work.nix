@@ -8,4 +8,5 @@ in with pkgs; [
   anydesk
   gdk
   teams-for-linux
+  rustdesk
 ]

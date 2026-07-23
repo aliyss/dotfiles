@@ -44,6 +44,9 @@ in {
     ./apps/wayland.nix
     ./apps/herdr.nix
     ./apps/wlr-which-key.nix
+    ./apps/vpn.nix
+    ./apps/rdp.nix
+    ./apps/ssh.nix
     # ./apps/spicetify.nix
     ./apps/yazi.nix
     ./apps/fish.nix
@@ -93,6 +96,7 @@ in {
     };
 
   home.pointerCursor = {
+    enable = true;
     package = pkgs.simp1e-cursors;
     name = "Simp1e-Dark";
     size = 28;

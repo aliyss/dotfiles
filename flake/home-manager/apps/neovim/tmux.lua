@@ -22,7 +22,7 @@ if vim.env.HERDR_ENV then
       local filename = vim.fn.expand("%:t")
       local tab_id = vim.env.HERDR_TAB_ID
       if tab_id and filename ~= "" then
-        os.execute("herdr tab rename " .. tab_id .. " '" .. filename .. "' 2>/dev/null")
+        vim.fn.system({ "herdr", "tab", "rename", tab_id, filename })
       end
     end,
   })
@@ -32,7 +32,7 @@ if vim.env.HERDR_ENV then
     callback = function()
       local tab_id = vim.env.HERDR_TAB_ID
       if tab_id then
-        os.execute("herdr tab rename " .. tab_id .. " nvim 2>/dev/null")
+        vim.fn.system({ "herdr", "tab", "rename", tab_id, "nvim" })
       end
     end,
   })

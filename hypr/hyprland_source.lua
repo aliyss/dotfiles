@@ -162,6 +162,51 @@ hl.window_rule({
 })
 
 hl.window_rule({
+    match = { title = "^(RDP Launcher)$" },
+    float = true,
+})
+
+hl.window_rule({
+    match = { title = "^(RDP Launcher)$" },
+    size = { 1000, 600 },
+})
+
+hl.window_rule({
+    match = { title = "^(RDP Launcher)$" },
+    center = true,
+})
+
+hl.window_rule({
+    match = { title = "^(VPN Launcher)$" },
+    float = true,
+})
+
+hl.window_rule({
+    match = { title = "^(VPN Launcher)$" },
+    size = { 1000, 600 },
+})
+
+hl.window_rule({
+    match = { title = "^(VPN Launcher)$" },
+    center = true,
+})
+
+hl.window_rule({
+    match = { title = "^(VPN Kill)$" },
+    float = true,
+})
+
+hl.window_rule({
+    match = { title = "^(VPN Kill)$" },
+    size = { 600, 200 },
+})
+
+hl.window_rule({
+    match = { title = "^(VPN Kill)$" },
+    center = true,
+})
+
+hl.window_rule({
     match = { title = "^(clipse_clipboard)$" },
     float = true,
 })
