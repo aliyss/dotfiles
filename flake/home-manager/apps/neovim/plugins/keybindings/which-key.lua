@@ -230,13 +230,13 @@ wk.add({
 	{ "<leader>tt", "<cmd>tabprevious<cr>", desc = "Previous Tab" },
 	{ "<leader>w", group = "Window" },
 	{ "<leader>wc", "<cmd>wincmd c<cr>", desc = "Close Window" },
-	{ "<leader>wh", "<cmd>NvimTmuxNavigateLeft<cr>", desc = "Left Window" },
-	{ "<leader>wj", "<cmd>NvimTmuxNavigateDown<cr>", desc = "Bottom Window" },
-	{ "<leader>wk", "<cmd>NvimTmuxNavigateUp<cr>", desc = "Top Window" },
-	{ "<leader>wl", "<cmd>NvimTmuxNavigateRight<cr>", desc = "Right Window" },
+	{ "<leader>wh", "<cmd>wincmd h<cr>", desc = "Left Window" },
+	{ "<leader>wj", "<cmd>wincmd j<cr>", desc = "Bottom Window" },
+	{ "<leader>wk", "<cmd>wincmd k<cr>", desc = "Top Window" },
+	{ "<leader>wl", "<cmd>wincmd l<cr>", desc = "Right Window" },
 	{ "<leader>ws", "<cmd>wincmd s<cr>", desc = "Split Window Horizontally" },
 	{ "<leader>wv", "<cmd>wincmd v<cr>", desc = "Split Window Vertically" },
-	{ "<leader>ww", "<cmd>NvimTmuxNavigateNext<cr>", desc = "Next Window" },
+	{ "<leader>ww", "<cmd>wincmd w<cr>", desc = "Next Window" },
 	{
 		"<leader>me",
 		function()

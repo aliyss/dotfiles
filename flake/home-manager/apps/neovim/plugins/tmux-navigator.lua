@@ -9,6 +9,13 @@ local function nav(wincmd, dir)
     if herdr == nil or herdr == "" then
       herdr = "herdr"
     end
+    local edges_json = vim.fn.system({ herdr, "pane", "edges", "--current" })
+    local ok, edges = pcall(vim.json.decode, edges_json)
+    if ok and edges and edges.result and edges.result.edges then
+      if edges.result.edges[dir] then
+        return
+      end
+    end
     vim.fn.system({ herdr, "pane", "focus", "--direction", dir, "--current" })
   elseif vim.env.TMUX and vim.env.TMUX ~= "" then
     local tmux = { left = "Left", down = "Down", up = "Up", right = "Right" }
