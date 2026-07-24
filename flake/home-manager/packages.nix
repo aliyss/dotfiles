@@ -14,6 +14,7 @@ let
     tridactyl-native
     chawan
     chromium
+    sshfs-fuse
     google-chrome
     btop
     yarn-berry

@@ -126,7 +126,8 @@
     # Using xfreerdp (X11 client) which is stable on XWayland.
     # The correct syntax for this version of FreeRDP is /kbd:layout:<id>,unicode:on
     # We use 0x00000807 (Swiss German) as the layout and enable unicode for your custom symbols.
-    nohup ${pkgs.freerdp}/bin/xfreerdp /v:"$URL" /u:"$USERNAME" /p:"$PASSWORD" /dynamic-resolution /kbd:unicode:on /cert:ignore /network:auto /relax-order-checks /audio-mode:0 >/dev/null 2>&1 &
+    nohup ${pkgs.freerdp}/bin/xfreerdp /v:"$URL" /u:"$USERNAME" /p:"$PASSWORD" /dynamic-resolution /cert:ignore /network:auto /relax-order-checks /audio-mode:0 >/dev/null 2>&1 &
+    # nohup ${pkgs.freerdp}/bin/xfreerdp /v:"$URL" /u:"$USERNAME" /p:"$PASSWORD" /dynamic-resolution /kbd:unicode:on /cert:ignore /network:auto /relax-order-checks /audio-mode:0 >/dev/null 2>&1 &
     sleep 0.5
     exit 0
   '';
