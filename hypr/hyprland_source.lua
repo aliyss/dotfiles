@@ -1,16 +1,35 @@
 local mainMod = "SUPER"
 
+
+-- hl.monitor({
+--     output   = "DP-2",
+--     mode     = "5120x1440",
+--     position = "0x0",
+--     scale    = 1,
+-- })
+--
+-- hl.monitor({
+--     output   = "DP-1",
+--     mode     = "5120x1440",
+--     position = "0x0",
+--     scale    = 1,
+-- })
+
 hl.monitor({
-    output   = "DP-2",
-    mode     = "5120x1440",
-    position = "0x0",
+    output   = "desc:BNQ BenQ BL2405 JAJ02877SL0",
+    mode     = "1920x1080@60",
+    position = "3840x0",
     scale    = 1,
+})
+hl.workspace_rule({
+    workspace = "3",
+    monitor = "desc:BNQ BenQ BL2405 JAJ02877SL0",
 })
 
 hl.monitor({
-    output   = "DP-1",
-    mode     = "5120x1440",
-    position = "0x0",
+    output   = "desc:BNQ BenQ BL2405 G1K00731SL0",
+    mode     = "1920x1080@60",
+    position = "1920x0",
     scale    = 1,
 })
 
@@ -20,6 +39,7 @@ hl.monitor({
     position = "0x0",
     scale    = 2,
 })
+
 
 hl.monitor({
     output   = "Unknown-1",
@@ -76,6 +96,7 @@ hl.config({
 
     binds = {
         allow_workspace_cycles = true,
+        movefocus_cycles_fullscreen = true
     },
 })
 
@@ -119,10 +140,6 @@ hl.window_rule({
 hl.window_rule({
     match = { initial_title = "^(Spotify Free)$" },
     opacity = "0.90 0.90",
-})
-
-hl.window_rule({
-    match = { initial_title = "^(Spotify Free)$" },
     workspace = 2,
 })
 
@@ -149,70 +166,34 @@ hl.window_rule({
 hl.window_rule({
     match = { title = "^(foot_install)$" },
     float = true,
-})
-
-hl.window_rule({
-    match = { title = "^(foot_install)$" },
     size = { 1200, 800 },
-})
-
-hl.window_rule({
-    match = { title = "^(foot_install)$" },
     center = true,
 })
 
 hl.window_rule({
     match = { title = "^(RDP Launcher)$" },
-    float = true,
-})
-
-hl.window_rule({
-    match = { title = "^(RDP Launcher)$" },
     size = { 1000, 600 },
-})
-
-hl.window_rule({
-    match = { title = "^(RDP Launcher)$" },
     center = true,
-})
-
-hl.window_rule({
-    match = { title = "^(VPN Launcher)$" },
     float = true,
 })
 
 hl.window_rule({
     match = { title = "^(VPN Launcher)$" },
+    float = true,
     size = { 1000, 600 },
-})
-
-hl.window_rule({
-    match = { title = "^(VPN Launcher)$" },
     center = true,
 })
 
 hl.window_rule({
     match = { title = "^(VPN Kill)$" },
     float = true,
-})
-
-hl.window_rule({
-    match = { title = "^(VPN Kill)$" },
     size = { 600, 200 },
-})
-
-hl.window_rule({
-    match = { title = "^(VPN Kill)$" },
     center = true,
 })
 
 hl.window_rule({
     match = { title = "^(clipse_clipboard)$" },
     float = true,
-})
-
-hl.window_rule({
-    match = { title = "^(clipse_clipboard)$" },
     size = { 622, 652 },
 })
 

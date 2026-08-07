@@ -44,9 +44,9 @@
     if [ -n "$existing" ]; then
       target_ws=$(${hyprctl} clients -j 2>/dev/null | ${pkgs.jq}/bin/jq -r \
         --arg addr "$existing" \
-        '.[] | select(.address == $addr) | .workspace.name' 2>/dev/null)
-      ${hyprctl} dispatch workspace "$target_ws" 2>/dev/null || true
-      ${hyprctl} dispatch focuswindow "address:$existing" 2>/dev/null || true
+        '.[] | select(.address == $addr) | .workspace.id' 2>/dev/null)
+      ${hyprctl} dispatch "hl.dsp.focus({workspace=$target_ws})" 2>/dev/null || true
+      ${hyprctl} dispatch "hl.dsp.focus({window=\"address:$existing\"})" 2>/dev/null || true
 
       ${herdrPkg}/bin/herdr server 2>/dev/null &
       for _ in $(seq 1 30); do

@@ -7,5 +7,5 @@ in
     # slack
     # anydesk
     # gdk
-    # teams-for-linux
+    teams-for-linux
   ]

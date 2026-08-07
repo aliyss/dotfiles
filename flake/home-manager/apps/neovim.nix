@@ -1,4 +1,9 @@
-{config, pkgs, lib, ...}: let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   lolcrab = pkgs.rustPlatform.buildRustPackage rec {
     name = "lolcrab";
     pname = "lolcrab";
@@ -156,16 +161,19 @@ in {
             "avante.providers.copilot"
             "avante.providers.gemini"
             "avante.providers.azure"
+            "avante.history.helpers"
+            "avante.libs.ReAct_parser2"
+            "avante.utils.prompts"
           ];
         });
         config = builtins.readFile ./neovim/plugins/llm/avante.lua;
         type = "lua";
       }
-      {
-        plugin = render-markdown-nvim;
-        config = builtins.readFile ./neovim/plugins/llm/render-markdown.lua;
-        type = "lua";
-      }
+      # {
+      #   plugin = render-markdown-nvim;
+      #   config = builtins.readFile ./neovim/plugins/llm/render-markdown.lua;
+      #   type = "lua";
+      # }
       # {
       #   plugin = augment-vim;
       #   config = builtins.readFile ./neovim/plugins/llm/augment.lua;
@@ -345,7 +353,8 @@ in {
       ## Themes
       {
         plugin = nyoom-oxocarbon;
-        config = builtins.readFile ./neovim/colorscheme.lua
+        config =
+          builtins.readFile ./neovim/colorscheme.lua
           + config.aliyss.themeGenerators.neovim;
         type = "lua";
       }
