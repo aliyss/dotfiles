@@ -37,6 +37,7 @@
       url = "github:ogulcancelik/herdr";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    forticlient-nixos.url = "github:jplana/forticlient-nixos";
   };
 
   outputs = {

@@ -71,11 +71,19 @@
        exit 1
     fi
 
-    # Check if host is reachable
-    echo "Checking connectivity to $URL..."
-    if ! ping -c 1 -W 2 "$URL" >/dev/null 2>&1; then
+    # Extract host and port from URL
+    RDP_HOST="$URL"
+    RDP_PORT=3389
+    if echo "$URL" | ${pkgs.gnugrep}/bin/grep -q ':'; then
+      RDP_HOST=$(echo "$URL" | ${pkgs.coreutils}/bin/cut -d: -f1)
+      RDP_PORT=$(echo "$URL" | ${pkgs.coreutils}/bin/cut -d: -f2-)
+    fi
+
+    # Check if RDP port is reachable
+    echo "Checking connectivity to $URL (port $RDP_PORT)..."
+    if ! ${pkgs.netcat}/bin/nc -z -w 2 "$RDP_HOST" "$RDP_PORT" >/dev/null 2>&1; then
       if [ -n "$VPN_CONFIG" ]; then
-        echo "Host $URL is unreachable and VPN_CONFIG ($VPN_CONFIG) is set."
+        echo "Host $URL (port $RDP_PORT) is unreachable and VPN_CONFIG ($VPN_CONFIG) is set."
         echo "Launching VPN..."
         ${pkgs.libnotify}/bin/notify-send "RDP" "Host unreachable, launching VPN: $VPN_CONFIG"
 
@@ -88,9 +96,9 @@
           read -p "Press Enter to retry connection anyway or Ctrl+C to abort..."
         fi
 
-        echo "Checking connectivity to $URL..."
+        echo "Checking connectivity to $URL (port $RDP_PORT)..."
         for i in {1..20}; do
-          if ping -c 1 -W 2 "$URL" >/dev/null 2>&1; then
+          if ${pkgs.netcat}/bin/nc -z -w 2 "$RDP_HOST" "$RDP_PORT" >/dev/null 2>&1; then
             echo " Connectivity established!"
             break
           fi
@@ -100,12 +108,12 @@
         done
         echo ""
 
-        if ! ping -c 1 -W 2 "$URL" >/dev/null 2>&1; then
-          echo "Error: Host $URL still unreachable after starting VPN."
+        if ! ${pkgs.netcat}/bin/nc -z -w 2 "$RDP_HOST" "$RDP_PORT" >/dev/null 2>&1; then
+          echo "Error: Host $URL (port $RDP_PORT) still unreachable after starting VPN."
           read -p "Press Enter to try connecting anyway or Ctrl+C to abort..."
         fi
       else
-        echo "Warning: Host $URL is unreachable and no VPN_CONFIG is defined."
+        echo "Warning: Host $URL (port $RDP_PORT) is unreachable and no VPN_CONFIG is defined."
         read -p "Press Enter to try connecting anyway or Ctrl+C to abort..."
       fi
     fi
@@ -134,6 +142,7 @@
 in {
   home.packages = [
     pkgs.freerdp
+    pkgs.netcat
     rdpScript
   ];
 

@@ -46,8 +46,9 @@ LOCAL_NIX="$SCRIPT_DIR/local.nix"
 case "$host" in
   bequitta) host="aliyss-bequitta" ;;
   blade)    host="aliyss-blade" ;;
+  blisspla)    host="aliyss-blisspla" ;;
   *)
-    echo "Unknown host: $host (valid: bequitta, blade)"
+    echo "Unknown host: $host (valid: bequitta, blade, blisspla)"
     exit 1
     ;;
 esac
