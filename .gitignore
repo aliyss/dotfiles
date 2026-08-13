@@ -75,7 +75,5 @@
 /aliyss-phone/config.fish
 
 # YouTube Music
-# !/YouTube Music/
-# /Youtube Music/*
-# /Youtube Music/*/
-!/YouTube Music/config.json
+# Tracked config lives in nix (flake/home-manager/apps/youtube-music.nix).
+# The app's live config.json (window state, url) is per-PC; fully ignored.
