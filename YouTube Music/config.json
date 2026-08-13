@@ -178,7 +178,12 @@
 		"y": 0
 	},
 	"window-size": {
+<<<<<<< HEAD
 		"width": 5120,
 		"height": 1440
+=======
+		"width": 950,
+		"height": 530
+>>>>>>> def55c9b5ecad6a6a86ef210c8726f44ca334d43
 	}
 }
