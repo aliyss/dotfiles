@@ -9,11 +9,12 @@ phone as a **managed device of the dotfiles flake** — same central theme
 
 - The phone is registered in `flake/flake.nix` as
   `homeConfigurations.aliyss-termux` (`flake/hosts/termux/home.nix`, aarch64).
-- That config imports the same theme wiring as the desktop
-  (`flake/home-manager/themes/default.nix` + `lib/themes/termux.nix` /
-  `phone-fish.nix`), and with `aliyss.phone.enable = true` writes
-  `~/.termux/colors.properties`, `~/.config/fish/config.fish` and
-  `~/.hushlogin` directly on the phone.
+- That config shares the same theme and app modules as the desktop
+  (`flake/home-manager/themes/default.nix`, `apps/fish.nix`, `apps/herdr.nix`),
+  with `aliyss.isPhone = true` gating the phone-specific bits: real-file
+  configs written directly on the phone (`~/.termux/colors.properties`,
+  `~/.config/fish/config.fish`, `~/.hushlogin`), Tailscale/sshd handling,
+  and no Hyprland.
 - Nix itself runs inside the Termux app via `proot` (the phone's `/` is
   dm-verity read-only, so a native `/nix` mount is impossible). The store lives
   at `~/.nix/nix`; no app, no mount, no root needed.
@@ -50,8 +51,9 @@ The only manual step after the command: authorize the phone on your tailnet —
 `tailscale-cli up` (opens/prints an auth URL; one-time).
 
 > Prerequisite: the repo must already contain `flake/hosts/termux`,
-> `flake/home-manager/themes/default.nix`, `flake/lib/themes/phone-fish.nix`
-> and the `aliyss-phone/` scripts (this README) before provisioning a phone.
+> `flake/home-manager/options.nix`, `flake/home-manager/themes/default.nix`,
+> `flake/home-manager/apps/fish.nix` and the `aliyss-phone/` scripts (this
+> README) before provisioning a phone.
 
 ## Updating the phone
 
@@ -110,8 +112,9 @@ home-manager on the phone:
 These are written as **real files** on the phone (home-manager's `home.file`
 links them into the store, but the phone's `/nix` is invisible to native Termux
 apps — an activation step copies them out). **Do not edit them directly.**
-Modify `flake/lib/theme.nix`, `flake/lib/themes/termux.nix` or
-`flake/lib/themes/phone-fish.nix`, then run `update-home`.
+Modify `flake/lib/theme.nix`, `flake/lib/themes/termux.nix` (colors) or
+`flake/home-manager/apps/fish.nix` (fish) — under the `isPhone` branches — then
+run `update-home`.
 
 The phone's opencode also gets the generated `catppuccin` theme
 (`.config/opencode/themes/catppuccin.json`). The theme is selected via the
