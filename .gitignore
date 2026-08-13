@@ -67,6 +67,7 @@
 !/opencode/opencode.jsonc
 !/opencode/plugins/
 !/opencode/themes/
+/opencode/themes/catppuccin.json
 !/opencode/tui.json
 
 # Phone Management

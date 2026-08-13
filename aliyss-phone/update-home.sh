@@ -12,10 +12,10 @@ set -euo pipefail
 #
 # Usage:   bash update-home.sh
 # Options (env vars):
-#   REPO_DIR   path to the dotfiles checkout  (default ~/dotfiles)
+#   REPO_DIR   path to the dotfiles checkout  (default ~/.config)
 #   PULL       pull the repo first            (default 1)
 
-REPO_DIR="${REPO_DIR:-$HOME/dotfiles}"
+REPO_DIR="${REPO_DIR:-$HOME/.config}"
 PULL="${PULL:-1}"
 export PATH="$HOME/.local/bin:$PATH"
 
@@ -23,7 +23,7 @@ log() { printf '\n\033[1;34m== %s ==\033[0m\n' "$*"; }
 
 if [ ! -f "$REPO_DIR/flake/flake.nix" ]; then
   echo "dotfiles checkout not found at $REPO_DIR" >&2
-  echo "clone it: git clone https://github.com/aliyss/dotfiles \"$REPO_DIR\"" >&2
+  echo "bootstrap it first: bash <(curl -fsSL https://raw.githubusercontent.com/aliyss/dotfiles/master/aliyss-phone/nix-install.sh)" >&2
   exit 1
 fi
 

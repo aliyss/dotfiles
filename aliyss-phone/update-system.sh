@@ -14,9 +14,9 @@ set -euo pipefail
 # managed by `nix profile`).
 #
 # Usage:   bash update-system.sh
-# Options (env vars): REPO_DIR  (default ~/dotfiles)
+# Options (env vars): REPO_DIR  (default ~/.config)
 
-REPO_DIR="${REPO_DIR:-$HOME/dotfiles}"
+REPO_DIR="${REPO_DIR:-$HOME/.config}"
 export PATH="$HOME/.local/bin:$PATH"
 
 log() { printf '\n\033[1;34m== %s ==\033[0m\n' "$*"; }

@@ -64,12 +64,6 @@ let
   openCodeThemeJSON = builtins.toJSON (mkOpenCodeTheme // {
     "$schema" = "https://opencode.ai/theme.json";
   });
-
-  # opencode config that selects the generated theme above.
-  openCodeConfigJSON = builtins.toJSON {
-    "$schema" = "https://opencode.ai/config.json";
-    theme = "catppuccin";
-  };
 in {
   options.aliyss.theme = lib.mkOption {
     type = lib.types.attrs;
@@ -128,17 +122,19 @@ in {
       # processes (Termux terminal, fish, opencode) can read them outside proot.
       # rm first: linkGeneration leaves store symlinks here, which native apps
       # can't follow and which are read-only (EACCES if written through).
+      # opencode.jsonc + tui.json are NOT written here — they are tracked repo
+      # files (the theme lives in the tracked tui.json); only the generated
+      # theme file is materialized.
       mkdir -p "$HOME/.termux" "$HOME/.config/fish" "$HOME/.config/opencode/themes"
       rm -f "$HOME/.termux/colors.properties" "$HOME/.config/fish/config.fish" \
-            "$HOME/.config/opencode/themes/catppuccin.json" "$HOME/.config/opencode/opencode.jsonc" \
+            "$HOME/.config/opencode/themes/catppuccin.json" \
             "$HOME/.hushlogin"
       cp ${pkgs.writeText "colors.properties" mkTermuxTheme} "$HOME/.termux/colors.properties"
       cp ${pkgs.writeText "fish-config.fish" mkPhoneFishConfig} "$HOME/.config/fish/config.fish"
       cp ${pkgs.writeText "opencode-theme.json" openCodeThemeJSON} "$HOME/.config/opencode/themes/catppuccin.json"
-      cp ${pkgs.writeText "opencode.jsonc" openCodeConfigJSON} "$HOME/.config/opencode/opencode.jsonc"
       # store files are 444; give the real copies normal perms
       chmod 644 "$HOME/.termux/colors.properties" "$HOME/.config/fish/config.fish" \
-                "$HOME/.config/opencode/themes/catppuccin.json" "$HOME/.config/opencode/opencode.jsonc"
+                "$HOME/.config/opencode/themes/catppuccin.json"
       : > "$HOME/.hushlogin"
     '');
   };

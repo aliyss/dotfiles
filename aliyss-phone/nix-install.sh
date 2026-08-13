@@ -19,7 +19,7 @@ set -euo pipefail
 # Options (env vars):
 #   NIX_VERSION            nix release to install        (default 2.35.1)
 #   REPO_URL               dotfiles repo to clone        (default https://github.com/aliyss/dotfiles)
-#   REPO_DIR               where to clone it             (default ~/dotfiles)
+#   REPO_DIR               where to merge it             (default ~/.config — the dotfiles convention)
 #   RUN_UPDATE             apply the home config at end  (default 1)
 #   INSTALL_TAILSCALE      install patched Tailscale     (default 1; auth is manual)
 #   SSH_AUTHORIZED_KEYS    desktop public key(s) to put in ~/.ssh/authorized_keys
@@ -33,7 +33,7 @@ NIX_BIN_DIR="$NIX_ROOT/bin"
 ROOTFS="$NIX_ROOT/rootfs"
 TARBALL="$NIX_ROOT/src/nix-$NIX_VERSION-aarch64-linux.tar.xz"
 REPO_URL="${REPO_URL:-https://github.com/aliyss/dotfiles}"
-REPO_DIR="${REPO_DIR:-$HOME/dotfiles}"
+REPO_DIR="${REPO_DIR:-$HOME/.config}"
 RUN_UPDATE="${RUN_UPDATE:-1}"
 INSTALL_TAILSCALE="${INSTALL_TAILSCALE:-1}"
 # Stable alias for the Termux user inside proot: the fake /etc/passwd maps this
@@ -260,10 +260,30 @@ log "Verifying nix"
 nix --version
 
 # ------------------------------------------------------------------ repo update
+# The dotfiles repo IS ~/.config (desktop convention). Since ~/.config already
+# exists on the phone (app + home-manager dirs), clone into a temp dir and merge
+# the tracked files in, exactly like the desktop setup instructions (README).
 if [ "$RUN_UPDATE" = "1" ]; then
   if [ ! -d "$REPO_DIR/.git" ]; then
-    log "Cloning dotfiles into $REPO_DIR"
-    git clone --depth 1 "$REPO_URL" "$REPO_DIR"
+    log "Merging dotfiles into $REPO_DIR"
+    TMP_CLONE="$NIX_ROOT/src/dotfiles-clone"
+    rm -rf "$TMP_CLONE"
+    git clone --depth 1 "$REPO_URL" "$TMP_CLONE"
+    mkdir -p "$REPO_DIR"
+    shopt -s dotglob
+    for item in "$TMP_CLONE"/*; do
+      name="$(basename "$item")"
+      case "$name" in .git | .gitignore) continue ;; esac
+      if [ -e "$REPO_DIR/$name" ]; then
+        warn "keeping existing $REPO_DIR/$name (merge repo file manually if needed)"
+      else
+        mv "$item" "$REPO_DIR/"
+      fi
+    done
+    shopt -u dotglob
+    mv "$TMP_CLONE/.git" "$REPO_DIR/.git"
+    mv "$TMP_CLONE/.gitignore" "$REPO_DIR/.gitignore"
+    rm -rf "$TMP_CLONE"
   else
     log "Pulling dotfiles in $REPO_DIR"
     git -C "$REPO_DIR" pull --ff-only || warn "pull failed (will still try to switch)"

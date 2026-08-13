@@ -24,10 +24,10 @@ alias bequitta="aliyss-termux"
 alias tailscale="tailscale-cli"
 
 # Update commands (mirror the desktop's update-system / update-home)
-alias update-system="bash ~/dotfiles/aliyss-phone/update-system.sh"
-alias update-home="bash ~/dotfiles/aliyss-phone/update-home.sh"
-alias update-phone="bash ~/dotfiles/aliyss-phone/update-home.sh"
-alias upgrade-flake="nix flake update --flake ~/dotfiles/flake"
+alias update-system="bash ~/.config/aliyss-phone/update-system.sh"
+alias update-home="bash ~/.config/aliyss-phone/update-home.sh"
+alias update-phone="bash ~/.config/aliyss-phone/update-home.sh"
+alias upgrade-flake="nix flake update --flake ~/.config/flake"
 
   # Ensure essential services and packages are running/installed
   if status is-interactive
