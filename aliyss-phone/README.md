@@ -42,7 +42,8 @@ curl -fsSL https://raw.githubusercontent.com/aliyss/dotfiles/master/aliyss-phone
   (single-user) + home-manager,
 - installs PATH wrappers so `nix`, `home-manager` and every `home.packages`
   tool work from a plain Termux shell (fish or bash),
-- clones this repo to `~/dotfiles` and applies the phone config
+- clones/merges this repo into `~/.config` (the dotfiles convention — the repo
+  IS `~/.config`, flake at `~/.config/flake`) and applies the phone config
   (theme, tools, aliases, opencode theme, `.hushlogin`).
 
 The only manual step after the command: authorize the phone on your tailnet —
@@ -60,10 +61,10 @@ The phone's fish config provides the same commands as the desktop:
 update-system   # Termux base (pkg upgrade) + flake inputs (nix flake update) + home
 update-home     # pull repo + rebuild + activate aliyss-termux, reload colors
 update-phone    # alias of update-home
-upgrade-flake   # nix flake update --flake ~/dotfiles/flake
+upgrade-flake   # nix flake update --flake ~/.config/flake
 ```
 
-Or, to only re-apply without pulling: `PULL=0 ~/dotfiles/aliyss-phone/update-home.sh`.
+Or, to only re-apply without pulling: `PULL=0 ~/.config/aliyss-phone/update-home.sh`.
 The scripts live in `aliyss-phone/` (`update-home.sh`, `update-system.sh`,
 `ensure-nix-wrappers.sh`); `update-phone.sh` is kept as a compat wrapper for
 `update-home.sh`.
@@ -113,8 +114,9 @@ Modify `flake/lib/theme.nix`, `flake/lib/themes/termux.nix` or
 `flake/lib/themes/phone-fish.nix`, then run `update-home`.
 
 The phone's opencode also gets the generated `catppuccin` theme
-(`.config/opencode/themes/catppuccin.json`) and its config selects it
-(`"theme": "catppuccin"` in `opencode.jsonc`).
+(`.config/opencode/themes/catppuccin.json`). The theme is selected via the
+tracked `opencode/tui.json` (`"theme": "catppuccin"`), the same as on the
+desktop; `opencode.jsonc` stays the tracked repo file.
 
 > `scripts/sync-phone.sh` and the desktop's scp copies are **retired** — the
 > phone updates itself from the flake. The repo's `aliyss-phone/scripts/`
