@@ -70,6 +70,15 @@ let
   '';
 
   # ── Aliases ─────────────────────────────────────────────────────────────
+  # SSH shortcuts for every device, available on all machines (each device
+  # reaches every other one over the tailnet).
+  sshAliases = {
+    ssh-blisspla = "ssh -p 22 aliyss@aliyss-blisspla";
+    ssh-bequitta = "ssh -p 22 aliyss@aliyss-bequitta";
+    ssh-blade = "ssh -p 22 aliyss@aliyss-blade";
+    ssh-termux = "ssh -p 8022 aliyss@aliyss-termux";
+  };
+
   desktopAliases = {
     update-system = "$HOME/.config/flake/update-system";
     ubequitta = "$HOME/.config/flake/update-system -s bequitta";
@@ -84,8 +93,6 @@ let
   };
 
   phoneAliases = {
-    aliyss-termux = "ssh -p 22 aliyss@aliyss-bequitta";
-    bequitta = "aliyss-termux";
     tailscale = "tailscale-cli";
     update-system = "bash ~/.config/aliyss-phone/update-system.sh";
     update-home = "bash ~/.config/aliyss-phone/update-home.sh";
@@ -93,7 +100,7 @@ let
     upgrade-flake = "nix flake update --flake ~/.config/flake";
   };
 
-  aliases = if isPhone then phoneAliases else desktopAliases;
+  aliases = sshAliases // (if isPhone then phoneAliases else desktopAliases);
 
   # The phone's config.fish is a plain real file (native Termux can't follow
   # Nix-store symlinks), so aliases are inlined as `alias` lines there.
