@@ -8,6 +8,7 @@
 }: let
   herdrPkg = herdr.packages.${pkgs.stdenv.hostPlatform.system}.herdr;
   herdrPluginDir = "${config.xdg.configHome}/herdr/plugins/vim-herdr-navigation";
+  herdrFreebuffPluginDir = "${config.xdg.configHome}/herdr/plugins/freebuff.integration";
   hyprctl = "${hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/hyprctl";
 
   herdrWorkspace = pkgs.writeShellScriptBin "herdr-workspace" ''
@@ -148,6 +149,16 @@ in {
     executable = true;
   };
 
+  # Freebuff plugin (herdr-freebuff-plugin), vendored verbatim from
+  # https://github.com/TheMetalStorm/herdr-freebuff-plugin. The freebuff Nix
+  # package (flake/packages/freebuff) already spawns its lifecycle watcher; the
+  # plugin supplies the pane entrypoints, setup/notify actions, and the
+  # agent-detection override.
+  home.file."${herdrFreebuffPluginDir}" = {
+    source = ./freebuff-plugin;
+    recursive = true;
+  };
+
   # Herdr config with vim-herdr-navigation keybindings
   xdg.configFile."herdr/config.toml".text = ''
     onboarding = false
@@ -215,6 +226,18 @@ in {
     command = "persiyanov.reviewr.toggle"
     description = "reviewr: toggle code review sidebar"
 
+    [[keys.command]]
+    key = "prefix+b"
+    type = "pane"
+    command = "freebuff"
+    description = "freebuff: new task"
+
+    [[keys.command]]
+    key = "prefix+shift+b"
+    type = "pane"
+    command = "freebuff --continue"
+    description = "freebuff: resume last session"
+
     [terminal]
     default_shell = "fish"
 
@@ -235,6 +258,12 @@ in {
       :
     else
       ${herdrPkg}/bin/herdr plugin link "${herdrPluginDir}" 2>/dev/null || true
+    fi
+
+    if ${herdrPkg}/bin/herdr plugin list 2>/dev/null | grep -q "freebuff.integration"; then
+      :
+    else
+      ${herdrPkg}/bin/herdr plugin link "${herdrFreebuffPluginDir}" 2>/dev/null || true
     fi
   '';
 }

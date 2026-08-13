@@ -1,0 +1,45 @@
+id = "freebuff.integration"
+name = "Freebuff"
+version = "0.1.0"
+min_herdr_version = "0.7.0"
+description = "Launch and manage Freebuff agents inside Herdr, with session restore and lifecycle state."
+platforms = ["linux", "macos", "windows"]
+
+# Interactive Freebuff sessions run as plugin PANE entrypoints. Herdr opens a
+# real terminal PTY for each, so freebuff's TUI gets a TTY (actions/CLI have
+# none and cannot launch interactive agents). Bind these in your herdr config:
+#   [[keys.command]]
+#   key = "prefix+f"
+#   type = "plugin_pane"
+#   command = "freebuff.integration.task"
+#   description = "Freebuff: new task"
+
+[[panes]]
+id = "task"
+title = "Freebuff"
+placement = "split"
+command = ["sh", "scripts/launch.sh", "task"]
+
+[[panes]]
+id = "resume-last"
+title = "Freebuff (last session)"
+placement = "split"
+command = ["sh", "scripts/launch.sh", "resume-last"]
+
+[[panes]]
+id = "resume-named"
+title = "Freebuff (named session)"
+placement = "split"
+command = ["sh", "scripts/launch.sh", "resume-named"]
+
+[[actions]]
+id = "setup"
+title = "Freebuff: install herdr integration"
+contexts = ["workspace"]
+command = ["sh", "scripts/setup.sh"]
+
+[[actions]]
+id = "notify"
+title = "Freebuff: send notification"
+contexts = ["workspace", "pane"]
+command = ["sh", "scripts/notify.sh"]
