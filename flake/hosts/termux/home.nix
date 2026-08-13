@@ -3,16 +3,26 @@
   config,
   lib,
   ...
-}: {
+}:
+{
   imports = [
-    # Reuse the exact same central-theme wiring the desktop home-manager uses:
-    # `flake/lib/theme.nix` -> `lib/themes/termux.nix` / `phone-fish.nix`.
+    # Shared device/profile options (defines aliyss.isPhone).
+    ../../home-manager/options.nix
+    # Same central-theme wiring as the desktop:
+    # `flake/lib/theme.nix` -> `lib/themes/termux.nix`.
     ../../home-manager/themes/default.nix
+    # Single fish module shared with the desktop; phone bits are gated on
+    # aliyss.isPhone inside it (writes a real config.fish; Termux can't see the
+    # Nix store).
+    ../../home-manager/apps/fish.nix
+    # herdr (workspace manager / multiplexer): same module as the desktop,
+    # minus the Hyprland-only `herdr-launch` wrapper (see apps/herdr.nix).
+    ../../home-manager/apps/herdr.nix
   ];
 
-  # Write `.termux/colors.properties` and `.config/fish/config.fish` on the
-  # phone from the shared theme generators.
-  aliyss.phone.enable = true;
+  # Everything phone-specific (real-file configs, Tailscale/sshd, no Hyprland)
+  # is gated on this flag.
+  aliyss.isPhone = true;
 
   # Last piece of the old sync-phone.sh flow: suppress the Termux login banner.
   home.file.".hushlogin" = {
@@ -37,7 +47,9 @@
     btop
     eza
     fd
+    htop
     jq
+    neovim
     ripgrep
   ];
 

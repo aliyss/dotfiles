@@ -1,5 +1,10 @@
-{lib, ...}: {
+{ lib, ... }: {
   options.aliyss = {
+    isPhone = lib.mkEnableOption ''
+      Termux phone target (Android, Nix via proot). Gate for phone-specific
+      behavior: real-file configs (native Termux can't see the Nix store),
+      Tailscale/sshd handling, no Hyprland.
+    '';
     profiles = {
       llm = lib.mkEnableOption "LLM tools";
       creative = lib.mkEnableOption "Creative apps (Affinity)";
@@ -8,7 +13,7 @@
     };
     standaloneApps = lib.mkOption {
       type = lib.types.listOf lib.types.str;
-      default = [];
+      default = [ ];
       description = "Apps installed individually without enabling the full profile";
     };
   };
