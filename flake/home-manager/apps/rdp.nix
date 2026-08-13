@@ -132,15 +132,6 @@
         done
         echo ""
 
-<<<<<<< HEAD
-        if ! ping -c 1 -W 2 "$URL" >/dev/null 2>&1; then
-          echo "Error: Host $URL still unreachable after starting VPN."
-          read -p "Press enter to try connecting anyway or Ctrl+C to abort..."
-        fi
-      else
-        echo "Warning: Host $URL is unreachable and no VPN_CONFIG is defined."
-        read -p "Press enter to try connecting anyway or Ctrl+C to abort..."
-=======
         if ! ${pkgs.netcat}/bin/nc -z -w 2 "$RDP_HOST" "$RDP_PORT" >/dev/null 2>&1; then
           echo "Error: Host $URL (port $RDP_PORT) still unreachable after starting VPN."
           read -p "Press Enter to try connecting anyway or Ctrl+C to abort..."
@@ -148,7 +139,6 @@
       else
         echo "Warning: Host $URL (port $RDP_PORT) is unreachable and no VPN_CONFIG is defined."
         read -p "Press Enter to try connecting anyway or Ctrl+C to abort..."
->>>>>>> def55c9b5ecad6a6a86ef210c8726f44ca334d43
       fi
     fi
 
