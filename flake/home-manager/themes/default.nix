@@ -64,6 +64,12 @@ let
   openCodeThemeJSON = builtins.toJSON (mkOpenCodeTheme // {
     "$schema" = "https://opencode.ai/theme.json";
   });
+
+  # opencode config that selects the generated theme above.
+  openCodeConfigJSON = builtins.toJSON {
+    "$schema" = "https://opencode.ai/config.json";
+    theme = "catppuccin";
+  };
 in {
   options.aliyss.theme = lib.mkOption {
     type = lib.types.attrs;
@@ -92,14 +98,48 @@ in {
     internal = true;
   };
 
+  options.aliyss.phone.enable = lib.mkEnableOption ''
+    Termux phone targets (`.termux/colors.properties` + `.config/fish/config.fish`)
+    written directly on the phone, derived from the same central theme.
+  '';
+
   config = {
     # ── Generated opencode theme file ──────────────────────────────
     xdg.configFile."opencode/themes/catppuccin.json" = {
       text = openCodeThemeJSON;
     };
 
-    # ── aliyss-phone sync targets ──────────────────────────────────
-    home.file.".config/aliyss-phone/colors.properties".text = mkTermuxTheme;
-    home.file.".config/aliyss-phone/config.fish".text = mkPhoneFishConfig;
+    # ── Termux phone targets (activated via home-manager on the phone) ──
+    # Declared via home.file (home-manager builds + tracks the content) AND
+    # copied to real files on activation (writePhoneFiles below). The phone's
+    # /nix is proot-faked and invisible to native Termux processes, so a store
+    # symlink would dangle for them; a real file copy is required.
+    home.file.".termux/colors.properties" = lib.mkIf config.aliyss.phone.enable {
+      text = mkTermuxTheme;
+      force = true; # Termux ships / sets these by default; we own them
+    };
+    home.file.".config/fish/config.fish" = lib.mkIf config.aliyss.phone.enable {
+      text = mkPhoneFishConfig;
+      force = true;
+    };
+
+    home.activation.writePhoneFiles = lib.mkIf config.aliyss.phone.enable (lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      # Materialize the generated config as real files so native Termux
+      # processes (Termux terminal, fish, opencode) can read them outside proot.
+      # rm first: linkGeneration leaves store symlinks here, which native apps
+      # can't follow and which are read-only (EACCES if written through).
+      mkdir -p "$HOME/.termux" "$HOME/.config/fish" "$HOME/.config/opencode/themes"
+      rm -f "$HOME/.termux/colors.properties" "$HOME/.config/fish/config.fish" \
+            "$HOME/.config/opencode/themes/catppuccin.json" "$HOME/.config/opencode/opencode.jsonc" \
+            "$HOME/.hushlogin"
+      cp ${pkgs.writeText "colors.properties" mkTermuxTheme} "$HOME/.termux/colors.properties"
+      cp ${pkgs.writeText "fish-config.fish" mkPhoneFishConfig} "$HOME/.config/fish/config.fish"
+      cp ${pkgs.writeText "opencode-theme.json" openCodeThemeJSON} "$HOME/.config/opencode/themes/catppuccin.json"
+      cp ${pkgs.writeText "opencode.jsonc" openCodeConfigJSON} "$HOME/.config/opencode/opencode.jsonc"
+      # store files are 444; give the real copies normal perms
+      chmod 644 "$HOME/.termux/colors.properties" "$HOME/.config/fish/config.fish" \
+                "$HOME/.config/opencode/themes/catppuccin.json" "$HOME/.config/opencode/opencode.jsonc"
+      : > "$HOME/.hushlogin"
+    '');
   };
 }
