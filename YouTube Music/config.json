@@ -86,13 +86,83 @@
 			"mode": "custom"
 		},
 		"visualizer": {
+			"enabled": true,
+			"type": "wave",
 			"butterchurn": {
-				"blendTimeInSeconds": 2.7,
 				"preset": "martin [shadow harlequins shape code] - fata morgana",
+				"blendTimeInSeconds": 2.7,
 				"renderingFrequencyInMs": 500
 			},
-			"enabled": false,
-			"type": "butterchurn"
+			"vudio": {
+				"effect": "lighting",
+				"accuracy": 128,
+				"lighting": {
+					"maxHeight": 160,
+					"maxSize": 12,
+					"lineWidth": 1,
+					"color": "#49f3f7",
+					"shadowBlur": 2,
+					"shadowColor": "rgba(244,244,244,.5)",
+					"fadeSide": true,
+					"prettify": false,
+					"horizontalAlign": "center",
+					"verticalAlign": "middle",
+					"dottify": true
+				}
+			},
+			"wave": {
+				"animations": [
+					{
+						"type": "Cubes",
+						"config": {
+							"bottom": true,
+							"count": 30,
+							"cubeHeight": 5,
+							"fillColor": {
+								"gradient": [
+									"#FAD961",
+									"#F76B1C"
+								]
+							},
+							"lineColor": "rgba(0,0,0,0)",
+							"radius": 20
+						}
+					},
+					{
+						"type": "Cubes",
+						"config": {
+							"top": true,
+							"count": 12,
+							"cubeHeight": 5,
+							"fillColor": {
+								"gradient": [
+									"#FAD961",
+									"#F76B1C"
+								]
+							},
+							"lineColor": "rgba(0,0,0,0)",
+							"radius": 10
+						}
+					},
+					{
+						"type": "Circles",
+						"config": {
+							"lineColor": {
+								"gradient": [
+									"#FAD961",
+									"#FAD961",
+									"#F76B1C"
+								],
+								"rotate": 90
+							},
+							"lineWidth": 4,
+							"diameter": 20,
+							"count": 10,
+							"frequencyBand": "base"
+						}
+					}
+				]
+			}
 		},
 		"shortcuts": {
 			"enabled": true
@@ -101,14 +171,23 @@
 			"enabled": true
 		}
 	},
-	"url": "https://music.youtube.com/watch?v=Nc5WRNeAgfg&list=RDAMVMJYO48p3aCuM&index=0",
+	"url": "https://music.youtube.com/watch?v=D41t0FG37xw&list=PLwUhsDAScMHv2Vsq2kPglQSPf39dHJQIC&index=0",
 	"window-maximized": true,
 	"window-position": {
 		"x": 0,
 		"y": 0
 	},
 	"window-size": {
+<<<<<<< HEAD
+		"width": 5120,
+		"height": 1440
+=======
 		"width": 950,
+<<<<<<< HEAD
 		"height": 1180
+=======
+		"height": 530
+>>>>>>> def55c9b5ecad6a6a86ef210c8726f44ca334d43
+>>>>>>> 7dd59ba3c52a6e5206fb46b70d425dfb4404c1f7
 	}
 }
