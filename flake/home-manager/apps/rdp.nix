@@ -4,69 +4,94 @@
   ...
 }: let
   rdpDir = "/home/aliyss/Documents/rdp";
+  vpnDir = "/home/aliyss/Documents/vpn";
+  rbwBin = "${pkgs.rbw}/bin/rbw";
   rdpScript = pkgs.writeShellScriptBin "rdp-launch" ''
     shopt -s nullglob
-    FILES=(${rdpDir}/*.env)
 
+    # Resolve which RBW entry to use.
     if [ -n "$1" ]; then
-      if [[ "$1" == /* ]]; then
+      if [[ "$1" == /* ]] || [[ "$1" == ./* ]]; then
+        # An existing env file was given explicitly.
         SELECTED_PATH="$1"
+        if [ ! -f "$SELECTED_PATH" ]; then
+          echo "Error: Profile $SELECTED_PATH not found"
+          exit 1
+        fi
+        source "$SELECTED_PATH"
       else
-        SELECTED_PATH="${rdpDir}/$1"
+        # Assumes the argument names an RBW entry directly.
+        RBW_RDP_CONFIG="$1"
       fi
-      if [ ! -f "$SELECTED_PATH" ]; then
-        SELECTED_PATH="''${SELECTED_PATH}.env"
-      fi
-      SELECTED=$(basename "$SELECTED_PATH")
-    else
-      if [ ''${#FILES[@]} -eq 0 ]; then
-        ${pkgs.libnotify}/bin/notify-send "RDP Error" "No .env files found in ${rdpDir}"
+    fi
+
+    if [ -z "$RBW_RDP_CONFIG" ]; then
+      # Select from rbw directly, filtered to RDP entries.
+      ENTRIES=$(DISPLAY= ${rbwBin} list --fields name,user 2>/dev/null | ${pkgs.gnugrep}/bin/grep "RDP")
+      if [ -z "$ENTRIES" ]; then
+        ${pkgs.libnotify}/bin/notify-send "RDP Error" "No RDP entries found in Bitwarden"
         exit 1
       fi
-      SELECTED=$(for f in "''${FILES[@]}"; do basename "$f"; done | ${pkgs.fzf}/bin/fzf --prompt="Select RDP Profile: ")
+
+      SELECTED=$(printf "%s\n" "$ENTRIES" | ${pkgs.fzf}/bin/fzf --prompt="Select RDP Entry: ")
       if [ -z "$SELECTED" ]; then
         exit 1
       fi
-      SELECTED_PATH="${rdpDir}/$SELECTED"
+      RBW_RDP_CONFIG=$(printf "%s\n" "$SELECTED" | ${pkgs.coreutils}/bin/cut -f1)
     fi
 
-    if [ ! -f "$SELECTED_PATH" ]; then
-      echo "Error: Profile $SELECTED_PATH not found"
-      exit 1
+    echo "Fetching configuration from rbw for '$RBW_RDP_CONFIG'..."
+
+    RBW_DATA=$(DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" 2>/dev/null)
+    if [ -n "$RBW_DATA" ]; then
+      PASSWORD="$RBW_DATA"
     fi
 
-    source "$SELECTED_PATH"
-
-    if [ -n "$RBW_RDP_CONFIG" ]; then
-      echo "Fetching configuration from rbw for '$RBW_RDP_CONFIG'..."
-
-      RBW_DATA=$(DISPLAY= ${pkgs.rbw}/bin/rbw get "$RBW_RDP_CONFIG" 2>/dev/null)
-      if [ -n "$RBW_DATA" ]; then
-        PASSWORD="$RBW_DATA"
+    RBW_USER=$(DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" --field username 2>/dev/null)
+    if [ -n "$RBW_USER" ]; then
+      USERNAME="$RBW_USER"
+    else
+      RBW_USER_FALLBACK=$(DISPLAY= ${rbwBin} list --fields name,user | ${pkgs.gnugrep}/bin/grep "^$RBW_RDP_CONFIG	" | ${pkgs.coreutils}/bin/cut -f2- 2>/dev/null)
+      if [ -n "$RBW_USER_FALLBACK" ]; then
+        USERNAME="$RBW_USER_FALLBACK"
       fi
+    fi
 
-      RBW_USER=$(DISPLAY= ${pkgs.rbw}/bin/rbw get "$RBW_RDP_CONFIG" --field username 2>/dev/null)
-      if [ -n "$RBW_USER" ]; then
-        USERNAME="$RBW_USER"
-      else
-        RBW_USER_FALLBACK=$(DISPLAY= ${pkgs.rbw}/bin/rbw list --fields name,user | ${pkgs.gnugrep}/bin/grep "^$RBW_RDP_CONFIG	" | ${pkgs.coreutils}/bin/cut -f2- 2>/dev/null)
-        if [ -n "$RBW_USER_FALLBACK" ]; then
-          USERNAME="$RBW_USER_FALLBACK"
+    RBW_URL=$(DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" --field uris 2>/dev/null || \
+               DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" --field url 2>/dev/null || \
+               DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" --field uri 2>/dev/null || \
+               DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" --field ip 2>/dev/null || \
+               DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" --field hostname 2>/dev/null)
+    if [ -n "$RBW_URL" ]; then
+      URL="$RBW_URL"
+    fi
+
+    # Optional VPN from the entry's "vpn" custom field.
+    RBW_VPN_FIELD=$(DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" --field vpn 2>/dev/null)
+    if [ -z "$RBW_VPN_FIELD" ]; then
+      RBW_VPN_FIELD=$(DISPLAY= ${rbwBin} get "$RBW_RDP_CONFIG" --field VPN 2>/dev/null)
+    fi
+
+    if [ -z "$VPN_CONFIG" ] && [ -n "$RBW_VPN_FIELD" ]; then
+      # Map the RBW VPN name back to a vpn-launch directory by checking
+      # each <vpnDir>/*/.env for the matching RBW_VPN_CONFIG.
+      for d in "${vpnDir}"/*/; do
+        if [ -f "$d/.env" ] && ${pkgs.gnugrep}/bin/grep -q "RBW_VPN_CONFIG=\"$RBW_VPN_FIELD\"" "$d/.env" 2>/dev/null; then
+          VPN_CONFIG=$(basename "$d")
+          break
         fi
+      done
+      # Fall back to directory name if it matches directly.
+      if [ -z "$VPN_CONFIG" ] && [ -d "${vpnDir}/$RBW_VPN_FIELD" ]; then
+        VPN_CONFIG="$RBW_VPN_FIELD"
       fi
-
-      RBW_URL=$(DISPLAY= ${pkgs.rbw}/bin/rbw get "$RBW_RDP_CONFIG" --field uris 2>/dev/null || \
-                DISPLAY= ${pkgs.rbw}/bin/rbw get "$RBW_RDP_CONFIG" --field url 2>/dev/null || \
-                DISPLAY= ${pkgs.rbw}/bin/rbw get "$RBW_RDP_CONFIG" --field uri 2>/dev/null || \
-                DISPLAY= ${pkgs.rbw}/bin/rbw get "$RBW_RDP_CONFIG" --field ip 2>/dev/null || \
-                DISPLAY= ${pkgs.rbw}/bin/rbw get "$RBW_RDP_CONFIG" --field hostname 2>/dev/null)
-      if [ -n "$RBW_URL" ]; then
-        URL="$RBW_URL"
+      if [ -z "$VPN_CONFIG" ]; then
+        echo "Warning: no VPN config directory matched field '$RBW_VPN_FIELD'"
       fi
     fi
 
     if [ -z "$URL" ] || [ -z "$USERNAME" ]; then
-       echo "Error: URL or USERNAME not set in $SELECTED"
+       echo "Error: URL or USERNAME not set for $RBW_RDP_CONFIG"
        sleep 3
        exit 1
     fi
@@ -95,18 +120,17 @@
             break
           fi
           echo -n "."
-          ${pkgs.coreutils}/bin/stdbuf -oL echo "" >/dev/null 2>&1 || true
           sleep 1
         done
         echo ""
 
         if ! ping -c 1 -W 2 "$URL" >/dev/null 2>&1; then
           echo "Error: Host $URL still unreachable after starting VPN."
-          read -p "Press Enter to try connecting anyway or Ctrl+C to abort..."
+          read -p "Press enter to try connecting anyway or Ctrl+C to abort..."
         fi
       else
         echo "Warning: Host $URL is unreachable and no VPN_CONFIG is defined."
-        read -p "Press Enter to try connecting anyway or Ctrl+C to abort..."
+        read -p "Press enter to try connecting anyway or Ctrl+C to abort..."
       fi
     fi
 
@@ -116,7 +140,7 @@
         read -rs -p "Enter Password for $USERNAME: " PASSWORD
         echo ""
       else
-        ${pkgs.libnotify}/bin/notify-send "RDP Error" "Password required but no TTY available for $SELECTED"
+        ${pkgs.libnotify}/bin/notify-send "RDP Error" "Password required but no TTY available for $RBW_RDP_CONFIG"
         exit 1
       fi
     else
@@ -127,7 +151,6 @@
     # The correct syntax for this version of FreeRDP is /kbd:layout:<id>,unicode:on
     # We use 0x00000807 (Swiss German) as the layout and enable unicode for your custom symbols.
     nohup ${pkgs.freerdp}/bin/xfreerdp /v:"$URL" /u:"$USERNAME" /p:"$PASSWORD" /dynamic-resolution /cert:ignore /network:auto /relax-order-checks /audio-mode:0 >/dev/null 2>&1 &
-    # nohup ${pkgs.freerdp}/bin/xfreerdp /v:"$URL" /u:"$USERNAME" /p:"$PASSWORD" /dynamic-resolution /kbd:unicode:on /cert:ignore /network:auto /relax-order-checks /audio-mode:0 >/dev/null 2>&1 &
     sleep 0.5
     exit 0
   '';
