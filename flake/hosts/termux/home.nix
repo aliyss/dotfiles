@@ -4,6 +4,10 @@
   lib,
   ...
 }:
+let
+  sshKeys = import ../../lib/ssh-keys.nix;
+  authorizedKeysFile = pkgs.writeText "authorized_keys" (lib.concatStringsSep "\n" sshKeys);
+in
 {
   imports = [
     # Shared device/profile options (defines aliyss.isPhone).
@@ -18,6 +22,10 @@
     # herdr (workspace manager / multiplexer): same module as the desktop,
     # minus the Hyprland-only `herdr-launch` wrapper (see apps/herdr.nix).
     ../../home-manager/apps/herdr.nix
+    # Shared neovim module; the phone gets the lean core profile (theme +
+    # Ctrl+hjkl navigation + telescope/treesitter/editing essentials), all
+    # heavy clusters (LLM, LSP/completion, DAP, media) are desktop-only.
+    ../../home-manager/apps/neovim.nix
   ];
 
   # Everything phone-specific (real-file configs, Tailscale/sshd, no Hyprland)
@@ -49,12 +57,28 @@
     fd
     htop
     jq
-    neovim
     ripgrep
   ];
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  # Phone sshd accepts every device's key (same pool as the NixOS boxes), so
+  # every machine can reach the phone. Written as a real file because Termux
+  # sshd can't see the Nix store symlink.
+  home.file.".ssh/authorized_keys" = {
+    source = authorizedKeysFile;
+    force = true;
+  };
+
+  home.activation.copyPhoneAuthorizedKeys = lib.hm.dag.entryAfter [
+    "linkGeneration"
+  ] ''
+    mkdir -p "$HOME/.ssh"
+    rm -f "$HOME/.ssh/authorized_keys"
+    cp ${authorizedKeysFile} "$HOME/.ssh/authorized_keys"
+    chmod 600 "$HOME/.ssh/authorized_keys"
+  '';
 
   nixpkgs.config.allowUnfree = true;
 }
