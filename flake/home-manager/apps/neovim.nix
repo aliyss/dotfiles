@@ -403,6 +403,11 @@
       config = builtins.readFile ./neovim/plugins/harpoon.lua;
       type = "lua";
     }
+    {
+      plugin = neo-tree-nvim;
+      config = builtins.readFile ./neovim/plugins/neo-tree.lua;
+      type = "lua";
+    }
     ## Autopairs
     {
       plugin = nvim-autopairs;
@@ -478,6 +483,11 @@
     {
       plugin = stay-in-place;
       config = builtins.readFile ./neovim/plugins/keybindings/stay-in-place.lua;
+      type = "lua";
+    }
+    {
+      plugin = which-key-nvim;
+      config = builtins.readFile ./neovim/plugins/keybindings/which-key-phone.lua;
       type = "lua";
     }
   ];
