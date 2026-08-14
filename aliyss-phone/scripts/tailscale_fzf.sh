@@ -110,8 +110,15 @@ else
 end
 
 if test -n "$SELECTED_NODE"
-    echo "Connecting to $SELECTED_NODE via tailscale ssh..."
-    tailscale-cli ssh "$SELECTED_NODE"
+    # Every device authenticates under its own username: desktop boxes log in
+    # as `aliyss`, the phone itself (aliyss-termux) as `u0_a393`.
+    set SSH_USER "aliyss"
+    if string match -qi "*termux*" -- "$SELECTED_NODE"
+        set SSH_USER "u0_a393"
+    end
+
+    echo "Connecting to $SSH_USER@$SELECTED_NODE via tailscale ssh..."
+    tailscale-cli ssh "$SSH_USER@$SELECTED_NODE"
 else
     echo "No node selected."
 end
