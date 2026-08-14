@@ -3,7 +3,7 @@
 This folder contains documentation and scripts for managing the Android (Termux)
 phone as a **managed device of the dotfiles flake** — same central theme
 (`flake/lib/theme.nix`) as the desktop, applied declaratively via home-manager
-(which runs inside the existing Termux app through `proot`).
+(which runs inside the existing Termux app through a kernel `chroot`).
 
 ## How it works
 
@@ -15,14 +15,15 @@ phone as a **managed device of the dotfiles flake** — same central theme
   configs written directly on the phone (`~/.termux/colors.properties`,
   `~/.config/fish/config.fish`, `~/.hushlogin`), Tailscale/sshd handling,
   and no Hyprland.
-- Nix itself runs inside the Termux app via `proot` (the phone's `/` is
-  dm-verity read-only, so a native `/nix` mount is impossible). The store lives
-  at `~/.nix/nix`; no app, no mount, no root needed.
+- Nix itself runs natively inside a kernel `chroot` (the phone's `/` is
+  dm-verity read-only, so a real `/nix` mountpoint is impossible). The store
+  lives at `~/.nix/nix` and is bind-mounted at `/nix` inside the chroot; this
+  needs root (KernelSU/Magisk) for the bind mounts + chroot.
 - Every tool installed via `home.packages` is automatically wrapped into
   `~/.local/bin` (`ensure-nix-wrappers.sh`, run by `update-home.sh` after each
   switch), so `bat`, `eza`, `fd`, `jq`, `rg`, `btop`, `nix` and `home-manager`
   all work from a normal Termux shell (fish or bash) — the wrapper transparently
-  runs the glibc binary inside proot.
+  runs the glibc binary inside the chroot.
 
 ## Fresh phone (bootstrap)
 
@@ -34,13 +35,15 @@ curl -fsSL https://raw.githubusercontent.com/aliyss/dotfiles/master/aliyss-phone
 
 `nix-install.sh` does all of it:
 
-- installs prerequisites (`proot`, `git`, `fish`, `openssh`, `termux-api`),
+- installs prerequisites (`git`, `fish`, `openssh`, `termux-api`),
+- checks for root (`su`) and copies busybox (needed for the chroot's
+  mount/unshare/setuidgid),
 - sets fish as the default shell (`~/.termux/shell`),
 - starts `sshd` and (optionally) writes `~/.ssh/authorized_keys` from
   `SSH_AUTHORIZED_KEYS`,
 - installs the patched Tailscale and starts its daemon,
-- builds the proot-faked Nix environment (`/nix` → `~/.nix/nix`), installs Nix
-  (single-user) + home-manager,
+- builds the chroot Nix environment (bind-mounts `~/.nix/nix` at `/nix` inside
+  the rootfs), installs Nix (single-user) + home-manager,
 - installs PATH wrappers so `nix`, `home-manager` and every `home.packages`
   tool work from a plain Termux shell (fish or bash),
 - clones/merges this repo into `~/.config` (the dotfiles convention — the repo

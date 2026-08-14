@@ -59,7 +59,7 @@
     };
 
     # Termux phone (Android, aarch64): Nix runs inside the existing Termux app
-    # via proot. Keep this pkgs minimal — only the phone home-manager config uses it.
+    # via chroot. Keep this pkgs minimal — only the phone home-manager config uses it.
     phoneSystem = "aarch64-linux";
     pkgsPhone = import nixpkgs {
       localSystem = { system = phoneSystem; };
@@ -128,7 +128,7 @@
         ];
         extraSpecialArgs = inputs;
       };
-      # Aliyss' phone (Termux on Android, Nix via proot). Activated on-device by
+      # Aliyss' phone (Termux on Android, Nix via chroot). Activated on-device by
       # aliyss-phone/update-phone.sh after aliyss-phone/nix-install.sh bootstrapped Nix.
       aliyss-termux = home-manager.lib.homeManagerConfiguration {
         pkgs = pkgsPhone;

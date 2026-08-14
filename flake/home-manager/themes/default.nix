@@ -106,7 +106,7 @@ in
     # ── Termux phone targets (activated via home-manager on the phone) ──
     # Declared via home.file (home-manager builds + tracks the content) AND
     # copied to real files on activation (writePhoneFiles below). The phone's
-    # /nix is proot-faked and invisible to native Termux processes, so a store
+    # /nix lives inside the chroot and is invisible to native Termux processes, so a store
     # symlink would dangle for them; a real file copy is required.
     # (The phone's fish config is owned by apps/fish.nix, not generated here.)
     home.file.".termux/colors.properties" = lib.mkIf config.aliyss.isPhone {
@@ -117,7 +117,7 @@ in
     home.activation.writePhoneFiles = lib.mkIf config.aliyss.isPhone (
       lib.hm.dag.entryAfter [ "linkGeneration" ] ''
         # Materialize the generated config as real files so native Termux
-        # processes (Termux terminal, opencode) can read them outside proot.
+        # processes (Termux terminal, opencode) can read them outside the chroot.
         # rm first: linkGeneration leaves store symlinks here, which native apps
         # can't follow and which are read-only (EACCES if written through).
         # opencode.jsonc + tui.json are NOT written here — they are tracked repo

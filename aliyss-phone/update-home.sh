@@ -33,11 +33,10 @@ if [ "$PULL" = "1" ] && [ -d "$REPO_DIR/.git" ]; then
 fi
 
 log "Switching home-manager config: aliyss-termux"
-# proot Nix runs with `sandbox = false`, where builders without an explicit
-# HOME get the shared /homeless-shelter; Nix refuses to build if it already
-# exists (purity check), so clear it before each switch.
-NIX_PROOT="${NIX_PROOT:-$HOME/.nix/bin/nix-proot}"
-[ -x "$NIX_PROOT" ] && "$NIX_PROOT" /bin/rm -rf /homeless-shelter 2>/dev/null || true
+# Nix runs with `sandbox = false`, where builders without an explicit HOME get
+# the shared /homeless-shelter (created inside the chroot rootfs); Nix refuses
+# to build if it already exists (purity check), so clear it before each switch.
+rm -rf "$HOME/.nix/rootfs/homeless-shelter" 2>/dev/null || true
 if [ -x "$HOME/.nix-profile/bin/home-manager" ]; then
   (
     cd "$REPO_DIR/flake"
