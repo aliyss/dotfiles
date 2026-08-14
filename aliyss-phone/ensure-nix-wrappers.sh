@@ -21,7 +21,8 @@ mkdir -p "$WRAP_DIR"
 export WRAP_DIR
 
 log "Wrapping home-manager tools for the Termux shell"
-"$NIX_CHROOT" /bin/sh -c '
+# List the profile's bins from inside the chroot (read-only)…
+tools="$("$NIX_CHROOT" /bin/sh -c '
   for tool in "$HOME/.nix-profile/bin"/*; do
     [ -e "$tool" ] || continue
     name=$(basename "$tool")
@@ -31,11 +32,27 @@ log "Wrapping home-manager tools for the Termux shell"
       # man-db internals are a home-manager dependency, not user packages
       man | mandb | apropos | whatis | accessdb | catman | lexgrog | man-recode | manpath | update-mime-database) continue ;;
     esac
-    if [ ! -e "$WRAP_DIR/$name" ]; then
-      ln -s nix "$WRAP_DIR/$name"
-      printf "  wrapped: %s\n" "$name"
-    fi
+    printf "%s\n" "$name"
   done
-' 2>/dev/null | grep -v "WARNING: linker" || true
+' 2>/dev/null | grep -v "WARNING: linker" || true)"
+
+# …but create the symlinks from the Termux side. Links made through su/chroot
+# lose the app's SELinux MLS categories (u:object_r:app_data_file:s0 instead of
+# s0:c137,c257,c512,c768) and become unreadable by the Termux app. `ln -sfn`
+# also repairs any such broken links from previous runs.
+for name in $tools; do
+  # [ -e ] is false for both missing links and SELinux-blocked ones.
+  if [ ! -e "$WRAP_DIR/$name" ]; then
+    # A SELinux-blocked stale link cannot be replaced as the app user (the
+    # MLS check denies unlink too) — remove it as root once:
+    #   su -c 'rm -f ~/.local/bin/tailscale'
+    ln -sfn nix "$WRAP_DIR/$name" 2>/dev/null || true
+    if [ -e "$WRAP_DIR/$name" ]; then
+      printf "  wrapped: %s\n" "$name"
+    else
+      printf "  !! could not wrap %s (SELinux?) — see script comment\n" "$name" >&2
+    fi
+  fi
+done
 
 log "Done. Installed tools are now on PATH via ~/.local/bin"

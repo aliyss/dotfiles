@@ -41,7 +41,8 @@ curl -fsSL https://raw.githubusercontent.com/aliyss/dotfiles/master/aliyss-phone
 - sets fish as the default shell (`~/.termux/shell`),
 - starts `sshd` and (optionally) writes `~/.ssh/authorized_keys` from
   `SSH_AUTHORIZED_KEYS`,
-- installs the patched Tailscale and starts its daemon,
+- (Tailscale is NOT installed here — the flake builds the patched binaries
+  and owns the runit service; see the Tailscale section below),
 - builds the chroot Nix environment (bind-mounts `~/.nix/nix` at `/nix` inside
   the rootfs), installs Nix (single-user) + home-manager,
 - installs PATH wrappers so `nix`, `home-manager` and every `home.packages`
@@ -51,7 +52,7 @@ curl -fsSL https://raw.githubusercontent.com/aliyss/dotfiles/master/aliyss-phone
   (theme, tools, aliases, opencode theme, `.hushlogin`).
 
 The only manual step after the command: authorize the phone on your tailnet —
-`tailscale-cli up` (opens/prints an auth URL; one-time).
+`tailscale up` (opens/prints an auth URL; one-time).
 
 > Prerequisite: the repo must already contain `flake/hosts/termux`,
 > `flake/home-manager/options.nix`, `flake/home-manager/themes/default.nix`,
@@ -80,10 +81,10 @@ The scripts live in `aliyss-phone/` (`update-home.sh`, `update-system.sh`,
 
 ## Manual setup — now handled by nix-install.sh
 
-The steps that used to be manual are automated: Tailscale (patched, daemon on),
-`pkg install openssh fish termux-api`, fish as default shell, sshd. The only
-remaining manual bits:
-- `tailscale-cli up` (one-time device authorization on your tailnet), and
+The steps that used to be manual are automated: `pkg install openssh fish
+termux-api`, fish as default shell, sshd. Tailscale is fully declarative now
+(flake-owned binaries + service, see below). The only remaining manual bits:
+- `tailscale up` (one-time device authorization on your tailnet), and
 - optionally pass `SSH_AUTHORIZED_KEYS='ssh-ed25519 AAAA...'` to
   `nix-install.sh` to add your desktop's key (default: no key is added).
 
@@ -95,12 +96,50 @@ The phone is accessible via Tailscale at:
 - **Port**: `8022`
 - **User**: `aliyss`
 
-## Tailscale Commands (Patched version)
+## Tailscale (declarative, flake-managed)
 
-- `tailscaled-start`: Starts the daemon or manages the service (`--service=on/off/status`).
-- `tailscale-cli`: The command to use instead of raw `tailscale` (it uses the correct socket).
-- `tailscaled-log`: View the daemon logs.
-- `tailscale-test`: Verify the connection.
+Tailscale is fully owned by home-manager — the bropines `.deb` / `curl|bash`
+installer is gone:
+
+- The patched binaries (`tailscale` + `tailscaled`) are built from source by the
+  flake (`flake/packages/tailscale-termux`; upstream bropines patches vendored
+  in `flake/packages/tailscale-termux/patches/`) and wrapped into
+  `~/.local/bin` like every other nix tool on the phone.
+- The runit service (`$PREFIX/var/service/tailscaled/run`) is written by
+  `home.activation` and auto-starts at Termux boot via termux-services — the
+  same supervision `sshd` gets. A plain `update-home` re-applies it and
+  restarts the daemon when the config changes.
+- The daemon runs in userspace-networking mode (no `/dev/net/tun`, no root)
+  and serves the SOCKS5 proxy the phone's ssh aliases route through. The port
+  is a single option (`aliyss.tailscaleSocks5Port`, default `23008`) shared
+  with `apps/fish.nix`.
+
+Commands:
+
+- `tailscale up` — one-time device authorization on your tailnet (prints an auth URL).
+- `tailscale status` / `tailscale ping <host>` — check connectivity.
+- `tailscale down` / `tailscale up` — stop/resume the daemon.
+- `SVDIR=$PREFIX/var/service sv restart tailscaled` — control the runit
+  service directly (plain `sv` can't find the service dir on this phone; the
+  daemon runs as a static binary in the app domain, so runit fully controls
+  it).
+
+> `tailscale ssh` is not available on the phone: tailscale's built-in SSH does
+> not compile for `GOOS=android`, so the daemon is built with `ts_omit_ssh`
+> (same limitation as the old `.deb`).
+
+### Troubleshooting
+
+- **Daemon restart drops the phone from the tailnet.** Recovery is on-device:
+  `SVDIR=$PREFIX/var/service sv restart tailscaled` (or `pkill -f tailscaled`
+  — note pgrep's `-x` flag is broken in this procps build). If that's not
+  enough, `su -c 'pkill -9 -f tailscaled'` (a wedged `runsv` may need
+  `su -c 'kill -9 <pid>'` — runsvdir respawns it cleanly).
+- **Migrating from the old bropines `.deb`:** `dpkg -r tailscale-termux` leaves
+  a stale `$PREFIX/var/service/tailscaled/log/` dir whose `run` script is gone;
+  runit wedges its runsv on that. The activation removes it automatically, but
+  if runsv is wedged from a previous state, delete the dir manually
+  (`rm -rf $PREFIX/var/service/tailscaled/log`).
 
 ## Generated files
 
@@ -110,7 +149,9 @@ home-manager on the phone:
 - `~/.termux/colors.properties` — Termux colors
 - `~/.config/fish/config.fish` — fish config
 - `~/.hushlogin` — suppress the Termux login banner
-- plus `home.packages` (bat, btop, eza, fd, jq, ripgrep)
+- `$PREFIX/var/service/tailscaled/run` — the tailscaled runit service (see
+  the Tailscale section)
+- plus `home.packages` (bat, btop, eza, fd, jq, ripgrep, tailscale-termux)
 
 These are written as **real files** on the phone (home-manager's `home.file`
 links them into the store, but the phone's `/nix` is invisible to native Termux

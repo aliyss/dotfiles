@@ -82,8 +82,9 @@ let
   # On the phone, tailscaled runs in userspace-networking mode (no TUN, can't
   # open /dev/tun without root), so the kernel never learns a route to tailnet
   # IPs and plain ssh would time out. Route through the daemon's SOCKS5 proxy
-  # (127.0.0.1:23008) via connect(1) as the ssh ProxyCommand instead.
-  proxyServer = "127.0.0.1:23008";
+  # via connect(1) as the ssh ProxyCommand instead. The port is shared with
+  # apps/tailscale.nix (the runit service) through aliyss.tailscaleSocks5Port.
+  proxyServer = "127.0.0.1:${config.aliyss.tailscaleSocks5Port}";
   proxyFlags = "-5 -S ${proxyServer}";
   phoneSshAliases = {
     ssh-blisspla = "ssh -o 'ProxyCommand=${proxyFlags} %h %p' aliyss@aliyss-blisspla";
@@ -106,7 +107,11 @@ let
   };
 
   phoneAliases = {
-    tailscale = "tailscale-cli";
+    # tailscale/tailscaled are nix-built (flake/packages/tailscale-termux) and
+    # wrapped into ~/.local/bin; the CLI already defaults its socket to
+    # ~/.tailscale/tailscaled.sock. `tailscale-cli` is kept as a compat alias
+    # for the old bropines .deb command name.
+    tailscale-cli = "tailscale";
     update-system = "bash ~/.config/aliyss-phone/update-system.sh";
     update-home = "bash ~/.config/aliyss-phone/update-home.sh";
     update-phone = "bash ~/.config/aliyss-phone/update-home.sh";
