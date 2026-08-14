@@ -171,11 +171,24 @@ cat > "$NIX_BIN_DIR/nix-chroot" <<'SCRIPT'
 # and real glibc (no syscall interception), so Nix is effectively native.
 set -eu
 
+# Already inside the chroot (e.g. a pane spawned by the chrooted herdr server)?
+# Then just exec the command directly — re-chrooting would nest and break
+# (`su 0` resolves "0" against the chroot's fake /etc/passwd and fails).
+if [ -d /nix/store ]; then
+  exec "$@"
+fi
+
 B="/data/data/com.termux/files/usr/bin/busybox"
 
 # Elevate to root. KernelSU `su 0 CMD ARGS...` execs CMD directly (no shell
-# re-parsing), so "$@" passes through verbatim.
+# re-parsing), so "$@" passes through verbatim — but it DOES reset PATH, TERM,
+# HOME, USER and SHELL to root's. Capture the caller's values first so we can
+# restore them inside the chroot (Termux tools like fish live in $PREFIX/bin).
 if [ "$(id -u 2>/dev/null || echo 1)" != "0" ]; then
+  export NIX_ORIG_PATH="$PATH"
+  export NIX_ORIG_TERM="${TERM-}"
+  export NIX_ORIG_SHELL="${SHELL-}"
+  export NIX_CWD="$(pwd)"
   exec su 0 /data/data/com.termux/files/usr/bin/sh "$0" "$@"
 fi
 
@@ -183,8 +196,12 @@ fi
 unset LD_PRELOAD LD_LIBRARY_PATH
 export USER="u0_a393"
 export HOME="/data/data/com.termux/files/home"
+export TERM="${NIX_ORIG_TERM:-xterm-256color}"
+export SHELL="${NIX_ORIG_SHELL:-/data/data/com.termux/files/usr/bin/fish}"
 export NIX_SSL_CERT_FILE="/data/data/com.termux/files/usr/etc/tls/cert.pem"
-export PATH="$HOME/.nix-profile/bin:$PATH"
+# Restore the caller's PATH (su replaced it with root's) and prepend the Nix
+# profile so store binaries win over any ~/.local/bin wrappers.
+export PATH="$HOME/.nix-profile/bin:${NIX_ORIG_PATH:-/data/data/com.termux/files/usr/bin}"
 export NIX_ROOT="${NIX_ROOT:-$HOME/.nix}"
 export ROOTFS="$NIX_ROOT/rootfs"
 export STORE="$NIX_ROOT/nix"
@@ -192,7 +209,7 @@ export ETC="$NIX_ROOT/etc"
 export TMP="$NIX_ROOT/tmp"
 export SRC="$NIX_ROOT/src"
 export SHM="$NIX_ROOT/shm"
-export NIX_CWD="$(pwd)"
+export NIX_CWD="${NIX_CWD:-$(pwd)}"
 
 # Run in a private mount namespace: KernelSU's su shares a persistent mount
 # namespace, so without this every invocation would stack another full set of
@@ -215,12 +232,14 @@ mkdir -p \
   "$ROOTFS/nix" "$ROOTFS/etc" "$ROOTFS/tmp" "$ROOTFS/src" \
   "$ROOTFS/dev/shm" "$ROOTFS/proc" "$ROOTFS/dev" "$ROOTFS/sys" \
   "$ROOTFS/system" "$ROOTFS/apex" "$ROOTFS/vendor" "$ROOTFS/product" \
-  "$ROOTFS/system_ext" "$ROOTFS/data/data/com.termux"
+  "$ROOTFS/system_ext" "$ROOTFS/linkerconfig" "$ROOTFS/data/data/com.termux"
 
 # --bind for plain directories on /data (no submounts); --rbind for the
 # Android partitions that are themselves mounts with submounts (e.g. /apex
 # is a tmpfs whose per-package dirs are loop mounts, and the bionic linker
-# lives at /apex/com.android.runtime/bin/linker64).
+# lives at /apex/com.android.runtime/bin/linker64). /linkerconfig is the
+# generated linker config tmpfs; bind it so bionic (termux sh/bash/fish)
+# doesn't warn about a missing ld.config.txt.
 "$B" mount -o bind  "$STORE" "$ROOTFS/nix"
 "$B" mount -o bind  "$ETC"   "$ROOTFS/etc"
 "$B" mount -o bind  "$TMP"   "$ROOTFS/tmp"
@@ -234,6 +253,7 @@ mkdir -p \
 "$B" mount -o rbind /vendor      "$ROOTFS/vendor"
 "$B" mount -o rbind /product     "$ROOTFS/product"
 "$B" mount -o rbind /system_ext  "$ROOTFS/system_ext"
+"$B" mount -o rbind /linkerconfig "$ROOTFS/linkerconfig" 2>/dev/null || true
 "$B" mount -o rbind /data/data/com.termux "$ROOTFS/data/data/com.termux"
 
 # busybox chroot chdir(2)s to "/" after chrooting, which would break relative
