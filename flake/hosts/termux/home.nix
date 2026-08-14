@@ -38,7 +38,7 @@ in
     force = true;
   };
 
-  # Stable aliases enforced by the `nix-proot` helper: "$USER" is always
+  # Stable aliases enforced by the `nix-chroot` helper: "$USER" is always
   # "u0_a393" (fake /etc/passwd maps it to the real Termux uid) and "$HOME" is
   # the standard Termux home. These must match so home-manager's activation
   # sanity checks pass.
@@ -46,8 +46,9 @@ in
   home.homeDirectory = "/data/data/com.termux/files/home";
   home.stateVersion = "23.05";
 
-  # Under proot, home-manager's manpage builder trips over Python
-  # multiprocessing (POSIX semaphores -> glibc sem_open linkat), so skip it.
+  # The manpage builder was a proot casualty (ptrace could not emulate glibc's
+  # sem_open linkat). Chroot runs the real kernel, so it could likely be
+  # re-enabled, but the phone has no need for manpages.
   manual.manpages.enable = false;
 
   home.packages = with pkgs; [

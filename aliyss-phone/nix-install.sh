@@ -4,8 +4,10 @@ set -euo pipefail
 # nix-install.sh — ONE-COMMAND bootstrap for a fresh Termux phone.
 #
 # Turns a stock Termux app into a fully managed device of the dotfiles flake:
-#   - Nix (2.35.1) running inside proot (the phone's "/" is dm-verity read-only,
-#     so a native /nix mount is impossible; the store lives at ~/.nix/nix).
+#   - Nix (2.35.1) running natively inside a kernel chroot (the phone's "/" is
+#     dm-verity read-only, so a real /nix mountpoint is impossible; the store
+#     lives at ~/.nix/nix and is bind-mounted at /nix inside the chroot).
+#     Requires root (KernelSU/Magisk) for the bind mounts + chroot.
 #   - home-manager config applied: theme (Termux colors + fish + opencode),
 #     tools (bat, btop, eza, fd, jq, rg), aliases (update-home/system/flake),
 #     .hushlogin, packages — all written as REAL files readable by native apps.
@@ -36,8 +38,8 @@ REPO_URL="${REPO_URL:-https://github.com/aliyss/dotfiles}"
 REPO_DIR="${REPO_DIR:-$HOME/.config}"
 RUN_UPDATE="${RUN_UPDATE:-1}"
 INSTALL_TAILSCALE="${INSTALL_TAILSCALE:-1}"
-# Stable alias for the Termux user inside proot: the fake /etc/passwd maps this
-# name to each device's real uid/gid, so it works on any phone.
+# Stable alias for the Termux user inside the chroot: the fake /etc/passwd maps
+# this name to each device's real uid/gid, so it works on any phone.
 T_USER="u0_a393"
 T_HOME="/data/data/com.termux/files/home"
 
@@ -56,9 +58,17 @@ case "$(uname -m)" in
 esac
 
 # ---------------------------------------------------------------- prerequisites
-log "Installing Termux prerequisites (proot, git, fish, openssh, termux-api)"
+# nix-chroot needs root (KernelSU/Magisk) for the bind mounts + chroot.
+if ! have su; then
+  warn "no su found — nix-chroot needs root (KernelSU/Magisk). Aborting."
+  exit 1
+fi
+su -c 'id -u' 2>/dev/null | grep -q '^0$' \
+  || warn "su is present but not granting root — nix-chroot will fail."
+
+log "Installing Termux prerequisites (git, fish, openssh, termux-api)"
 printf 'N\n' | pkg update -y
-pkg_install proot git fish openssh termux-api
+pkg_install git fish openssh termux-api
 
 # Make fish the default Termux shell (Termux honors ~/.termux/shell).
 log "Setting fish as the default shell"
@@ -97,12 +107,14 @@ if [ "$INSTALL_TAILSCALE" = "1" ]; then
 fi
 
 # ------------------------------------------------------- fake /etc + fake root
-log "Setting up fake /etc and a readable fake /"
+log "Setting up fake /etc and the chroot rootfs"
 USER_UID="$(id -u)"
 USER_GID="$(id -g)"
 
 mkdir -p "$NIX_ROOT"/{nix,etc/nix,tmp,bin,src,shm}
-mkdir -p "$ROOTFS/data/data"
+# Bind-mount targets inside the chroot rootfs (filled in by nix-chroot-run).
+mkdir -p "$ROOTFS"/{nix,etc,tmp,src,dev/shm,proc,dev,sys,system,apex,vendor,product,system_ext}
+mkdir -p "$ROOTFS/data/data/com.termux"
 chmod 1777 "$NIX_ROOT/shm"
 
 cat > "$NIX_ROOT/etc/resolv.conf" <<EOF
@@ -130,75 +142,117 @@ EOF
 ln -sfn "$PREFIX/bin" "$ROOTFS/bin"
 ln -sfn "$PREFIX" "$ROOTFS/usr"
 
-# ------------------------------------------------------------------ nix-proot
-log "Writing the proot helper ($NIX_BIN_DIR/nix-proot)"
-mkdir -p "$NIX_BIN_DIR"
-cat > "$NIX_BIN_DIR/nix-proot" <<SCRIPT
-#!/data/data/com.termux/files/usr/bin/sh
-# nix-proot: run a command inside the proot-faked Nix environment.
-# Fakes /nix -> ~/.nix/nix, /etc -> ~/.nix/etc and overlays a readable fake
-# "/" (rootfs) because this device denies readdir on the real "/" for apps
-# (nix opens "/" during store init). No root required.
-set -eu
-
-unset LD_PRELOAD LD_LIBRARY_PATH
-# Deterministic proot env: "$T_USER" is a stable alias for the Termux user
-# (fake /etc/passwd maps it to the real uid). home-manager's activation sanity
-# checks compare \$USER/\$HOME against the config, so keep them fixed.
-export USER="$T_USER"
-export HOME="$T_HOME"
-export NIX_SSL_CERT_FILE="${NIX_SSL_CERT_FILE:-\$PREFIX/etc/tls/cert.pem}"
-# Inside proot prefer the real nix binaries so tools like the home-manager
-# activation script (which locates nix via \`type -p nix-env\`) run the store
-# binaries instead of re-entering this wrapper.
-export PATH="\$HOME/.nix-profile/bin:\$PATH"
-
-ROOTFS="\$HOME/.nix/rootfs"
-mkdir -p "\$ROOTFS"
-mkdir -p "\$ROOTFS/data/data"
-# Android's bionic dynamic linker warns ("failed to find generated linker
-# configuration") unless /linkerconfig/ld.config.txt exists inside the guest.
-# It is a generated tmpfs dir the app cannot stat for proot -b, so copy it
-# into the rootfs instead (fall back to an empty file on older Android).
-mkdir -p "\$ROOTFS/linkerconfig"
-if [ -r /linkerconfig/ld.config.txt ]; then
-  /bin/cp -f /linkerconfig/ld.config.txt "\$ROOTFS/linkerconfig/ld.config.txt" 2>/dev/null \
-    || : > "\$ROOTFS/linkerconfig/ld.config.txt"
-else
-  : > "\$ROOTFS/linkerconfig/ld.config.txt"
+# --------------------------------------------------------------- nix-chroot
+# Kernel chroot helper (replaces proot): bind-mounts the store at /nix inside
+# a rootfs on /data and chroots in. Needs root (KernelSU/Magisk) + busybox
+# (mount/unshare/chroot/setuidgid), copied into the Termux prefix so it is
+# available inside the chroot too.
+log "Copying busybox for use inside the chroot ($PREFIX/bin/busybox)"
+BUSYBOX_SRC="$(su -c 'command -v busybox' 2>/dev/null || true)"
+if [ -n "$BUSYBOX_SRC" ] && [ "$BUSYBOX_SRC" != "$PREFIX/bin/busybox" ]; then
+  cp -f "$BUSYBOX_SRC" "$PREFIX/bin/busybox"
+  chmod 755 "$PREFIX/bin/busybox"
+elif [ ! -x "$PREFIX/bin/busybox" ]; then
+  warn "no busybox found via su — nix-chroot needs it (install KernelSU/Magisk busybox)"
+  exit 1
 fi
 
-PROOT_BIN="\${PROOT_BIN:-\$PREFIX/bin/proot}"
-[ -x "\$PROOT_BIN" ] || PROOT_BIN="\$(command -v proot || true)"
-[ -n "\$PROOT_BIN" ] || { echo "nix-proot: proot not found" >&2; exit 1; }
+log "Writing the chroot helpers ($NIX_BIN_DIR/nix-chroot{,-run})"
+mkdir -p "$NIX_BIN_DIR"
+cat > "$NIX_BIN_DIR/nix-chroot" <<'SCRIPT'
+#!/data/data/com.termux/files/usr/bin/sh
+# nix-chroot: run a command natively inside a chroot, using KernelSU root.
+#
+# Replaces nix-proot. Same wrapper contract (argv[1..] is the command to run
+# inside the Nix environment), but instead of ptrace-based proot it uses a real
+# kernel chroot + bind mounts. The store (/nix) and a fake /etc live on
+# writable /data; the phone's real "/" is dm-verity read-only, so a real /nix
+# mountpoint is impossible — hence chroot. Everything runs with the real kernel
+# and real glibc (no syscall interception), so Nix is effectively native.
+set -eu
 
-exec "\$PROOT_BIN" \\
-  --sysvipc \\
-  -b "\$ROOTFS:/" \\
-  -b "\$HOME/.nix/nix:/nix" \\
-  -b "\$HOME/.nix/etc:/etc" \\
-  -b "\$HOME/.nix/tmp:/tmp" \\
-  -b "\$HOME/.nix/src:/src" \\
-  -b "\$ROOTFS/data:/data" \\
-  -b "\$ROOTFS/data/data:/data/data" \\
-  -b /data/data/com.termux:/data/data/com.termux \\
-  -b /proc:/proc \\
-  -b /dev:/dev \\
-  -b "\$HOME/.nix/shm:/dev/shm" \\
-  -b /sys:/sys \\
-  -b /system:/system \\
-  -b /apex:/apex \\
-  -b /vendor:/vendor \\
-  -b /product:/product \\
-  -b /system_ext:/system_ext \\
-  "\$@"
+B="/data/data/com.termux/files/usr/bin/busybox"
+
+# Elevate to root. KernelSU `su 0 CMD ARGS...` execs CMD directly (no shell
+# re-parsing), so "$@" passes through verbatim.
+if [ "$(id -u 2>/dev/null || echo 1)" != "0" ]; then
+  exec su 0 /data/data/com.termux/files/usr/bin/sh "$0" "$@"
+fi
+
+# --- root context ---
+unset LD_PRELOAD LD_LIBRARY_PATH
+export USER="u0_a393"
+export HOME="/data/data/com.termux/files/home"
+export NIX_SSL_CERT_FILE="/data/data/com.termux/files/usr/etc/tls/cert.pem"
+export PATH="$HOME/.nix-profile/bin:$PATH"
+export NIX_ROOT="${NIX_ROOT:-$HOME/.nix}"
+export ROOTFS="$NIX_ROOT/rootfs"
+export STORE="$NIX_ROOT/nix"
+export ETC="$NIX_ROOT/etc"
+export TMP="$NIX_ROOT/tmp"
+export SRC="$NIX_ROOT/src"
+export SHM="$NIX_ROOT/shm"
+export NIX_CWD="$(pwd)"
+
+# Run in a private mount namespace: KernelSU's su shares a persistent mount
+# namespace, so without this every invocation would stack another full set of
+# bind mounts (they'd only vanish on reboot).
+exec "$B" unshare -m --propagation private \
+  /data/data/com.termux/files/usr/bin/sh "$HOME/.nix/bin/nix-chroot-run" "$@"
 SCRIPT
-chmod +x "$NIX_BIN_DIR/nix-proot"
+chmod +x "$NIX_BIN_DIR/nix-chroot"
+
+cat > "$NIX_BIN_DIR/nix-chroot-run" <<'SCRIPT'
+#!/data/data/com.termux/files/usr/bin/sh
+# nix-chroot-run: (runs as root, in a private mount ns) bind-mount the Nix
+# store + fake /etc into the rootfs, chroot into it, drop to the Termux user
+# (u0_a393) and exec the requested command. Config comes from env (set by
+# nix-chroot); "$@" is the command + its arguments.
+set -eu
+B="/data/data/com.termux/files/usr/bin/busybox"
+
+mkdir -p \
+  "$ROOTFS/nix" "$ROOTFS/etc" "$ROOTFS/tmp" "$ROOTFS/src" \
+  "$ROOTFS/dev/shm" "$ROOTFS/proc" "$ROOTFS/dev" "$ROOTFS/sys" \
+  "$ROOTFS/system" "$ROOTFS/apex" "$ROOTFS/vendor" "$ROOTFS/product" \
+  "$ROOTFS/system_ext" "$ROOTFS/data/data/com.termux"
+
+# --bind for plain directories on /data (no submounts); --rbind for the
+# Android partitions that are themselves mounts with submounts (e.g. /apex
+# is a tmpfs whose per-package dirs are loop mounts, and the bionic linker
+# lives at /apex/com.android.runtime/bin/linker64).
+"$B" mount -o bind  "$STORE" "$ROOTFS/nix"
+"$B" mount -o bind  "$ETC"   "$ROOTFS/etc"
+"$B" mount -o bind  "$TMP"   "$ROOTFS/tmp"
+"$B" mount -o bind  "$SRC"   "$ROOTFS/src"
+"$B" mount -o bind  "$SHM"   "$ROOTFS/dev/shm"
+"$B" mount -o rbind /proc        "$ROOTFS/proc"
+"$B" mount -o rbind /dev         "$ROOTFS/dev"
+"$B" mount -o rbind /sys         "$ROOTFS/sys"
+"$B" mount -o rbind /system      "$ROOTFS/system"
+"$B" mount -o rbind /apex        "$ROOTFS/apex"
+"$B" mount -o rbind /vendor      "$ROOTFS/vendor"
+"$B" mount -o rbind /product     "$ROOTFS/product"
+"$B" mount -o rbind /system_ext  "$ROOTFS/system_ext"
+"$B" mount -o rbind /data/data/com.termux "$ROOTFS/data/data/com.termux"
+
+# busybox chroot chdir(2)s to "/" after chrooting, which would break relative
+# flake refs (e.g. `home-manager switch --flake .#...`). Restore the caller's
+# cwd first (it is reachable inside the chroot as long as it lives under
+# /data/data/com.termux, which is bind-mounted). setuidgid drops to u0_a393
+# (from the fake /etc/passwd) so store/home files stay owned by the Termux
+# user, not root.
+exec "$B" chroot "$ROOTFS" /bin/sh -c '
+  cd "${NIX_CWD:-/}" 2>/dev/null || cd /
+  exec /bin/busybox setuidgid u0_a393 "$@"
+' sh "$@"
+SCRIPT
+chmod +x "$NIX_BIN_DIR/nix-chroot-run"
 
 # ------------------------------------------------------------------- tarball
-# ~/.nix-profile is a symlink into /nix, which is only visible inside proot —
-# so probe it with nix-proot, not from the Termux side.
-if "$NIX_BIN_DIR/nix-proot" /bin/sh -c '[ -x "$HOME/.nix-profile/bin/nix" ]' 2>/dev/null; then
+# ~/.nix-profile is a symlink into /nix, which is only visible inside the
+# chroot — so probe it with nix-chroot, not from the Termux side.
+if "$NIX_BIN_DIR/nix-chroot" /bin/sh -c '[ -x "$HOME/.nix-profile/bin/nix" ]' 2>/dev/null; then
   log "Nix already installed — skipping download + install"
 else
   log "Downloading Nix $NIX_VERSION"
@@ -218,10 +272,10 @@ else
   mkdir -p "$NIX_ROOT/src/unpack"
   tar -xf "$TARBALL" -C "$NIX_ROOT/src/unpack"
 
-  # Single-user install: no root, no daemon, no channel, no profile edits.
-  # Requires the fake readable "/" (nix opens it during store init).
-  log "Installing Nix inside proot (single-user)"
-  "$NIX_BIN_DIR/nix-proot" /bin/sh \
+  # Single-user install: no daemon, no channel, no profile edits. The store is
+  # written at /nix inside the chroot, owned by the Termux user.
+  log "Installing Nix inside the chroot (single-user)"
+  "$NIX_BIN_DIR/nix-chroot" /bin/sh \
     "$NIX_ROOT/src/unpack/nix-$NIX_VERSION-aarch64-linux/install" \
     --no-daemon --no-channel-add --no-modify-profile
 fi
@@ -231,13 +285,14 @@ log "Installing PATH wrappers (~/.local/bin)"
 mkdir -p "$HOME/.local/bin"
 cat > "$HOME/.local/bin/nix" <<'WRAP'
 #!/data/data/com.termux/files/usr/bin/sh
-# nix wrapper for the proot-in-Termux Nix installation.
+# nix wrapper for the chroot-in-Termux Nix installation.
 # Each symlink name (nix, nix-env, nix-shell, home-manager, bat, ...) maps to
 # the matching binary in the Nix profile (~/.nix-profile/bin) executed inside
-# proot, so everything works from a plain Termux shell.
+# a kernel chroot (via KernelSU root), so everything works from a plain
+# Termux shell.
 cmd="$(basename "$0")"
 
-exec "$HOME/.nix/bin/nix-proot" "$HOME/.nix-profile/bin/$cmd" "$@"
+exec "$HOME/.nix/bin/nix-chroot" "$HOME/.nix-profile/bin/$cmd" "$@"
 WRAP
 chmod +x "$HOME/.local/bin/nix"
 # Symlink the other nix commands to the wrapper (NOT `nix` itself — it is the
@@ -251,13 +306,13 @@ ln -sfn nix "$HOME/.local/bin/home-manager"
 # PATH hooks so the wrappers are available in every Termux shell.
 mkdir -p "$HOME/.config/fish/conf.d"
 cat > "$HOME/.config/fish/conf.d/nix-termux.fish" <<'FISH'
-# Nix (proot-in-Termux) entry points
+# Nix (chroot-in-Termux) entry points
 fish_add_path -m ~/.local/bin
 FISH
 for rc in "$HOME/.bashrc" "$HOME/.profile"; do
   if [ ! -f "$rc" ] || ! grep -q "nix-termux" "$rc" 2>/dev/null; then
     cat >> "$rc" <<'RC'
-# Nix (proot-in-Termux) entry points
+# Nix (chroot-in-Termux) entry points
 case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac
 RC
   fi
