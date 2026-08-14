@@ -156,6 +156,17 @@ export PATH="\$HOME/.nix-profile/bin:\$PATH"
 ROOTFS="\$HOME/.nix/rootfs"
 mkdir -p "\$ROOTFS"
 mkdir -p "\$ROOTFS/data/data"
+# Android's bionic dynamic linker warns ("failed to find generated linker
+# configuration") unless /linkerconfig/ld.config.txt exists inside the guest.
+# It is a generated tmpfs dir the app cannot stat for proot -b, so copy it
+# into the rootfs instead (fall back to an empty file on older Android).
+mkdir -p "\$ROOTFS/linkerconfig"
+if [ -r /linkerconfig/ld.config.txt ]; then
+  /bin/cp -f /linkerconfig/ld.config.txt "\$ROOTFS/linkerconfig/ld.config.txt" 2>/dev/null \
+    || : > "\$ROOTFS/linkerconfig/ld.config.txt"
+else
+  : > "\$ROOTFS/linkerconfig/ld.config.txt"
+fi
 
 PROOT_BIN="\${PROOT_BIN:-\$PREFIX/bin/proot}"
 [ -x "\$PROOT_BIN" ] || PROOT_BIN="\$(command -v proot || true)"
