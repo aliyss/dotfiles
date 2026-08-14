@@ -62,6 +62,7 @@ in {
     jq
     ripgrep
     git
+    zoxide
   ];
 
   # Let Home Manager install and manage itself.

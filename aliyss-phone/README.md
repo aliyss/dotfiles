@@ -110,9 +110,7 @@ installer is gone:
   same supervision `sshd` gets. A plain `update-home` re-applies it and
   restarts the daemon when the config changes.
 - The daemon runs in userspace-networking mode (no `/dev/net/tun`, no root)
-  and serves the SOCKS5 proxy the phone's ssh aliases route through. The port
-  is a single option (`aliyss.tailscaleSocks5Port`, default `23008`) shared
-  with `apps/fish.nix`.
+  and serves a SOCKS5 proxy on `aliyss.tailscaleSocks5Port` (default `23008`).
 
 Commands:
 
@@ -151,7 +149,8 @@ home-manager on the phone:
 - `~/.hushlogin` — suppress the Termux login banner
 - `$PREFIX/var/service/tailscaled/run` — the tailscaled runit service (see
   the Tailscale section)
-- plus `home.packages` (bat, btop, eza, fd, jq, ripgrep, tailscale-termux)
+- plus `home.packages` (bat, btop, eza, fd, jq, ripgrep, tailscale-termux,
+  zoxide)
 
 These are written as **real files** on the phone (home-manager's `home.file`
 links them into the store, but the phone's `/nix` is invisible to native Termux

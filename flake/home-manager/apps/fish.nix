@@ -79,20 +79,6 @@ let
     ssh-termux = "ssh -p 8022 aliyss@aliyss-termux";
   };
 
-  # On the phone, tailscaled runs in userspace-networking mode (no TUN, can't
-  # open /dev/tun without root), so the kernel never learns a route to tailnet
-  # IPs and plain ssh would time out. Route through the daemon's SOCKS5 proxy
-  # via connect(1) as the ssh ProxyCommand instead. The port is shared with
-  # apps/tailscale.nix (the runit service) through aliyss.tailscaleSocks5Port.
-  proxyServer = "127.0.0.1:${config.aliyss.tailscaleSocks5Port}";
-  proxyFlags = "-5 -S ${proxyServer}";
-  phoneSshAliases = {
-    ssh-blisspla = "ssh -o 'ProxyCommand=${proxyFlags} %h %p' aliyss@aliyss-blisspla";
-    ssh-bequitta = "ssh -o 'ProxyCommand=${proxyFlags} %h %p' aliyss@aliyss-bequitta";
-    ssh-blade = "ssh -o 'ProxyCommand=${proxyFlags} %h %p' aliyss@aliyss-blade";
-    ssh-termux = "ssh -p 8022 aliyss@aliyss-termux";
-  };
-
   desktopAliases = {
     update-system = "$HOME/.config/flake/update-system";
     ubequitta = "$HOME/.config/flake/update-system -s bequitta";
@@ -118,7 +104,7 @@ let
     upgrade-flake = "nix flake update --flake ~/.config/flake";
   };
 
-  aliases = (if isPhone then phoneSshAliases else sshAliases) // (if isPhone then phoneAliases else desktopAliases);
+  aliases = sshAliases // (if isPhone then phoneAliases else desktopAliases);
 
   # The phone's config.fish is a plain real file (native Termux can't follow
   # Nix-store symlinks), so aliases are inlined as `alias` lines there.
@@ -126,12 +112,27 @@ let
     lib.mapAttrsToList (name: value: "alias ${name}=\"${value}\"") aliases
   );
 
+  # zoxide: nix-built and wrapped into ~/.local/bin, which
+  # conf.d/nix-termux.fish already added to PATH. `--cmd cd` makes zoxide take
+  # over `cd` (same as the desktop's programs.zoxide); zoxide 0.10 can't emit
+  # a second command itself, so re-alias `z`/`zi` onto the internal functions
+  # it still defines. `zi`/`cdi` (interactive) need fzf, which is not on the
+  # phone.
+  zoxideInit = ''
+    if command -q zoxide
+      zoxide init fish --cmd cd | source
+      alias z=__zoxide_z
+      alias zi=__zoxide_zi
+    end
+  '';
+
   # Single source of truth for the phone's whole ~/.config/fish/config.fish.
   # herdr attach must come last: `exec herdr-workspace` replaces the shell, so
   # anything before it (sshd autostart) still runs.
   phoneFishText = ''
     ${baseInit}
     ${renderAliases}
+    ${zoxideInit}
     ${phoneInit}
     ${herdrInit}
   '';
