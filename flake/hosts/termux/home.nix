@@ -3,12 +3,10 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   sshKeys = import ../../lib/ssh-keys.nix;
   authorizedKeysFile = pkgs.writeText "authorized_keys" (lib.concatStringsSep "\n" sshKeys);
-in
-{
+in {
   imports = [
     # Shared device/profile options (defines aliyss.isPhone).
     ../../home-manager/options.nix
@@ -60,6 +58,7 @@ in
     htop
     jq
     ripgrep
+    git
   ];
 
   # Let Home Manager install and manage itself.
@@ -73,14 +72,15 @@ in
     force = true;
   };
 
-  home.activation.copyPhoneAuthorizedKeys = lib.hm.dag.entryAfter [
-    "linkGeneration"
-  ] ''
-    mkdir -p "$HOME/.ssh"
-    rm -f "$HOME/.ssh/authorized_keys"
-    cp ${authorizedKeysFile} "$HOME/.ssh/authorized_keys"
-    chmod 600 "$HOME/.ssh/authorized_keys"
-  '';
+  home.activation.copyPhoneAuthorizedKeys =
+    lib.hm.dag.entryAfter [
+      "linkGeneration"
+    ] ''
+      mkdir -p "$HOME/.ssh"
+      rm -f "$HOME/.ssh/authorized_keys"
+      cp ${authorizedKeysFile} "$HOME/.ssh/authorized_keys"
+      chmod 600 "$HOME/.ssh/authorized_keys"
+    '';
 
   nixpkgs.config.allowUnfree = true;
 }
