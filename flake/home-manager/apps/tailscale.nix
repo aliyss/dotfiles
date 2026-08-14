@@ -23,12 +23,10 @@
 #     see in ps or pkill.
 #   - the runit service definition (run script + autostart) is written by
 #     home.activation, so a plain `update-home` re-applies it and restarts the
-#     daemon when the config changes;
-#   - the SOCKS5 port is shared with the ssh aliases (fish.nix) via
-#     aliyss.tailscaleSocks5Port.
+#     daemon when the config changes.
 #
 # The daemon runs in userspace-networking mode (no /dev/net/tun, no root) and
-# serves the SOCKS5 proxy the phone's ssh aliases route through.
+# also serves a SOCKS5 proxy on aliyss.tailscaleSocks5Port.
 let
   isPhone = config.aliyss.isPhone;
   socks5Port = config.aliyss.tailscaleSocks5Port;
@@ -58,7 +56,8 @@ let
           --socks5-server=127.0.0.1:${socks5Port}
     } >> "$HOME/.tailscale/tailscaled.log" 2>&1
   '';
-in {
+in
+{
   home.packages = lib.mkIf isPhone [ tailscale-termux ];
 
   # The runit service lives outside $HOME ($PREFIX/var/service), so home.file
