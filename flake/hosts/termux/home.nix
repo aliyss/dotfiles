@@ -53,6 +53,7 @@ in
   home.packages = with pkgs; [
     bat
     btop
+    connect
     eza
     fd
     htop

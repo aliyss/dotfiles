@@ -79,6 +79,19 @@ let
     ssh-termux = "ssh -p 8022 aliyss@aliyss-termux";
   };
 
+  # On the phone, tailscaled runs in userspace-networking mode (no TUN, can't
+  # open /dev/tun without root), so the kernel never learns a route to tailnet
+  # IPs and plain ssh would time out. Route through the daemon's SOCKS5 proxy
+  # (127.0.0.1:23008) via connect(1) as the ssh ProxyCommand instead.
+  proxyServer = "127.0.0.1:23008";
+  proxyFlags = "-5 -S ${proxyServer}";
+  phoneSshAliases = {
+    ssh-blisspla = "ssh -o 'ProxyCommand=${proxyFlags} %h %p' aliyss@aliyss-blisspla";
+    ssh-bequitta = "ssh -o 'ProxyCommand=${proxyFlags} %h %p' aliyss@aliyss-bequitta";
+    ssh-blade = "ssh -o 'ProxyCommand=${proxyFlags} %h %p' aliyss@aliyss-blade";
+    ssh-termux = "ssh -p 8022 aliyss@aliyss-termux";
+  };
+
   desktopAliases = {
     update-system = "$HOME/.config/flake/update-system";
     ubequitta = "$HOME/.config/flake/update-system -s bequitta";
@@ -100,7 +113,7 @@ let
     upgrade-flake = "nix flake update --flake ~/.config/flake";
   };
 
-  aliases = sshAliases // (if isPhone then phoneAliases else desktopAliases);
+  aliases = (if isPhone then phoneSshAliases else sshAliases) // (if isPhone then phoneAliases else desktopAliases);
 
   # The phone's config.fish is a plain real file (native Termux can't follow
   # Nix-store symlinks), so aliases are inlined as `alias` lines there.
