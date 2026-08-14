@@ -16,5 +16,15 @@
       default = [ ];
       description = "Apps installed individually without enabling the full profile";
     };
+    tailscaleSocks5Port = lib.mkOption {
+      type = lib.types.str;
+      default = "23008";
+      description = ''
+        Port of the phone's tailscaled SOCKS5 proxy (userspace-networking
+        mode). Single source of truth: consumed by apps/tailscale.nix (the
+        runit service args) and apps/fish.nix (the ssh aliases that route
+        through the proxy via connect(1)).
+      '';
+    };
   };
 }

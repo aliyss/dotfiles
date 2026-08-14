@@ -12,7 +12,8 @@ set -euo pipefail
 #     tools (bat, btop, eza, fd, jq, rg), aliases (update-home/system/flake),
 #     .hushlogin, packages — all written as REAL files readable by native apps.
 #   - wrappers so every installed tool works from a plain Termux shell.
-#   - fish as the default shell, sshd running, patched Tailscale installed.
+#   - fish as the default shell, sshd running (Tailscale itself comes from the
+#     flake — see flake/home-manager/apps/tailscale.nix).
 #
 # Prerequisite: the dotfiles repo (with flake/hosts/termux, the aliyss-phone
 # scripts and the theme changes) must be pushed to REPO_URL before running.
@@ -23,8 +24,11 @@ set -euo pipefail
 #   REPO_URL               dotfiles repo to clone        (default https://github.com/aliyss/dotfiles)
 #   REPO_DIR               where to merge it             (default ~/.config — the dotfiles convention)
 #   RUN_UPDATE             apply the home config at end  (default 1)
-#   INSTALL_TAILSCALE      install patched Tailscale     (default 1; auth is manual)
 #   SSH_AUTHORIZED_KEYS    desktop public key(s) to put in ~/.ssh/authorized_keys
+#
+# Tailscale is NOT installed here anymore: the flake provides the (patched,
+# Nix-built) binaries via home.packages and owns the runit service via
+# home.activation. The only manual step is the one-time `tailscale up` login.
 #
 # Idempotent: safe to re-run; existing steps are skipped.
 
@@ -37,7 +41,6 @@ TARBALL="$NIX_ROOT/src/nix-$NIX_VERSION-aarch64-linux.tar.xz"
 REPO_URL="${REPO_URL:-https://github.com/aliyss/dotfiles}"
 REPO_DIR="${REPO_DIR:-$HOME/.config}"
 RUN_UPDATE="${RUN_UPDATE:-1}"
-INSTALL_TAILSCALE="${INSTALL_TAILSCALE:-1}"
 # Stable alias for the Termux user inside the chroot: the fake /etc/passwd maps
 # this name to each device's real uid/gid, so it works on any phone.
 T_USER="u0_a393"
@@ -88,23 +91,10 @@ if ! pgrep -x sshd >/dev/null 2>&1; then
   sshd || warn "sshd failed to start (install openssh and re-run)"
 fi
 
-# Patched Tailscale (Android 11+). "tailscale-cli up" needs a one-time login —
-# the auth URL is printed for you to open on the desktop.
-if [ "$INSTALL_TAILSCALE" = "1" ]; then
-  if ! have tailscale-cli; then
-    log "Installing patched Tailscale (Android 11+ compatible)"
-    curl -fsSL https://raw.githubusercontent.com/bropines/tailscale-termux-cli/main/remote-install.sh | bash \
-      || warn "Tailscale install failed (skip with INSTALL_TAILSCALE=0)"
-  fi
-  if have tailscaled-start; then
-    tailscaled-start --service=on 2>/dev/null || true
-  fi
-  if have tailscale-cli && tailscale-cli status >/dev/null 2>&1; then
-    log "Tailscale is already up"
-  else
-    warn "Tailscale daemon started. Authorize this phone once:  tailscale-cli up"
-  fi
-fi
+# Tailscale is handled by the flake (flake/home-manager/apps/tailscale.nix):
+# nix-built patched binaries via home.packages, runit service + config via
+# home.activation. Nothing to install here — the only manual step after the
+# first switch is a one-time `tailscale up` login.
 
 # ------------------------------------------------------- fake /etc + fake root
 log "Setting up fake /etc and the chroot rootfs"
@@ -380,5 +370,5 @@ fi
 log "Done. Nix is installed."
 log "Next steps:"
 echo "  - apply the config:   $REPO_DIR/aliyss-phone/update-phone.sh"
-echo "  - authorize Tailscale: tailscale-cli up"
+echo "  - authorize Tailscale: tailscale up"
 echo "  - new shell (fish) is the default; reload it and use update-home / update-system"

@@ -24,6 +24,9 @@ in {
     # Ctrl+hjkl navigation + telescope/treesitter/editing essentials), all
     # heavy clusters (LLM, LSP/completion, DAP, media) are desktop-only.
     ../../home-manager/apps/neovim.nix
+    # Tailscale, fully declarative: nix-built binaries + the runit service
+    # definition written by home.activation (see apps/tailscale.nix).
+    ../../home-manager/apps/tailscale.nix
   ];
 
   # Everything phone-specific (real-file configs, Tailscale/sshd, no Hyprland)
