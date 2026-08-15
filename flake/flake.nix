@@ -38,6 +38,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     forticlient-nixos.url = "github:jplana/forticlient-nixos";
+    # Android APK packages (used on the Termux phone): thousands of apps pinned
+    # by app-id, e.g. `nix build .#com-darkempire78-opencalculator`.
+    aliyss-android-pkgs.url = "github:aliyss/aliyss-android-pkgs";
   };
 
   outputs = {
@@ -66,6 +69,8 @@
       config.allowUnfree = true;
     };
 
+    androidPkgs = inputs.aliyss-android-pkgs;
+
     lib = nixpkgs.lib;
 
     sharedConfigurationModules = [
@@ -73,6 +78,13 @@
       home-manager.nixosModules.home-manager
     ];
   in {
+    # Android APK packages from aliyss-android-pkgs, re-exported so they can be
+    # built directly from this flake on any supported system (e.g. the phone).
+    packages = {
+      ${system} = androidPkgs.packages.${system};
+      ${phoneSystem} = androidPkgs.packages.${phoneSystem};
+    };
+
     # NIXOS CONFIGURATIONS
     nixosConfigurations = {
       # Desktop
