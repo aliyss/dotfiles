@@ -15,8 +15,9 @@ set -euo pipefail
 #   2. resolve the built APK's host path — the `result`/out-link symlinks point
 #      into the chroot's /nix, which Android cannot read; the real store is at
 #      ~/.nix/nix (bind-mounted at /nix inside the chroot)
-#   3. pm install -r as root (su -c 'pm install'). If Google Play Protect
-#      blocks the app, the install is reported and left to the phone screen.
+#   3. pm install -r as root (/system/bin/su -c '/system/bin/pm install'). If
+#      Google Play Protect blocks the app, the install is reported and left to
+#      the phone screen.
 #
 # Requires: the aliyss-android-pkgs flake input (already in flake.lock) and
 # root (KernelSU/Magisk) for pm install.
@@ -52,6 +53,18 @@ fi
 # The script is fully non-interactive; never let anything block on stdin (e.g.
 # when driven over ssh with a pipe on stdin that never delivers data).
 exec </dev/null
+
+# --- Android system tools ------------------------------------------------
+# Absolute paths, so the script works from a plain Termux shell AND inside the
+# nix-chroot, where home-manager's activation runs with a minimal PATH (no
+# $PREFIX/bin — bare `su` is not found there). su is the Termux shim, not
+# /system/bin/su: the shim just locates /system/bin/su, but it also sets the
+# root-context PATH (incl. /system/bin), which pm needs to resolve its
+# internal `cmd` call. pm/dumpsys are /system/bin scripts (pm is
+# `cmd package "$@"`), reachable from both contexts.
+SU=/data/data/com.termux/files/usr/bin/su
+PM=/system/bin/pm
+DUMPSYS=/system/bin/dumpsys
 
 # --- app-id <-> flake attr -----------------------------------------------
 # Mirror android-pkgs' pkgs/default.nix sanitizeName: dots -> dashes, and
@@ -111,7 +124,7 @@ install_one() {
   # foreground pm call can block indefinitely on a Play Protect dialog.
   pm_install_as_root "$app_id" "$host_apk" || return 1
 
-  if pm list packages 2>/dev/null | grep -qx "package:$app_id"; then
+  if "$PM" list packages 2>/dev/null | grep -qx "package:$app_id"; then
     echo "  installed: $app_id"
   else
     warn "$app_id not found in 'pm list packages' after install"
@@ -130,11 +143,14 @@ pm_install_as_root() {
   local log="$HOME/.cache/install-app-$app_id.log"
   local exit_marker="$log.exit"
   rm -f "$log" "$exit_marker"
+  # Same env cleanup the Termux su shim does before exec'ing /system/bin/su:
+  # nothing Termux-specific may leak into the root context.
+  unset LD_LIBRARY_PATH LD_PRELOAD
   # Detached subshell so a blocked pm can never wedge the script's own stdout
   # or pid-tracking; completion is signalled by a marker file instead of wait.
   # The subshell's stdout is discarded (pm writes to $log inside it).
   (
-    su -c "pm install -r '$host_apk'" >"$log" 2>&1
+    "$SU" -c "/system/bin/pm install -r '$host_apk'" >"$log" 2>&1
     echo $? >"$exit_marker"
   ) </dev/null >/dev/null 2>&1 &
   local waited=0
@@ -145,7 +161,7 @@ pm_install_as_root() {
 
   if [ ! -f "$exit_marker" ]; then
     # Still running: almost certainly waiting on a Play Protect dialog.
-    if su -c "dumpsys window" 2>/dev/null | grep -qE "PlayProtect|packageinstaller"; then
+    if "$SU" -c "/system/bin/dumpsys window" 2>/dev/null | grep -qE "PlayProtect|packageinstaller"; then
       warn "$app_id was blocked by Google Play Protect (older/flagged APK) — allow it in Play Protect on the phone, or pick another app"
     else
       warn "$app_id install is still running — check the phone screen"
