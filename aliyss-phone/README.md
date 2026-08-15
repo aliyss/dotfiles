@@ -69,34 +69,40 @@ update-home     # pull repo + rebuild + activate aliyss-termux, reload colors
 update-phone    # alias of update-home
 upgrade-flake   # nix flake update --flake ~/.config/flake
 install-app     # build + pm-install an Android app from aliyss-android-pkgs
+uninstall-app   # pm-uninstall an app (dotted or dashed id)
 ```
 
 ## Installing Android apps (aliyss-android-pkgs)
 
 The flake inputs [aliyss/aliyss-android-pkgs](https://github.com/aliyss/aliyss-android-pkgs)
 and re-exports its package set (`flake/flake.nix`), so every pinned app-id can
-be built straight from the dotfiles flake on the phone. `install-app` wraps
-the two steps into one: `nix build .#<app-id>` (dotted or dashed id accepted),
-then `pm install -r` as root (`su`), resolving the APK from the host-visible
-store (`~/.nix/nix/store`, since `/nix` only exists inside the chroot):
+be built straight from the dotfiles flake on the phone. **The install engine
+lives in the android-pkgs repo itself** — `scripts/install.sh`, packaged as
+`.#android-install` (also added to `home.packages` on the phone, so the
+commands below are plain aliases to it). There is no per-user install script.
+
+`install-app` builds the app (`nix build <flake>#<app-id>`, dotted or dashed
+id accepted) and `pm install -r`s it as root (`su`), mapping the chroot store
+path to the host-visible `~/.nix/nix/store` (since `/nix` only exists inside
+the chroot); `uninstall-app` is the inverse:
 
 ```fish
 install-app com.darkempire78.opencalculator   # one app
 install-app org.videolan.vlc com.spotify.music # several at once
+uninstall-app com.darkempire78.opencalculator
 ```
 
 The APKs are the pinned, hash-verified artifacts from aliyss-android-pkgs
 (F-Droid / IzzyOnDroid / APKPure sources, see that repo's trust model).
 `pm install` runs with a 60s poll: if **Google Play Protect** blocks the app
 (older/flagged APKs show an "Unsafe app blocked" dialog on the phone), the
-script reports it and exits — allow the app in Play Protect on the phone (or
-pick another) and re-run. Uninstall as usual:
-`su -c 'pm uninstall com.darkempire78.opencalculator'`.
+installer reports it and exits — allow the app in Play Protect on the phone
+(or pick another) and re-run.
 
 ### Declarative installs (`aliyss.androidPkgs`)
 
-Instead of installing ad hoc, apps can be **declared in the home-manager
-config** — `flake/hosts/termux/home.nix` (module: `apps/android-pkgs.nix`):
+Apps can be **declared in the home-manager config** —
+`flake/hosts/termux/home.nix` (module: `apps/android-pkgs.nix`):
 
 ```nix
 aliyss.androidPkgs = [
@@ -105,11 +111,13 @@ aliyss.androidPkgs = [
 ];
 ```
 
-Every `update-home` (home-manager switch) builds + installs the declared apps
-with the same engine as `install-app` (chroot store-path mapping, root
+Every `update-home` (home-manager switch) runs the repo installer in
+on-device mode for the declared apps (chroot store-path mapping, root
 `pm install -r`, bounded 60s Play Protect poll). A blocked/failed app fails
 the switch loudly — allow it in Play Protect (or remove the id) and re-run.
-Remove an id to stop reinstalling that app (it is not uninstalled).
+**Removing an app-id uninstalls it**: the previous declaration is tracked in
+`~/.local/state/aliyss-android-pkgs`, and apps that disappeared from the list
+are `pm uninstall`ed on the next switch (best-effort — failures only warn).
 
 Or, to only re-apply without pulling: `PULL=0 ~/.config/aliyss-phone/update-home.sh`.
 The scripts live in `aliyss-phone/` (`update-home.sh`, `update-system.sh`,

@@ -102,9 +102,12 @@ let
     update-home = "bash ~/.config/aliyss-phone/update-home.sh";
     update-phone = "bash ~/.config/aliyss-phone/update-home.sh";
     upgrade-flake = "nix flake update --flake ~/.config/flake";
-    # Build + pm-install an Android app from aliyss-android-pkgs (see
-    # aliyss-phone/install-app.sh), e.g. `install-app org.videolan.vlc`.
-    install-app = "bash ~/.config/aliyss-phone/install-app.sh";
+    # Build + pm-install an Android app from aliyss-android-pkgs via the
+    # repo's installer (aliyss-android-pkgs scripts/install.sh, packaged as
+    # .#android-install), e.g. `install-app org.videolan.vlc`. -d = on-device
+    # (no adb), -f = build from the dotfiles flake (pins the input).
+    install-app = "android-install -d -f ~/.config/flake";
+    uninstall-app = "android-install -d -f ~/.config/flake -u";
   };
 
   aliases = sshAliases // (if isPhone then phoneAliases else desktopAliases);
