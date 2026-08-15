@@ -93,6 +93,24 @@ script reports it and exits — allow the app in Play Protect on the phone (or
 pick another) and re-run. Uninstall as usual:
 `su -c 'pm uninstall com.darkempire78.opencalculator'`.
 
+### Declarative installs (`aliyss.androidPkgs`)
+
+Instead of installing ad hoc, apps can be **declared in the home-manager
+config** — `flake/hosts/termux/home.nix` (module: `apps/android-pkgs.nix`):
+
+```nix
+aliyss.androidPkgs = [
+  "com.darkempire78.opencalculator"
+  "org.videolan.vlc"
+];
+```
+
+Every `update-home` (home-manager switch) builds + installs the declared apps
+with the same engine as `install-app` (chroot store-path mapping, root
+`pm install -r`, bounded 60s Play Protect poll). A blocked/failed app fails
+the switch loudly — allow it in Play Protect (or remove the id) and re-run.
+Remove an id to stop reinstalling that app (it is not uninstalled).
+
 Or, to only re-apply without pulling: `PULL=0 ~/.config/aliyss-phone/update-home.sh`.
 The scripts live in `aliyss-phone/` (`update-home.sh`, `update-system.sh`,
 `ensure-nix-wrappers.sh`); `update-phone.sh` is kept as a compat wrapper for

@@ -3,10 +3,12 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   sshKeys = import ../../lib/ssh-keys.nix;
   authorizedKeysFile = pkgs.writeText "authorized_keys" (lib.concatStringsSep "\n" sshKeys);
-in {
+in
+{
   imports = [
     # Shared device/profile options (defines aliyss.isPhone).
     ../../home-manager/options.nix
@@ -27,6 +29,16 @@ in {
     # Tailscale, fully declarative: nix-built binaries + the runit service
     # definition written by home.activation (see apps/tailscale.nix).
     ../../home-manager/apps/tailscale.nix
+    # Declarative Android app installs from the aliyss-android-pkgs flake
+    # input (defines aliyss.androidPkgs, see apps/android-pkgs.nix).
+    ../../home-manager/apps/android-pkgs.nix
+  ];
+
+  # Android apps installed declaratively from aliyss-android-pkgs: built +
+  # pm-installed (as root) on every switch. Add app-ids here to install them;
+  # remove an id to stop (re)installing it. See aliyss-phone/README.md.
+  aliyss.androidPkgs = [
+    "com.darkempire78.opencalculator"
   ];
 
   # Everything phone-specific (real-file configs, Tailscale/sshd, no Hyprland)
@@ -77,14 +89,16 @@ in {
   };
 
   home.activation.copyPhoneAuthorizedKeys =
-    lib.hm.dag.entryAfter [
-      "linkGeneration"
-    ] ''
-      mkdir -p "$HOME/.ssh"
-      rm -f "$HOME/.ssh/authorized_keys"
-      cp ${authorizedKeysFile} "$HOME/.ssh/authorized_keys"
-      chmod 600 "$HOME/.ssh/authorized_keys"
-    '';
+    lib.hm.dag.entryAfter
+      [
+        "linkGeneration"
+      ]
+      ''
+        mkdir -p "$HOME/.ssh"
+        rm -f "$HOME/.ssh/authorized_keys"
+        cp ${authorizedKeysFile} "$HOME/.ssh/authorized_keys"
+        chmod 600 "$HOME/.ssh/authorized_keys"
+      '';
 
   nixpkgs.config.allowUnfree = true;
 }
