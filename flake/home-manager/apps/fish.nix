@@ -102,6 +102,9 @@ let
     update-home = "bash ~/.config/aliyss-phone/update-home.sh";
     update-phone = "bash ~/.config/aliyss-phone/update-home.sh";
     upgrade-flake = "nix flake update --flake ~/.config/flake";
+    # Build + pm-install an Android app from aliyss-android-pkgs (see
+    # aliyss-phone/install-app.sh), e.g. `install-app org.videolan.vlc`.
+    install-app = "bash ~/.config/aliyss-phone/install-app.sh";
   };
 
   aliases = sshAliases // (if isPhone then phoneAliases else desktopAliases);

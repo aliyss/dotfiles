@@ -68,7 +68,27 @@ update-system   # Termux base (pkg upgrade) + flake inputs (nix flake update) + 
 update-home     # pull repo + rebuild + activate aliyss-termux, reload colors
 update-phone    # alias of update-home
 upgrade-flake   # nix flake update --flake ~/.config/flake
+install-app     # build + pm-install an Android app from aliyss-android-pkgs
 ```
+
+## Installing Android apps (aliyss-android-pkgs)
+
+The flake inputs [aliyss/aliyss-android-pkgs](https://github.com/aliyss/aliyss-android-pkgs)
+and re-exports its package set (`flake/flake.nix`), so every pinned app-id can
+be built straight from the dotfiles flake on the phone. `install-app` wraps
+the two steps into one: `nix build .#<app-id>` (dotted or dashed id accepted),
+then `pm install -r` with a root (`su`) fallback, resolving the APK from the
+host-visible store (`~/.nix/nix/store`, since `/nix` only exists inside the
+chroot):
+
+```fish
+install-app com.darkempire78.opencalculator   # one app
+install-app org.videolan.vlc com.spotify.music # several at once
+```
+
+The APKs are the pinned, hash-verified artifacts from aliyss-android-pkgs
+(F-Droid / IzzyOnDroid / APKPure sources, see that repo's trust model).
+Uninstall as usual: `su -c 'pm uninstall com.darkempire78.opencalculator'`.
 
 Or, to only re-apply without pulling: `PULL=0 ~/.config/aliyss-phone/update-home.sh`.
 The scripts live in `aliyss-phone/` (`update-home.sh`, `update-system.sh`,
