@@ -40,6 +40,11 @@ let
   # ~/.nix-profile/bin (and wrapped into ~/.local/bin by ensure-nix-wrappers.sh,
   # giving the phone its install-app / uninstall-app commands).
   installer = aliyss-android-pkgs.packages.${pkgs.system}.android-install;
+  # The activation must call the installer by store path — the generated
+  # activation script's PATH does not include ~/.nix-profile/bin (only
+  # ~/.local/bin, whose android-install wrapper is created post-switch by
+  # ensure-nix-wrappers.sh). The derivation is built by home.packages below.
+  installerBin = "${installer}/bin/android-install";
   appList = lib.concatStringsSep " " cfg;
 in
 {
@@ -83,7 +88,7 @@ in
             *" $id "*) : ;;
             *)
               log "Uninstalling removed app: $id"
-              android-install -d -f "$HOME/.config/flake" -u "$id" \
+              ${installerBin} -d -f "$HOME/.config/flake" -u "$id" \
                 || warn "could not uninstall $id (already gone?)"
               ;;
           esac
@@ -97,7 +102,7 @@ in
       # Install (build + pm install as root) every declared app.
       if [ -n "$curr" ]; then
         log "Installing declared Android apps (aliyss.androidPkgs): ${lib.concatStringsSep ", " cfg}"
-        if ! android-install -d -f "$HOME/.config/flake" $curr; then
+        if ! ${installerBin} -d -f "$HOME/.config/flake" $curr; then
           warn "one or more apps failed to install (Play Protect block? see above) — fix and re-run update-home"
           exit 1
         fi
