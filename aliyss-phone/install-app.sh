@@ -15,11 +15,11 @@ set -euo pipefail
 #   2. resolve the built APK's host path — the `result`/out-link symlinks point
 #      into the chroot's /nix, which Android cannot read; the real store is at
 #      ~/.nix/nix (bind-mounted at /nix inside the chroot)
-#   3. pm install -r, trying the Termux user first and falling back to root
-#      (su -c 'pm install') — same fallback as android-pkgs' scripts/install.sh.
+#   3. pm install -r as root (su -c 'pm install'). If Google Play Protect
+#      blocks the app, the install is reported and left to the phone screen.
 #
 # Requires: the aliyss-android-pkgs flake input (already in flake.lock) and
-# root (KernelSU/Magisk) for the pm install fallback.
+# root (KernelSU/Magisk) for pm install.
 #
 # Usage:   bash install-app.sh <app-id> [<app-id> ...]
 # Options (env vars):
@@ -48,6 +48,10 @@ if [ "$PULL" = "1" ] && [ -d "$REPO_DIR/.git" ]; then
   log "Pulling latest dotfiles"
   git -C "$REPO_DIR" pull --ff-only || echo "  (pull failed — continuing)" >&2
 fi
+
+# The script is fully non-interactive; never let anything block on stdin (e.g.
+# when driven over ssh with a pipe on stdin that never delivers data).
+exec </dev/null
 
 # --- app-id <-> flake attr -----------------------------------------------
 # Mirror android-pkgs' pkgs/default.nix sanitizeName: dots -> dashes, and
@@ -102,16 +106,57 @@ install_one() {
   fi
 
   log "Installing $app_id ($(du -h "$host_apk" | cut -f1))"
-  if ! pm install -r "$host_apk" 2>/dev/null; then
-    echo "  (user pm install denied — retrying as root)"
-    su -c "pm install -r '$host_apk'"
-  fi
+  # Install as root (su). The Termux-user pm attempt is skipped: it is always
+  # denied here (app_data_file SELinux label + missing INSTALL_PACKAGES) and a
+  # foreground pm call can block indefinitely on a Play Protect dialog.
+  pm_install_as_root "$app_id" "$host_apk" || return 1
 
   if pm list packages 2>/dev/null | grep -qx "package:$app_id"; then
     echo "  installed: $app_id"
   else
-    warn "$app_id installed but not found in 'pm list packages'?"
+    warn "$app_id not found in 'pm list packages' after install"
   fi
+}
+
+# pm install runs through system_server, which can block indefinitely on a
+# Google Play Protect dialog (new or flagged APKs — e.g. apps built for an
+# older Android). Run it in the background and poll briefly; if it hasn't
+# finished, report what is blocking it and give up (the background process
+# stays parked until the dialog is answered, then exits on its own). The
+# dialog is left up on purpose — allowing the app is the user's Play Protect
+# decision, and dismissing it silently would just cancel the install.
+pm_install_as_root() {
+  local app_id="$1" host_apk="$2"
+  local log="$HOME/.cache/install-app-$app_id.log"
+  local exit_marker="$log.exit"
+  rm -f "$log" "$exit_marker"
+  # Detached subshell so a blocked pm can never wedge the script's own stdout
+  # or pid-tracking; completion is signalled by a marker file instead of wait.
+  # The subshell's stdout is discarded (pm writes to $log inside it).
+  (
+    su -c "pm install -r '$host_apk'" >"$log" 2>&1
+    echo $? >"$exit_marker"
+  ) </dev/null >/dev/null 2>&1 &
+  local waited=0
+  while [ ! -f "$exit_marker" ] && [ "$waited" -lt 60 ]; do
+    sleep 2
+    waited=$((waited + 2))
+  done
+
+  if [ ! -f "$exit_marker" ]; then
+    # Still running: almost certainly waiting on a Play Protect dialog.
+    if su -c "dumpsys window" 2>/dev/null | grep -qE "PlayProtect|packageinstaller"; then
+      warn "$app_id was blocked by Google Play Protect (older/flagged APK) — allow it in Play Protect on the phone, or pick another app"
+    else
+      warn "$app_id install is still running — check the phone screen"
+    fi
+    return 1
+  fi
+
+  local status
+  status="$(cat "$exit_marker")"
+  [ "$status" -eq 0 ] || cat "$log" >&2
+  return "$status"
 }
 
 for app in "$@"; do
