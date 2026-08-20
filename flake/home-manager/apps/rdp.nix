@@ -155,10 +155,20 @@
       echo "Connecting to $URL as $USERNAME (using password from rbw)"
     fi
 
-    # Using xfreerdp (X11 client) which is stable on XWayland.
-    # The correct syntax for this version of FreeRDP is /kbd:layout:<id>,unicode:on
-    # We use 0x00000807 (Swiss German) as the layout and enable unicode for your custom symbols.
-    nohup ${pkgs.freerdp}/bin/xfreerdp /v:"$URL" /u:"$USERNAME" /p:"$PASSWORD" /dynamic-resolution /cert:ignore /network:auto /relax-order-checks /audio-mode:0 >/dev/null 2>&1 &
+    # xfreerdp (X11/XWayland client) - best overall remote session quality.
+    #
+    # - +clipboard: bidirectional clipboard. Works, but has minor sync quirks
+    #   over XWayland on Hyprland (same class of bug as Wine/Citrix/VirtualBox
+    #   clipboards) - content may need a re-copy on the remote side.
+    # - +dynamic-resolution +disp: window resizes push resolution updates to
+    #   the remote desktop (Right-Shift+R to force refresh if it lags).
+    # - /size:1920x1080: initial crisp session size.
+    # - /wm-class:Freerdp: deterministic class for Hyprland window rules.
+    #
+    # Keep the clipse "-listen" watcher OFF while an RDP session runs: it
+    # races the RDP clipboard handshake and hangs it (observed futex hang).
+    LOG_FILE="${rdpDir}/freerdp-$(date +%s).log"
+    nohup ${pkgs.freerdp}/bin/xfreerdp +clipboard +dynamic-resolution +disp /size:1920x1080 /wm-class:Freerdp /v:"$URL" /u:"$USERNAME" /p:"$PASSWORD" /cert:ignore /network:auto /relax-order-checks /audio-mode:0 >"$LOG_FILE" 2>&1 &
     sleep 0.5
     exit 0
   '';
