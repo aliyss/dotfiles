@@ -204,10 +204,11 @@ hl.window_rule({
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("hyprlock --immediate-render")
+    
+    hl.exec_cmd("forticlient-tray")
     hl.exec_cmd("awww-daemon")
     hl.exec_cmd(
         "sh ~/.config/hypr/wallpapers/wrapped_awww.sh ~/.config/images/wallpapers/light/ ~/.config/images/wallpapers/dark/")
-    hl.exec_cmd("clipse -listen")
     hl.exec_cmd("systemctl --user start activitywatch-watcher-aw-watcher-window-wayland.service")
     hl.exec_cmd("systemctl --user start activitywatch-watcher-aw-watcher-afk.service")
 end)
