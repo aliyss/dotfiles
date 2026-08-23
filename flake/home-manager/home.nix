@@ -62,6 +62,7 @@ in {
 
     ./services/mako.nix
     ./services/activity-watcher.nix
+    ./services/clipse.nix
 
     ../local.nix
   ];

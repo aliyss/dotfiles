@@ -8,6 +8,7 @@ let
   lowe = import ./packages/lowe.nix { inherit pkgs; };
   work = import ./packages/work.nix { inherit pkgs; };
   other = with pkgs; [
+    clipse
     libsixel
     sshpass
     httpie

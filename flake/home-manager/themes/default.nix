@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   # ── Central theme ────────────────────────────────────────────────
   theme = import ../../lib/theme.nix;
@@ -57,14 +62,14 @@ let
     inherit theme lib;
   };
 
-  mkPhoneFishConfig = import ../../lib/themes/phone-fish.nix {
-    inherit theme lib;
-  };
-
-  openCodeThemeJSON = builtins.toJSON (mkOpenCodeTheme // {
-    "$schema" = "https://opencode.ai/theme.json";
-  });
-in {
+  openCodeThemeJSON = builtins.toJSON (
+    mkOpenCodeTheme
+    // {
+      "$schema" = "https://opencode.ai/theme.json";
+    }
+  );
+in
+{
   options.aliyss.theme = lib.mkOption {
     type = lib.types.attrs;
     default = theme;
@@ -76,13 +81,13 @@ in {
     type = lib.types.attrs;
     default = {
       opencode = mkOpenCodeTheme;
-      herdr    = mkHerdrTheme;
-      neovim   = mkNeovimHighlights;
-      foot     = mkFootTheme;
-      fzf      = mkFzfTheme;
-      btop     = mkBtopTheme;
-      yazi     = mkYaziTheme;
-      mako     = mkMakoTheme;
+      herdr = mkHerdrTheme;
+      neovim = mkNeovimHighlights;
+      foot = mkFootTheme;
+      fzf = mkFzfTheme;
+      btop = mkBtopTheme;
+      yazi = mkYaziTheme;
+      mako = mkMakoTheme;
       hyprlock = mkHyprlockTheme;
       youtube-music = mkYouTubeMusicTheme;
       firefox = mkFirefoxTheme;
@@ -98,8 +103,37 @@ in {
       text = openCodeThemeJSON;
     };
 
-    # ── aliyss-phone sync targets ──────────────────────────────────
-    home.file.".config/aliyss-phone/colors.properties".text = mkTermuxTheme;
-    home.file.".config/aliyss-phone/config.fish".text = mkPhoneFishConfig;
+    # ── Termux phone targets (activated via home-manager on the phone) ──
+    # Declared via home.file (home-manager builds + tracks the content) AND
+    # copied to real files on activation (writePhoneFiles below). The phone's
+    # /nix lives inside the chroot and is invisible to native Termux processes, so a store
+    # symlink would dangle for them; a real file copy is required.
+    # (The phone's fish config is owned by apps/fish.nix, not generated here.)
+    home.file.".termux/colors.properties" = lib.mkIf config.aliyss.isPhone {
+      text = mkTermuxTheme;
+      force = true; # Termux ships / sets these by default; we own them
+    };
+
+    home.activation.writePhoneFiles = lib.mkIf config.aliyss.isPhone (
+      lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+        # Materialize the generated config as real files so native Termux
+        # processes (Termux terminal, opencode) can read them outside the chroot.
+        # rm first: linkGeneration leaves store symlinks here, which native apps
+        # can't follow and which are read-only (EACCES if written through).
+        # opencode.jsonc + tui.json are NOT written here — they are tracked repo
+        # files (the theme lives in the tracked tui.json); only the generated
+        # theme file is materialized.
+        mkdir -p "$HOME/.termux" "$HOME/.config/opencode/themes"
+        rm -f "$HOME/.termux/colors.properties" \
+              "$HOME/.config/opencode/themes/catppuccin.json" \
+              "$HOME/.hushlogin"
+        cp ${pkgs.writeText "colors.properties" mkTermuxTheme} "$HOME/.termux/colors.properties"
+        cp ${pkgs.writeText "opencode-theme.json" openCodeThemeJSON} "$HOME/.config/opencode/themes/catppuccin.json"
+        # store files are 444; give the real copies normal perms
+        chmod 644 "$HOME/.termux/colors.properties" \
+                  "$HOME/.config/opencode/themes/catppuccin.json"
+        : > "$HOME/.hushlogin"
+      ''
+    );
   };
 }

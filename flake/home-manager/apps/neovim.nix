@@ -4,6 +4,9 @@
   lib,
   ...
 }: let
+  isPhone = config.aliyss.isPhone;
+
+  # Desktop-only: a few launcher plugins for phone tooling.
   lolcrab = pkgs.rustPlatform.buildRustPackage rec {
     name = "lolcrab";
     pname = "lolcrab";
@@ -24,435 +27,549 @@
     };
   };
   plugins = pkgs.vimPlugins // pkgs.callPackage ./neovim-plugins.nix {};
+
+  # ── Desktop: the full plugin list, order preserved verbatim ───────────────
+  desktopPlugins = with plugins; [
+    nvim-ts-context-commentstring
+    todo-comments-nvim
+    {
+      plugin = comment-nvim;
+      config = builtins.readFile ./neovim/plugins/comment.lua;
+      type = "lua";
+    }
+    nvim-web-devicons
+    # {
+    #   plugin = dashboard-nvim;
+    #   config = builtins.readFile ./neovim/plugins/dashboard.lua;
+    #   type = "lua";
+    # }
+    fidget-nvim
+    plenary-nvim
+    {
+      plugin = harpoon;
+      config = builtins.readFile ./neovim/plugins/harpoon.lua;
+      type = "lua";
+    }
+    {
+      plugin = neo-tree-nvim;
+      config = builtins.readFile ./neovim/plugins/neo-tree.lua;
+      type = "lua";
+    }
+    # {
+    #   plugin = project-nvim;
+    #   config = builtins.readFile ./neovim/plugins/project.lua;
+    #   type = "lua";
+    # }
+    ## Treesitter
+    nvim-ts-autotag
+
+    ## SQL Grammar
+    vim-dadbod
+    vim-dadbod-ui
+    vim-dadbod-completion
+    ## Rest Client
+    # {
+    #   plugin = rest-nvim;
+    #   config = builtins.readFile ./neovim/plugins/modes/rest.lua;
+    #   type = "lua";
+    # }
+    ## OrgMode Grammar
+    {
+      plugin = orgmode;
+      config = builtins.readFile ./neovim/plugins/modes/orgmode.lua;
+      type = "lua";
+    }
+    ## LLM
+    copilot-lsp
+    {
+      plugin = copilot-lua;
+      config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
+      type = "lua";
+    }
+    {
+      plugin = p99.overrideAttrs {
+        nvimSkipModules = [
+          "99.editor.lsp"
+        ];
+      };
+      config = builtins.readFile ./neovim/plugins/llm/p99.lua;
+      type = "lua";
+    }
+    {
+      plugin = opencode-nvim;
+      config = builtins.readFile ./neovim/plugins/llm/opencode.lua;
+      type = "lua";
+    }
+    {
+      plugin = avante-nvim.overrideAttrs (old: {
+        nvimSkipModules = [
+          "avante.providers.vertex_claude"
+          "avante.providers.vertex"
+          "avante.providers.copilot"
+          "avante.providers.gemini"
+          "avante.providers.azure"
+          "avante.history.helpers"
+          "avante.libs.ReAct_parser2"
+          "avante.utils.prompts"
+        ];
+      });
+      config = builtins.readFile ./neovim/plugins/llm/avante.lua;
+      type = "lua";
+    }
+    # {
+    #   plugin = render-markdown-nvim;
+    #   config = builtins.readFile ./neovim/plugins/llm/render-markdown.lua;
+    #   type = "lua";
+    # }
+    # {
+    #   plugin = augment-vim;
+    #   config = builtins.readFile ./neovim/plugins/llm/augment.lua;
+    #   type = "lua";
+    # }
+    # {
+    #   plugin = minuet-ai-nvim;
+    #   config = builtins.readFile ./neovim/plugins/llm/minuet.lua;
+    #   type = "lua";
+    # }
+    ## CMP
+    neodev-nvim
+    cmp-buffer
+    cmp-path
+    cmp-nvim-lsp
+    cmp_luasnip
+    luasnip
+    friendly-snippets
+    lspkind-nvim
+    colorful-menu-nvim
+    blink-cmp
+    blink-cmp-copilot
+    {
+      plugin = nvim-cmp;
+      config = builtins.readFile ./neovim/plugins/cmp.lua;
+      type = "lua";
+    }
+    ## Autopairs
+    {
+      plugin = nvim-autopairs;
+      config = builtins.readFile ./neovim/plugins/autopairs.lua;
+      type = "lua";
+    }
+    ## LSP
+    mason-lspconfig-nvim
+    mason-tool-installer-nvim
+    {
+      plugin = mason-nvim;
+      config = builtins.readFile ./neovim/plugins/lsp/mason.lua;
+      type = "lua";
+    }
+    {
+      plugin = nvim-lspconfig;
+      config = builtins.readFile ./neovim/plugins/lsp/lspconfig.lua;
+      type = "lua";
+    }
+    {
+      plugin = lsp_lines-nvim;
+      config = builtins.readFile ./neovim/plugins/lsp/lsp_lines.lua;
+      type = "lua";
+    }
+    # {
+    #   plugin = gopher-nvim;
+    #   config = builtins.readFile ./neovim/plugins/lsp/langs/gopher.lua;
+    #   type = "lua";
+    # }
+    ## Formatting
+    guess-indent-nvim
+    {
+      plugin = conform-nvim;
+      config = builtins.readFile ./neovim/plugins/lsp/formatting.lua;
+      type = "lua";
+    }
+    ## Lint
+    {
+      plugin = nvim-lint;
+      config = builtins.readFile ./neovim/plugins/lsp/linting.lua;
+      type = "lua";
+    }
+    ## Highlighting
+    (nvim-treesitter.withPlugins (
+      _:
+        nvim-treesitter.allGrammars
+        ++ [
+          # (pkgs.tree-sitter.buildGrammar {
+          #   language = "just";
+          #   version = "8af0aab";
+          #   src = pkgs.fetchFromGitHub {
+          #     owner = "IndianBoy42";
+          #     repo = "tree-sitter-just";
+          #     rev = "8af0aab79854aaf25b620a52c39485849922f766";
+          #     sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
+          #   };
+          # })
+          # (pkgs.tree-sitter.buildGrammar {
+          #   language = "blade";
+          #   version = "dead019";
+          #   src = pkgs.fetchgit {
+          #     url = "https://github.com/EmranMR/tree-sitter-blade";
+          #     rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
+          #     sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
+          #   };
+          # })
+        ]
+    ))
+    {
+      plugin = nvim-treesitter;
+      config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
+      type = "lua";
+    }
+    nvim-treesitter-parsers.tsx
+    nvim-treesitter-parsers.typescript
+    nvim-treesitter-parsers.nix
+    nvim-treesitter-parsers.lua
+    nvim-treesitter-parsers.luadoc
+    nvim-treesitter-parsers.vim
+    nvim-treesitter-parsers.vimdoc
+    nvim-treesitter-parsers.bash
+    nvim-treesitter-parsers.fish
+    nvim-treesitter-parsers.json
+    nvim-treesitter-parsers.yaml
+    nvim-treesitter-parsers.toml
+    nvim-treesitter-parsers.rust
+    nvim-treesitter-parsers.c
+    nvim-treesitter-parsers.tsx
+    nvim-treesitter-parsers.python
+    nvim-treesitter-parsers.go
+    nvim-treesitter-parsers.zig
+    nvim-treesitter-parsers.html
+    nvim-treesitter-parsers.css
+    nvim-treesitter-parsers.gpg
+    nvim-treesitter-parsers.dockerfile
+    nvim-treesitter-parsers.gitattributes
+    nvim-treesitter-parsers.regex
+    nvim-treesitter-parsers.gitcommit
+    nvim-treesitter-parsers.gitignore
+    nvim-treesitter-parsers.markdown
+    nvim-treesitter-parsers.markdown_inline
+    nvim-treesitter-parsers.latex
+    wookayin-semshi
+    ## Diagnostics
+    {
+      plugin = trouble-nvim;
+      config = builtins.readFile ./neovim/plugins/diagnostics/trouble.lua;
+      type = "lua";
+    }
+    ## Debugging
+    direnv-vim
+    {
+      plugin = nvim-dap;
+      config = builtins.readFile ./neovim/plugins/debugging/dap.lua;
+      type = "lua";
+    }
+    nvim-nio
+    {
+      plugin = nvim-dap-ui;
+      config = builtins.readFile ./neovim/plugins/debugging/dap-ui.lua;
+      type = "lua";
+    }
+    ## Git
+    {
+      plugin = gitsigns-nvim;
+      config = builtins.readFile ./neovim/plugins/git/gitsigns.lua;
+      type = "lua";
+    }
+    ## GitHub
+    {
+      plugin = pipeline-nvim;
+      config = builtins.readFile ./neovim/plugins/git/pipeline.lua;
+      type = "lua";
+    }
+    ## Telescope
+    telescope-undo-nvim
+    telescope-fzf-native-nvim
+    {
+      plugin = telescope-nvim;
+      config = builtins.readFile ./neovim/plugins/telescope.lua;
+      type = "lua";
+    }
+    ## Autosession
+    # {
+    #   plugin = auto-session;
+    #   config = builtins.readFile ./neovim/plugins/autosession.lua;
+    #   type = "lua";
+    # }
+    ## Themes
+    {
+      plugin = nyoom-oxocarbon;
+      config =
+        builtins.readFile ./neovim/colorscheme.lua
+        + config.aliyss.themeGenerators.neovim;
+      type = "lua";
+    }
+    ## Markdown
+    {
+      plugin = markview-nvim;
+      config = builtins.readFile ./neovim/plugins/modes/markview.lua;
+      type = "lua";
+    }
+    {
+      plugin = modes-nvim;
+      config = builtins.readFile ./neovim/plugins/themes/modes.lua;
+      type = "lua";
+    }
+    {
+      plugin = colorizer;
+      config = builtins.readFile ./neovim/plugins/themes/colorizer.lua;
+      type = "lua";
+    }
+    {
+      plugin = lualine-nvim;
+      config = builtins.readFile ./neovim/plugins/themes/lualine.lua;
+      type = "lua";
+    }
+    # {
+    #   plugin = incline-nvim;
+    #   config = builtins.readFile ./neovim/plugins/themes/incline.lua;
+    #   type = "lua";
+    # }
+    {
+      plugin = indent-blankline-nvim;
+      config = builtins.readFile ./neovim/plugins/themes/ibl.lua;
+      type = "lua";
+    }
+    ## Keybindings
+    # {
+    #   plugin = precognition;
+    #   config = builtins.readFile ./neovim/plugins/keybindings/precognition.lua;
+    #   type = "lua";
+    # }
+    {
+      plugin = vim-bufsurf;
+    }
+    {
+      plugin = vim-be-good;
+    }
+    {
+      plugin = hardtime-nvim;
+      config = builtins.readFile ./neovim/plugins/keybindings/hardtime.lua;
+      type = "lua";
+    }
+    {
+      plugin = neoscroll-nvim;
+      config = builtins.readFile ./neovim/plugins/keybindings/neoscroll.lua;
+      type = "lua";
+    }
+    {
+      plugin = which-key-nvim;
+      config = builtins.readFile ./neovim/plugins/keybindings/which-key.lua;
+      type = "lua";
+    }
+    {
+      plugin = stay-in-place;
+      config = builtins.readFile ./neovim/plugins/keybindings/stay-in-place.lua;
+      type = "lua";
+    }
+
+    ## Activity Watch
+    aw-watcher-vim
+
+    ## Music
+    {
+      plugin = tidal-vim;
+      config = "";
+      type = "viml";
+    }
+    {
+      plugin = strudel-nvim;
+      config = builtins.readFile ./neovim/plugins/modes/strudel.lua;
+      type = "lua";
+    }
+
+    ## Email
+    notmuch-vim
+    # himalaya-custom-vim
+  ];
+
+  # ── Phone: lean profile, same theme + navigation, no heavy clusters ───────
+  phonePlugins = with plugins; [
+    nvim-ts-context-commentstring
+    {
+      plugin = comment-nvim;
+      config = builtins.readFile ./neovim/plugins/comment.lua;
+      type = "lua";
+    }
+    nvim-web-devicons
+    plenary-nvim
+    {
+      plugin = harpoon;
+      config = builtins.readFile ./neovim/plugins/harpoon.lua;
+      type = "lua";
+    }
+    {
+      plugin = neo-tree-nvim;
+      config = builtins.readFile ./neovim/plugins/neo-tree.lua;
+      type = "lua";
+    }
+    ## Autopairs
+    {
+      plugin = nvim-autopairs;
+      config = builtins.readFile ./neovim/plugins/autopairs.lua;
+      type = "lua";
+    }
+    ## Highlighting (focused grammar set — no withPlugins/allGrammars)
+    {
+      plugin = nvim-treesitter;
+      config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
+      type = "lua";
+    }
+    nvim-treesitter-parsers.typescript
+    nvim-treesitter-parsers.tsx
+    nvim-treesitter-parsers.javascript
+    nvim-treesitter-parsers.lua
+    nvim-treesitter-parsers.python
+    nvim-treesitter-parsers.bash
+    nvim-treesitter-parsers.nix
+    nvim-treesitter-parsers.json
+    nvim-treesitter-parsers.yaml
+    nvim-treesitter-parsers.toml
+    nvim-treesitter-parsers.markdown
+    nvim-treesitter-parsers.markdown_inline
+    ## Git
+    {
+      plugin = gitsigns-nvim;
+      config = builtins.readFile ./neovim/plugins/git/gitsigns.lua;
+      type = "lua";
+    }
+    ## Telescope
+    telescope-undo-nvim
+    telescope-fzf-native-nvim
+    {
+      plugin = telescope-nvim;
+      config = builtins.readFile ./neovim/plugins/telescope.lua;
+      type = "lua";
+    }
+    ## Themes
+    {
+      plugin = nyoom-oxocarbon;
+      config =
+        builtins.readFile ./neovim/colorscheme.lua
+        + config.aliyss.themeGenerators.neovim;
+      type = "lua";
+    }
+    {
+      plugin = modes-nvim;
+      config = builtins.readFile ./neovim/plugins/themes/modes.lua;
+      type = "lua";
+    }
+    {
+      plugin = colorizer;
+      config = builtins.readFile ./neovim/plugins/themes/colorizer.lua;
+      type = "lua";
+    }
+    {
+      plugin = lualine-nvim;
+      config = builtins.readFile ./neovim/plugins/themes/lualine.lua;
+      type = "lua";
+    }
+    {
+      plugin = indent-blankline-nvim;
+      config = builtins.readFile ./neovim/plugins/themes/ibl.lua;
+      type = "lua";
+    }
+    ## Keybindings
+    {
+      plugin = neoscroll-nvim;
+      config = builtins.readFile ./neovim/plugins/keybindings/neoscroll.lua;
+      type = "lua";
+    }
+    {
+      plugin = stay-in-place;
+      config = builtins.readFile ./neovim/plugins/keybindings/stay-in-place.lua;
+      type = "lua";
+    }
+    {
+      plugin = which-key-nvim;
+      config = builtins.readFile ./neovim/plugins/keybindings/which-key-phone.lua;
+      type = "lua";
+    }
+  ];
+
+  # Shared init: options + tmux/herdr window navigation (Ctrl+h/j/k/l).
+  baseInit = ''
+    ${builtins.readFile ./neovim/options.lua}
+    ${builtins.readFile ./neovim/tmux.lua}
+    ${builtins.readFile ./neovim/plugins/tmux-navigator.lua}
+  '';
+
+  desktopInit = ''
+    vim.g.vue_ls_path = "${pkgs.vue-language-server}";
+
+    vim.opt.runtimepath:append("~/Projects/vim-himalaya-ui")
+  '';
 in {
   programs.neovim = {
     enable = true;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
-    withPython3 = true;
-    withRuby = true;
-    extraPackages = with pkgs;
-      [
-        eslint_d
-        ripgrep
-        ripgrep-all
-        tailwindcss
-        luajitPackages.luacheck
-        luajitPackages.lua-lsp
-        luajitPackages.lua-curl
-        copilot-language-server
-        xclip
-        wl-clipboard
-        stylua
-        basedpyright
-        pylint
-        pylyzer
-        postgresql_16
-        postgres-language-server
-        phpactor
-        intelephense
-        # phpPackages.php-cs-fixer
-        blade-formatter
-        black
-        isort
-        vim-language-server
-        vue-language-server
-        alejandra
-        prettierd
-        # nodePackages_latest.jsonlint
-        python3Packages.pynvim
-        rust-analyzer
-        hyprlang
-        go
-        gopls
-        gofumpt
-        delve
-        hyprls
-        lolcrab
-        nil
-        sqlite
-        marksman
-      ]
-      ++ [
+    withPython3 = !isPhone;
+    withRuby = !isPhone;
+    extraPackages = with pkgs; [
+      ripgrep
+    ] ++ (if isPhone then [] else [
+      eslint_d
+      ripgrep
+      ripgrep-all
+      tailwindcss
+      luajitPackages.luacheck
+      luajitPackages.lua-lsp
+      luajitPackages.lua-curl
+      copilot-language-server
+      xclip
+      wl-clipboard
+      stylua
+      basedpyright
+      pylint
+      pylyzer
+      postgresql_16
+      postgres-language-server
+      phpactor
+      intelephense
+      # phpPackages.php-cs-fixer
+      blade-formatter
+      black
+      isort
+      vim-language-server
+      vue-language-server
+      alejandra
+      prettierd
+      # nodePackages_latest.jsonlint
+      python3Packages.pynvim
+      rust-analyzer
+      hyprlang
+      go
+      gopls
+      gofumpt
+      delve
+      hyprls
+      lolcrab
+      nil
+      sqlite
+      marksman
+    ]);
+    extraLuaPackages =
+      if isPhone
+      then pkgs: []
+      else pkgs: [
+        pkgs.lua-curl
+        pkgs.xml2lua
+        pkgs.mimetypes
+        pkgs.nvim-nio
       ];
-    extraLuaPackages = pkgs: [
-      pkgs.lua-curl
-      pkgs.xml2lua
-      pkgs.mimetypes
-      pkgs.nvim-nio
-    ];
-    plugins = with plugins; [
-      nvim-ts-context-commentstring
-      todo-comments-nvim
-      {
-        plugin = comment-nvim;
-        config = builtins.readFile ./neovim/plugins/comment.lua;
-        type = "lua";
-      }
-      nvim-web-devicons
-      # {
-      #   plugin = dashboard-nvim;
-      #   config = builtins.readFile ./neovim/plugins/dashboard.lua;
-      #   type = "lua";
-      # }
-      fidget-nvim
-      plenary-nvim
-      {
-        plugin = harpoon;
-        config = builtins.readFile ./neovim/plugins/harpoon.lua;
-        type = "lua";
-      }
-      {
-        plugin = neo-tree-nvim;
-        config = builtins.readFile ./neovim/plugins/neo-tree.lua;
-        type = "lua";
-      }
-      # {
-      #   plugin = project-nvim;
-      #   config = builtins.readFile ./neovim/plugins/project.lua;
-      #   type = "lua";
-      # }
-      ## Treesitter
-      nvim-ts-autotag
-
-      ## SQL Grammar
-      vim-dadbod
-      vim-dadbod-ui
-      vim-dadbod-completion
-      ## Rest Client
-      # {
-      #   plugin = rest-nvim;
-      #   config = builtins.readFile ./neovim/plugins/modes/rest.lua;
-      #   type = "lua";
-      # }
-      ## OrgMode Grammar
-      {
-        plugin = orgmode;
-        config = builtins.readFile ./neovim/plugins/modes/orgmode.lua;
-        type = "lua";
-      }
-      ## LLM
-      copilot-lsp
-      {
-        plugin = copilot-lua;
-        config = builtins.readFile ./neovim/plugins/llm/copilot.lua;
-        type = "lua";
-      }
-      {
-        plugin = p99.overrideAttrs {
-          nvimSkipModules = [
-            "99.editor.lsp"
-          ];
-        };
-        config = builtins.readFile ./neovim/plugins/llm/p99.lua;
-        type = "lua";
-      }
-      {
-        plugin = opencode-nvim;
-        config = builtins.readFile ./neovim/plugins/llm/opencode.lua;
-        type = "lua";
-      }
-      {
-        plugin = avante-nvim.overrideAttrs (old: {
-          nvimSkipModules = [
-            "avante.providers.vertex_claude"
-            "avante.providers.vertex"
-            "avante.providers.copilot"
-            "avante.providers.gemini"
-            "avante.providers.azure"
-            "avante.history.helpers"
-            "avante.libs.ReAct_parser2"
-            "avante.utils.prompts"
-          ];
-        });
-        config = builtins.readFile ./neovim/plugins/llm/avante.lua;
-        type = "lua";
-      }
-      # {
-      #   plugin = render-markdown-nvim;
-      #   config = builtins.readFile ./neovim/plugins/llm/render-markdown.lua;
-      #   type = "lua";
-      # }
-      # {
-      #   plugin = augment-vim;
-      #   config = builtins.readFile ./neovim/plugins/llm/augment.lua;
-      #   type = "lua";
-      # }
-      # {
-      #   plugin = minuet-ai-nvim;
-      #   config = builtins.readFile ./neovim/plugins/llm/minuet.lua;
-      #   type = "lua";
-      # }
-      ## CMP
-      neodev-nvim
-      cmp-buffer
-      cmp-path
-      cmp-nvim-lsp
-      cmp_luasnip
-      luasnip
-      friendly-snippets
-      lspkind-nvim
-      colorful-menu-nvim
-      blink-cmp
-      blink-cmp-copilot
-      {
-        plugin = nvim-cmp;
-        config = builtins.readFile ./neovim/plugins/cmp.lua;
-        type = "lua";
-      }
-      ## Autopairs
-      {
-        plugin = nvim-autopairs;
-        config = builtins.readFile ./neovim/plugins/autopairs.lua;
-        type = "lua";
-      }
-      ## LSP
-      mason-lspconfig-nvim
-      mason-tool-installer-nvim
-      {
-        plugin = mason-nvim;
-        config = builtins.readFile ./neovim/plugins/lsp/mason.lua;
-        type = "lua";
-      }
-      {
-        plugin = nvim-lspconfig;
-        config = builtins.readFile ./neovim/plugins/lsp/lspconfig.lua;
-        type = "lua";
-      }
-      {
-        plugin = lsp_lines-nvim;
-        config = builtins.readFile ./neovim/plugins/lsp/lsp_lines.lua;
-        type = "lua";
-      }
-      # {
-      #   plugin = gopher-nvim;
-      #   config = builtins.readFile ./neovim/plugins/lsp/langs/gopher.lua;
-      #   type = "lua";
-      # }
-      ## Formatting
-      guess-indent-nvim
-      {
-        plugin = conform-nvim;
-        config = builtins.readFile ./neovim/plugins/lsp/formatting.lua;
-        type = "lua";
-      }
-      ## Lint
-      {
-        plugin = nvim-lint;
-        config = builtins.readFile ./neovim/plugins/lsp/linting.lua;
-        type = "lua";
-      }
-      ## Highlighting
-      (nvim-treesitter.withPlugins (
-        _:
-          nvim-treesitter.allGrammars
-          ++ [
-            # (pkgs.tree-sitter.buildGrammar {
-            #   language = "just";
-            #   version = "8af0aab";
-            #   src = pkgs.fetchFromGitHub {
-            #     owner = "IndianBoy42";
-            #     repo = "tree-sitter-just";
-            #     rev = "8af0aab79854aaf25b620a52c39485849922f766";
-            #     sha256 = "sha256-hYKFidN3LHJg2NLM1EiJFki+0nqi1URnoLLPknUbFJY=";
-            #   };
-            # })
-            # (pkgs.tree-sitter.buildGrammar {
-            #   language = "blade";
-            #   version = "dead019";
-            #   src = pkgs.fetchgit {
-            #     url = "https://github.com/EmranMR/tree-sitter-blade";
-            #     rev = "dead019eeabe612da7fb325caf72fdc7c744d19a";
-            #     sha256 = "sha256-RW6W6CqBQZfAC5C1aGg3GLi+xThh2e33l65++3+uhMw=";
-            #   };
-            # })
-          ]
-      ))
-      {
-        plugin = nvim-treesitter;
-        config = builtins.readFile ./neovim/plugins/lsp/highlighting.lua;
-        type = "lua";
-      }
-
-      nvim-treesitter-parsers.tsx
-      nvim-treesitter-parsers.typescript
-      nvim-treesitter-parsers.nix
-      nvim-treesitter-parsers.lua
-      nvim-treesitter-parsers.luadoc
-      nvim-treesitter-parsers.vim
-      nvim-treesitter-parsers.vimdoc
-      nvim-treesitter-parsers.bash
-      nvim-treesitter-parsers.fish
-      nvim-treesitter-parsers.json
-      nvim-treesitter-parsers.yaml
-      nvim-treesitter-parsers.toml
-      nvim-treesitter-parsers.rust
-      nvim-treesitter-parsers.c
-      nvim-treesitter-parsers.tsx
-      nvim-treesitter-parsers.python
-      nvim-treesitter-parsers.go
-      nvim-treesitter-parsers.zig
-      nvim-treesitter-parsers.html
-      nvim-treesitter-parsers.css
-      nvim-treesitter-parsers.gpg
-      nvim-treesitter-parsers.dockerfile
-      nvim-treesitter-parsers.gitattributes
-      nvim-treesitter-parsers.regex
-      nvim-treesitter-parsers.gitcommit
-      nvim-treesitter-parsers.gitignore
-      nvim-treesitter-parsers.markdown
-      nvim-treesitter-parsers.markdown_inline
-      nvim-treesitter-parsers.latex
-      wookayin-semshi
-      ## Diagnostics
-      {
-        plugin = trouble-nvim;
-        config = builtins.readFile ./neovim/plugins/diagnostics/trouble.lua;
-        type = "lua";
-      }
-      ## Debugging
-      direnv-vim
-      {
-        plugin = nvim-dap;
-        config = builtins.readFile ./neovim/plugins/debugging/dap.lua;
-        type = "lua";
-      }
-      nvim-nio
-      {
-        plugin = nvim-dap-ui;
-        config = builtins.readFile ./neovim/plugins/debugging/dap-ui.lua;
-        type = "lua";
-      }
-      ## Git
-      {
-        plugin = gitsigns-nvim;
-        config = builtins.readFile ./neovim/plugins/git/gitsigns.lua;
-        type = "lua";
-      }
-      ## GitHub
-      {
-        plugin = pipeline-nvim;
-        config = builtins.readFile ./neovim/plugins/git/pipeline.lua;
-        type = "lua";
-      }
-      ## Telescope
-      telescope-undo-nvim
-      telescope-fzf-native-nvim
-      {
-        plugin = telescope-nvim;
-        config = builtins.readFile ./neovim/plugins/telescope.lua;
-        type = "lua";
-      }
-      ## Autosession
-      # {
-      #   plugin = auto-session;
-      #   config = builtins.readFile ./neovim/plugins/autosession.lua;
-      #   type = "lua";
-      # }
-      ## Themes
-      {
-        plugin = nyoom-oxocarbon;
-        config =
-          builtins.readFile ./neovim/colorscheme.lua
-          + config.aliyss.themeGenerators.neovim;
-        type = "lua";
-      }
-      ## Markdown
-      {
-        plugin = markview-nvim;
-        config = builtins.readFile ./neovim/plugins/modes/markview.lua;
-        type = "lua";
-      }
-      {
-        plugin = modes-nvim;
-        config = builtins.readFile ./neovim/plugins/themes/modes.lua;
-        type = "lua";
-      }
-      {
-        plugin = colorizer;
-        config = builtins.readFile ./neovim/plugins/themes/colorizer.lua;
-        type = "lua";
-      }
-      {
-        plugin = lualine-nvim;
-        config = builtins.readFile ./neovim/plugins/themes/lualine.lua;
-        type = "lua";
-      }
-      # {
-      #   plugin = incline-nvim;
-      #   config = builtins.readFile ./neovim/plugins/themes/incline.lua;
-      #   type = "lua";
-      # }
-      {
-        plugin = indent-blankline-nvim;
-        config = builtins.readFile ./neovim/plugins/themes/ibl.lua;
-        type = "lua";
-      }
-      ## Keybindings
-      # {
-      #   plugin = precognition;
-      #   config = builtins.readFile ./neovim/plugins/keybindings/precognition.lua;
-      #   type = "lua";
-      # }
-      {
-        plugin = vim-bufsurf;
-      }
-      {
-        plugin = vim-be-good;
-      }
-      {
-        plugin = hardtime-nvim;
-        config = builtins.readFile ./neovim/plugins/keybindings/hardtime.lua;
-        type = "lua";
-      }
-      {
-        plugin = neoscroll-nvim;
-        config = builtins.readFile ./neovim/plugins/keybindings/neoscroll.lua;
-        type = "lua";
-      }
-      {
-        plugin = which-key-nvim;
-        config = builtins.readFile ./neovim/plugins/keybindings/which-key.lua;
-        type = "lua";
-      }
-      {
-        plugin = stay-in-place;
-        config = builtins.readFile ./neovim/plugins/keybindings/stay-in-place.lua;
-        type = "lua";
-      }
-
-      ## Activity Watch
-      aw-watcher-vim
-
-      ## Music
-      {
-        plugin = tidal-vim;
-        config = "";
-        type = "viml";
-      }
-      {
-        plugin = strudel-nvim;
-        config = builtins.readFile ./neovim/plugins/modes/strudel.lua;
-        type = "lua";
-      }
-
-      ## Email
-      notmuch-vim
-      # himalaya-custom-vim
-    ];
-    initLua = ''
-      ${builtins.readFile ./neovim/options.lua}
-      ${builtins.readFile ./neovim/tmux.lua}
-      ${builtins.readFile ./neovim/plugins/tmux-navigator.lua}
-
-      vim.g.vue_ls_path = "${pkgs.vue-language-server}";
-
-      vim.opt.runtimepath:append("~/Projects/vim-himalaya-ui")
-    '';
+    plugins = if isPhone then phonePlugins else desktopPlugins;
+    initLua = baseInit + (if isPhone then "" else desktopInit);
   };
 
-  xdg.configFile."nvim/after/queries/html/injections.scm".text = ''
+  # ── Web-specific treesitter query files: desktop only ────────────────────
+  xdg.configFile."nvim/after/queries/html/injections.scm" = lib.mkIf (!isPhone) {text = ''
     ;; extends
 
     ; AlpineJS attributes
@@ -489,9 +606,9 @@ in {
           (quoted_attribute_value
             (attribute_value) @injection.content)
           (#set! injection.language "php_only"))))
-  '';
+  '';};
 
-  xdg.configFile."nvim/after/queries/php/indents.scm".text = ''
+  xdg.configFile."nvim/after/queries/php/indents.scm" = lib.mkIf (!isPhone) {text = ''
     ;; extends
 
     [
@@ -502,9 +619,9 @@ in {
       (return_statement
         (anonymous_function_creation_expression))
     ] @indent.dedent
-  '';
+  '';};
 
-  xdg.configFile."nvim/queries/blade/folds.scm".text = ''
+  xdg.configFile."nvim/queries/blade/folds.scm" = lib.mkIf (!isPhone) {text = ''
     ((directive_start) @start
         (directive_end) @end.after
         (#set! role block))
@@ -513,8 +630,8 @@ in {
     ((bracket_start) @start
         (bracket_end) @end
         (#set! role block))
-  '';
-  xdg.configFile."nvim/queries/blade/highlights.scm".text = ''
+  '';};
+  xdg.configFile."nvim/queries/blade/highlights.scm" = lib.mkIf (!isPhone) {text = ''
     (directive) @function
     (directive_start) @function
     (directive_end) @function
@@ -524,8 +641,8 @@ in {
     ((bracket_start) @function (#set! "priority" 120))
     ((bracket_end) @function (#set! "priority" 120))
     (keyword) @function
-  '';
-  xdg.configFile."nvim/queries/blade/injections.scm".text = ''
+  '';};
+  xdg.configFile."nvim/queries/blade/injections.scm" = lib.mkIf (!isPhone) {text = ''
     ((text) @injection.content
         (#not-has-ancestor? @injection.content "envoy")
         (#set! injection.combined)
@@ -542,8 +659,8 @@ in {
 
     ((parameter) @injection.content
         (#set! injection.language php_only))
-  '';
-  xdg.configFile."nvim/queries/sql/injections.scm".text = ''
+  '';};
+  xdg.configFile."nvim/queries/sql/injections.scm" = lib.mkIf (!isPhone) {text = ''
     ; extends
 
     (assignment
@@ -551,5 +668,5 @@ in {
       (#offset! @injection.content 0 1 0 -1)
       (#set! injection.language "json")
     )
-  '';
+  '';};
 }
