@@ -93,16 +93,39 @@
     shopt -s nullglob
     DIRS=()
     for d in "${vpnDir}"/*/; do
+      # The forticlient dir is a first-class picker entry (added below only when
+      # it exists), so skip it here to avoid listing it twice.
+      [ "$(basename "$d")" = "forticlient" ] && continue
       if [ -f "$d/client.ovpn" ] || [ -f "$d/.env" ]; then
         DIRS+=("$(basename "$d")")
       fi
     done
+    # FortiClient is shown in the picker only when the forticlient dir exists;
+    # it holds the XML exports that fortivpn-import reads.
+    if [ -d "${vpnDir}/forticlient" ]; then
+      DIRS+=("forticlient")
+    fi
+
+    # FortiClient toggles via the native client. `fortivpn` resolves the tunnel
+    # name (vpn list -> XML export) and auto-imports from the XML via
+    # fortivpn-import if no profile is found, so `vpn-launch` just toggles.
+    fortivpn_toggle() {
+      if forticlient vpn status 2>/dev/null | grep -qE "Status: Connected"; then
+        fortivpn down
+      else
+        fortivpn up
+      fi
+    }
 
     if [ -n "$1" ]; then
       SELECTED="$1"
+      if [ "$SELECTED" = "forticlient" ]; then
+        fortivpn_toggle
+        exit $?
+      fi
       VPN_DIR="${vpnDir}/$SELECTED"
     else
-      if [ ''${#DIRS[@]} -eq 0 ]; then
+      if [ ''${#DIRS[@]} -eq 1 ]; then
         ${pkgs.libnotify}/bin/notify-send "VPN Error" "No VPN configurations found in ${vpnDir}"
         exit 1
       fi
@@ -110,6 +133,12 @@
       SELECTED=$(printf "%s\n" "''${DIRS[@]}" | ${pkgs.fzf}/bin/fzf --prompt="Select VPN Profile: ")
       if [ -z "$SELECTED" ]; then
         exit 1
+      fi
+
+      # FortiClient toggles via the native client; everything else is file-based.
+      if [ "$SELECTED" = "forticlient" ]; then
+        fortivpn_toggle
+        exit $?
       fi
       VPN_DIR="${vpnDir}/$SELECTED"
     fi

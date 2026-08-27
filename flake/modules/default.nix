@@ -14,6 +14,7 @@
 
     ./services/pipewire.nix
     ./services/docker.nix
+    ./services/forticlient.nix
     ./services/greetd.nix
     ./services/display-manager.nix
     ./services/waydroid.nix

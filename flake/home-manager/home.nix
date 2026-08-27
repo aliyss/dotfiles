@@ -45,6 +45,8 @@ in {
     ./apps/herdr.nix
     ./apps/wlr-which-key.nix
     ./apps/vpn.nix
+    ./apps/fortivpn.nix
+    ./apps/fortivpn-import.nix
     ./apps/rdp.nix
     ./apps/ssh.nix
     # ./apps/spicetify.nix
