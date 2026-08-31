@@ -95,6 +95,56 @@ with lib; let
   enabledGated = filter (app: app ? cmd) gatedApps;
   disabledGated = filter (app: !(app ? cmd)) gatedApps;
 
+  brightnessMenu = {
+    key = ["l"];
+    desc = "Brightness";
+    submenu = [
+      ({
+        key = "5";
+        desc = "50%";
+        cmd = "brightnessctl set 50%";
+      })
+      ({
+        key = "6";
+        desc = "60%";
+        cmd = "brightnessctl set 60%";
+      })
+      ({
+        key = "7";
+        desc = "70%";
+        cmd = "brightnessctl set 70%";
+      })
+      ({
+        key = "8";
+        desc = "80%";
+        cmd = "brightnessctl set 80%";
+      })
+      ({
+        key = "9";
+        desc = "90%";
+        cmd = "brightnessctl set 90%";
+      })
+      ({
+        key = "0";
+        desc = "100%";
+        cmd = "brightnessctl set 100%";
+      })
+      ({
+        key = "=";
+        desc = "+10%";
+        cmd = "brightnessctl set +10%";
+      })
+      ({
+        key = "-";
+        desc = "-10%";
+        # Clamp at 50%: read current percent, step down, floor at 50.
+        cmd = ''
+          sh -c 'p=$(brightnessctl -m | cut -d, -f6 | tr -d "%"); p=''${p%.*}; if [ "$p" -le 60 ]; then brightnessctl set 50%; else brightnessctl set 10%-; fi'
+        '';
+      })
+    ];
+  };
+
   configData = {
     font = "JetBrainsMono Nerd Font 12";
     background = "#282828d0";
@@ -116,10 +166,11 @@ with lib; let
     inhibit_compositor_keyboard_shortcuts = true;
     auto_kbd_layout = true;
 
-    menu = [
-      {
-        key = "p";
-        desc = "Power";
+    menu =
+      [
+        {
+          key = "p";
+          desc = "Power";
         submenu =
           [
             {
@@ -146,9 +197,13 @@ with lib; let
             }
           ];
       }
-      {
-        key = "s";
-        desc = "System";
+        # Brightness menu (harmless on desktops; brightnessctl no-ops w/o backlight).
+      ]
+      ++ [brightnessMenu]
+      ++ [
+        {
+          key = "s";
+          desc = "System";
         submenu = let
           profileEntries =
             map (p: let
@@ -275,6 +330,24 @@ with lib; let
         key = ["v"];
         desc = "VPN";
         submenu = [
+          {
+            key = "t";
+            desc = "Toggle Tailscale";
+            # Toggle the tailnet via a sudo foot prompt (no polkit agent on
+            # Hyprland, so use sudo with a TTY). Stopping tailscaled fully
+            # disconnects + parks the daemon (battery); starting it brings the node
+            # back with `tailscale up`. Notifications are keyed off the actual
+            # command exit status, not notify-send's own return value.
+            cmd = ''
+              foot --title 'Tailscale toggle' -e sh -c '
+                if sudo systemctl is-active --quiet tailscaled && sudo tailscale status >/dev/null 2>&1; then
+                  sudo systemctl stop tailscaled && notify-send "Tailscale" "VPN disconnected" || notify-send -u critical "Tailscale" "Failed to stop daemon"
+                else
+                  sudo systemctl start tailscaled && sudo tailscale up && notify-send "Tailscale" "VPN connected" || notify-send -u critical "Tailscale" "Failed to bring up Tailscale"
+                fi
+              '
+            '';
+          }
           {
             key = "l";
             desc = "Launch VPN";

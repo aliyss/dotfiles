@@ -1,6 +1,7 @@
 {...}: {
   aliyss.profiles = {
-    creative = false;
+    llm = true;
+    creative = true;
   };
   aliyss.standaloneApps = [];
 }

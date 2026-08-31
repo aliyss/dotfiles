@@ -29,7 +29,7 @@ in
                 -m ${pkgs.fetchurl {
                 name = "qwen2.5-coder-7b-instruct-q5_k_m.gguf";
                 url = "https://huggingface.co";
-                sha256 = "sha256-WGhE6sTW1jIWifAZLIqo5pzYYll0pcwtklsaAzZuTRY=";
+                sha256 = "sha256-Ksr4vioU7kZmmSPhwafu5RLuaJ346rkmllM+oDV41W8=";
               }} \
                 --port ''${PORT} --n-gpu-layers 99 --flash-attn auto --ctx-size 16384 -b 512 -ub 512
             '';

@@ -51,6 +51,7 @@
     }))
     grim
     slurp
+    brightnessctl
     git
     gh
     wget
