@@ -61,6 +61,7 @@ in {
     ./apps/firefox.nix
     ./apps/youtube-music.nix
     ./apps/tidalcycles.nix
+    ./apps/affinity-ai.nix
 
     ./services/mako.nix
     ./services/activity-watcher.nix
