@@ -1,8 +1,12 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   imports = [
+    ./hardware/nvidia.nix
     ./services/redis.nix
     ./programs/programs.nix
   ];
+
+  # NVIDIA host — enable CUDA for blender, etc. (blisspla/blade are Intel and keep false for cache.forall.systems hit)
+  nixpkgs.config.cudaSupport = lib.mkForce true;
 
   networking.hostName = "aliyss-bequitta";
 

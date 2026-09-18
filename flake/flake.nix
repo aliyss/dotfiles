@@ -1,6 +1,17 @@
 {
   description = "Aliyss' flake.nix configuration file!";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://cache.forall.systems"
+      "https://hyprland.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "cache.forall.systems:5PmD7QO4MSF8YgyRZtkSGXRDo96H3bybIf2SsQh8ScI="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
@@ -38,6 +49,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     forticlient-nixos.url = "github:jplana/forticlient-nixos";
+    # Cisco AnyConnect with Azure AD / SAML MFA over NetworkManager+openconnect
+    # (vpn-connect / vpn-disconnect); wired up in modules/core/networking.nix.
+    # nixpkgs follows so the module evaluates against the host pkgs — it only
+    # ships a .nix file and builds nothing from its own input.
+    anyconnect-webauth = {
+      url = "github:z10n-dev/nixos-anyconnect-webauth";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Android APK packages (used on the Termux phone): thousands of apps pinned
     # by app-id, e.g. `nix build .#com-darkempire78-opencalculator`.
     aliyss-android-pkgs.url = "github:aliyss/aliyss-android-pkgs";
@@ -52,12 +71,15 @@
     ...
   } @ inputs: let
     system = "x86_64-linux";
+    davinciOverlay = import ./overlays/davinci-resolve.nix;
     pkgs = import nixpkgs {
       localSystem = {inherit system;};
       config.allowUnfree = true;
+      config.cudaSupport = false;
       overlays = [
         affinity-nix.overlays.default
         nur.overlays.default
+        davinciOverlay
       ];
     };
 
@@ -65,13 +87,16 @@
     # via chroot. Keep this pkgs minimal — only the phone home-manager config uses it.
     phoneSystem = "aarch64-linux";
     pkgsPhone = import nixpkgs {
-      localSystem = { system = phoneSystem; };
+      localSystem = {system = phoneSystem;};
       config.allowUnfree = true;
     };
 
     androidPkgs = inputs.aliyss-android-pkgs;
 
     lib = nixpkgs.lib;
+
+    # Vulkan device smoke check helper for blisspla is added to the host profile
+    # via the blisspla NixOS config's profile module. No flakeside export needed.
 
     sharedConfigurationModules = [
       ./modules/default.nix
@@ -85,7 +110,7 @@
       ${phoneSystem} = androidPkgs.packages.${phoneSystem};
     };
 
-    # NIXOS CONFIGURATIONS
+    # NixOS configurations
     nixosConfigurations = {
       # Desktop
       aliyss-bequitta = lib.nixosSystem {
@@ -123,10 +148,12 @@
           [
             ./hosts/blisspla/hardware-configuration.nix
             ./hosts/blisspla/configuration.nix
+            ./hosts/blisspla/services/llama-vulkan-devices-profile.nix
           ]
           ++ sharedConfigurationModules;
       };
     };
+
     # FORMATTER
     formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
 

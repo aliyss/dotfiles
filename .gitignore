@@ -35,6 +35,8 @@
 
 # Flake
 !/flake/
+# Secrets — never track env files
+/flake/.env
 /flake/*/.env
 # Nix build outputs — not tracked
 /flake/result

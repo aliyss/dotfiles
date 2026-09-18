@@ -48,12 +48,18 @@ in {
     ./apps/fortivpn.nix
     ./apps/fortivpn-import.nix
     ./apps/rdp.nix
+    ./apps/printing.nix
     ./apps/ssh.nix
     # ./apps/spicetify.nix
     ./apps/yazi.nix
     ./apps/fish.nix
     ./apps/btop.nix
     ./apps/bat.nix
+    ./apps/zen-proxy.nix
+    ./apps/pi.nix
+    ./apps/local-llm.nix
+    ./apps/cloud-llm.nix
+    ./apps/prompt-orchestration.nix
     ./apps/hyprlock.nix
     ./apps/direnv.nix
     ./apps/foot/default.nix
@@ -66,6 +72,9 @@ in {
     ./services/mako.nix
     ./services/activity-watcher.nix
     ./services/clipse.nix
+
+    ./profiles/creative.nix
+    ./profiles/adobe-fonts.nix
 
     ../local.nix
   ];

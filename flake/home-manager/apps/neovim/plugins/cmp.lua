@@ -28,11 +28,21 @@ require("blink-cmp").setup({
         providers = {
             copilot = {
                 name = "copilot",
-                enabled = true,
+                -- Guard against race where copilot LSP not yet started (fixes api/init.lua:23 nil client)
+                enabled = function()
+                    return vim.lsp.get_clients({ name = "copilot" })[1] ~= nil
+                end,
                 module = "blink-cmp-copilot",
                 score_offset = 1200,
                 async = true,
                 max_items = 3,
+                -- Ensure blink doesn't call source when client is nil
+                transform_items = function(_, items)
+                    if vim.lsp.get_clients({ name = "copilot" })[1] == nil then
+                        return {}
+                    end
+                    return items
+                end,
             },
             dadbod = {
                 name = "dadbod",

@@ -8,19 +8,20 @@
     ./core/nix.nix
     ./core/env.nix
 
-    ./hardware/nvidia.nix
     ./hardware/bluetooth.nix
     ./hardware/fonts.nix
 
     ./services/pipewire.nix
     ./services/docker.nix
     ./services/forticlient.nix
+    ./services/cisco-secure-client.nix
     ./services/greetd.nix
     ./services/display-manager.nix
     ./services/waydroid.nix
     ./services/keyd.nix
     ./services/xdg-portal.nix
     ./services/misc.nix
+    ./services/printing.nix
 
     ./programs/hyprland.nix
     ./programs/hyprlock.nix

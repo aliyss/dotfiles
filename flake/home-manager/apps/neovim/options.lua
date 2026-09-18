@@ -38,9 +38,21 @@ o.writebackup = false
 o.undofile = true
 o.swapfile = false
 
+-- Live reload when files are changed outside Neovim (needed for opencode/ACP edits)
+o.autoread = true
+o.updatetime = 200 -- already set above, keep low for CursorHold checktime
+
 o.history = 50
 
 o.splitright = true
 o.splitbelow = true
 
 o.mouse = "a"
+
+-- Fallback autoread trigger (redundant with AvanteOpencodeReload, but useful globally)
+vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
+	group = vim.api.nvim_create_augroup("AutoReadCheck", { clear = true }),
+	callback = function()
+		if vim.fn.getcmdwintype() == "" then vim.cmd("checktime") end
+	end,
+})

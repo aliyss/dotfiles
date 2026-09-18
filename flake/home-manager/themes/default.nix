@@ -62,6 +62,12 @@ let
     inherit theme lib;
   };
 
+  mkPiTheme = import ../../lib/themes/pi.nix {
+    inherit theme;
+  };
+
+  piThemeJSON = builtins.toJSON mkPiTheme;
+
   openCodeThemeJSON = builtins.toJSON (
     mkOpenCodeTheme
     // {
@@ -93,6 +99,7 @@ in
       firefox = mkFirefoxTheme;
       tridactyl = mkTridactylTheme;
       termux = mkTermuxTheme;
+      pi = mkPiTheme;
     };
     internal = true;
   };
@@ -101,6 +108,17 @@ in
     # ── Generated opencode theme file ──────────────────────────────
     xdg.configFile."opencode/themes/catppuccin.json" = {
       text = openCodeThemeJSON;
+    };
+
+    # ── Generated pi theme file (oxocarbon) ────────────────────────
+    # Pi discovers themes in ~/.pi/agent/themes/ (global) — home.file link
+    # and also via xdg.configFile for visibility. `pi --use-theme oxocarbon` or
+    # set via settings.json `theme` (handled in apps/pi.nix).
+    home.file.".pi/agent/themes/oxocarbon.json" = {
+      text = piThemeJSON;
+    };
+    xdg.configFile."pi/themes/oxocarbon.json" = {
+      text = piThemeJSON;
     };
 
     # ── Termux phone targets (activated via home-manager on the phone) ──

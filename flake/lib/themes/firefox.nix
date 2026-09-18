@@ -26,15 +26,15 @@ in {
       -moz-appearance: none !important;
     }
 
-    *:not(
-      i,
-      span,
-      [class*="icon"],
-      [class*="fa-"],
-      .material-icons
-    ) {
-      font-family: 'JetBrains Mono' !important;
-    }
+    # *:not(
+    #   i,
+    #   span,
+    #   [class*="icon"],
+    #   [class*="fa-"],
+    #   .material-icons
+    # ) {
+    #   font-family: 'JetBrains Mono' !important;
+    # }
 
     :root {
       --tabpanel-background-color: transparent !important;
@@ -286,15 +286,15 @@ in {
       background-color: transparent !important;
     }
 
-    *:not(
-      i,
-      span,
-      [class*="icon"],
-      [class*="fa-"],
-      .material-icons
-    ) {
-      font-family: 'JetBrains Mono' !important;
-    }
+    # *:not(
+    #   i,
+    #   span,
+    #   [class*="icon"],
+    #   [class*="fa-"],
+    #   .material-icons
+    # ) {
+    #   font-family: 'JetBrains Mono' !important;
+    # }
 
 
     :root {

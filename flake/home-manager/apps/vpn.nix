@@ -149,6 +149,130 @@
     fi
     TYPE=''${TYPE:-openvpn}
 
+    if [ "$TYPE" = "cisco" ]; then
+      # ---- Cisco Secure Client (vendor client) ----
+      # The only client that can complete SSO-v2 "Login window" (e.g. Microsoft MFA):
+      # the NetworkManager openconnect plugin's dialog dies before it renders
+      # (process_stdin assertion), and the openconnect CLI has no SSO handler at
+      # all. Install/wrappers live in modules/services/cisco-secure-client.nix.
+      #
+      # The connect itself can only happen in the GUI: `vpn connect <host>`
+      # answers
+      #   >> error: The requested authentication type is not supported in
+      #      AnyConnect CLI.
+      # (that string lives in libvpnapi.so) because the gateway authenticates with
+      # SAML/SSO, and only vpnui hands the login URL to the agent's webkit
+      # window (acwebhelper). So: connect = open the client; state/disconnect are
+      # fine over the CLI. Set CISCO_HOST in ~/Documents/vpn/<name>/.env.
+      #
+      # `vpn` is a `VPN>` REPL unless it reads commands from stdin with `-s`.
+      # Match the state string exactly — a substring match on "connected" also
+      # matches "state: Disconnected".
+      CISCO_HOST=''${CISCO_HOST:-''${GATEWAY:-}} 
+      if [ -z "$CISCO_HOST" ]; then
+        echo "Error: CISCO_HOST (or GATEWAY) not set — add it to $ENV_FILE" >&2
+        ${pkgs.libnotify}/bin/notify-send "VPN Error" "CISCO_HOST not set for $SELECTED (see $ENV_FILE)"
+        exit 1
+      fi
+      if ! command -v cisco-vpn > /dev/null 2>&1 || ! command -v cisco-vpnui > /dev/null 2>&1; then
+        ${pkgs.libnotify}/bin/notify-send "VPN Error" "Cisco Secure Client wrappers not found (see modules/services/cisco-secure-client.nix)"
+        exit 1
+      fi
+
+      CISCO_STATE=$(printf 'state\n' | cisco-vpn -s 2>/dev/null | grep -o 'state: [A-Za-z]*' | tail -1)
+      if [ "$CISCO_STATE" = "state: Connected" ]; then
+        ${pkgs.libnotify}/bin/notify-send "VPN" "Disconnecting $CISCO_HOST..."
+        printf 'disconnect\n' | cisco-vpn -s
+        exit $?
+      fi
+
+      ${pkgs.libnotify}/bin/notify-send "VPN" "Opening Cisco Secure Client — click Connect, then complete the login + MFA"
+      # setsid so the window outlives this script and its terminal.
+      setsid cisco-vpnui > /dev/null 2>&1 &
+
+      # ssh.nix and rdp.nix call this with VPN_BACKGROUND=1 and expect it to
+      # block until the tunnel is up; the SSO step is the user's, in the GUI.
+      if [ -n "$VPN_BACKGROUND" ]; then
+        for i in {1..180}; do
+          CISCO_STATE=$(printf 'state\n' | cisco-vpn -s 2>/dev/null | grep -o 'state: [A-Za-z]*' | tail -1)
+          if [ "$CISCO_STATE" = "state: Connected" ]; then
+            ${pkgs.libnotify}/bin/notify-send "VPN" "$CISCO_HOST Connected"
+            exit 0
+          fi
+          sleep 2
+        done
+        ${pkgs.libnotify}/bin/notify-send "VPN Error" "$CISCO_HOST did not connect (SSO not completed?)"
+        exit 1
+      fi
+      exit 0
+    fi
+
+    if [ "$TYPE" = "webauth" ] || [ "$TYPE" = "nm" ]; then
+      # ---- AnyConnect WebAuth (NetworkManager + openconnect) ----
+      # Generic SSO-v2 webview flow (NetworkManager + openconnect). The
+      # connection and helper scripts belong to z10n-dev/nixos-anyconnect-webauth
+      # (modules/core/networking.nix): `vpn-connect` deletes+recreates the
+      # profile so every connect runs a fresh SSO instead of reusing an expired
+      # cookie, then hands MFA to nm-applet's login window. TYPE=nm is an alias.
+      # Define per-site in ~/Documents/vpn/<name>/.env:
+      #   TYPE=nm
+      #   NM_PROFILE=<name>        # or WEBAUTH_PROFILE
+      #   # gateway lives in the NM profile or GATEWAY var; not hardcoded here.
+      WA_PROFILE="''${WEBAUTH_PROFILE:-''${NM_PROFILE:-$SELECTED}}"
+
+      if ! command -v vpn-connect > /dev/null 2>&1 || ! command -v vpn-disconnect > /dev/null 2>&1; then
+        echo "Error: vpn-connect/vpn-disconnect not found — is services.anyconnect-webauth enabled?"
+        ${pkgs.libnotify}/bin/notify-send "VPN Error" "vpn-connect not found (services.anyconnect-webauth)"
+        exit 1
+      fi
+
+      NMCLI="${pkgs.networkmanager}/bin/nmcli"
+
+      # The login window is a WebKitGTK view (nm-openconnect-auth-dialog), and
+      # WebKitGTK does https through libsoup, which finds its TLS backend as a
+      # GIO extension module (glib-networking). A session that started before
+      # this was added to /etc/set-environment has a stale GIO_EXTRA_MODULES
+      # without it, and then the window cannot load the SSO page at all — it
+      # fails with libsoup's "TLS support is not available", which the clients
+      # report as a login/authentication error. Prepend rather than default: the
+      # variable may already exist and be missing exactly this module.
+      export GIO_EXTRA_MODULES="${pkgs.glib-networking}/lib/gio/modules''${GIO_EXTRA_MODULES:+:$GIO_EXTRA_MODULES}"
+
+      # nmcli has to reach the secret agent (nm-applet) over the session bus to
+      # collect the SSO cookie; without it NetworkManager gives up with the
+      # opaque "No valid secrets".
+      if [ -z "''${DBUS_SESSION_BUS_ADDRESS:-}" ] && [ -S "/run/user/$(id -u)/bus" ]; then
+        export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+      fi
+
+      # Toggling off needs no SSO, so check the active state first.
+      if [ "$("$NMCLI" -t -f GENERAL.STATE connection show "$WA_PROFILE" 2>/dev/null)" = "activated" ]; then
+        ${pkgs.libnotify}/bin/notify-send "VPN" "Stopping $WA_PROFILE VPN..."
+        vpn-disconnect "$WA_PROFILE"
+        exit $?
+      fi
+
+      ${pkgs.libnotify}/bin/notify-send "VPN" "Starting $WA_PROFILE — complete the login + MFA in the window that opens"
+
+      if [ -z "''${VPN_BACKGROUND:-}" ]; then
+        vpn-connect "$WA_PROFILE"
+        exit $?
+      fi
+
+      # ssh.nix and rdp.nix call this with VPN_BACKGROUND=1 and expect it to
+      # block until the tunnel is up; the SSO/MFA step is the user's.
+      setsid vpn-connect "$WA_PROFILE" > /dev/null 2>&1 &
+      for i in {1..180}; do
+        if [ "$("$NMCLI" -t -f GENERAL.STATE connection show "$WA_PROFILE" 2>/dev/null)" = "activated" ]; then
+          ${pkgs.libnotify}/bin/notify-send "VPN" "$WA_PROFILE Connected"
+          exit 0
+        fi
+        sleep 2
+      done
+      ${pkgs.libnotify}/bin/notify-send "VPN Error" "$WA_PROFILE did not connect (SSO not completed?)"
+      exit 1
+    fi
+
     if [ "$TYPE" = "openfortivpn" ]; then
       # ---- OpenFortiVPN ----
 

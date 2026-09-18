@@ -99,49 +99,59 @@ with lib; let
     key = ["l"];
     desc = "Brightness";
     submenu = [
-      ({
+      {
+        key = "3";
+        desc = "30%";
+        cmd = "brightnessctl set 30%";
+      }
+      {
+        key = "4";
+        desc = "40%";
+        cmd = "brightnessctl set 40%";
+      }
+      {
         key = "5";
         desc = "50%";
         cmd = "brightnessctl set 50%";
-      })
-      ({
+      }
+      {
         key = "6";
         desc = "60%";
         cmd = "brightnessctl set 60%";
-      })
-      ({
+      }
+      {
         key = "7";
         desc = "70%";
         cmd = "brightnessctl set 70%";
-      })
-      ({
+      }
+      {
         key = "8";
         desc = "80%";
         cmd = "brightnessctl set 80%";
-      })
-      ({
+      }
+      {
         key = "9";
         desc = "90%";
         cmd = "brightnessctl set 90%";
-      })
-      ({
+      }
+      {
         key = "0";
         desc = "100%";
         cmd = "brightnessctl set 100%";
-      })
-      ({
+      }
+      {
         key = "=";
         desc = "+10%";
         cmd = "brightnessctl set +10%";
-      })
-      ({
+      }
+      {
         key = "-";
         desc = "-10%";
         # Clamp at 50%: read current percent, step down, floor at 50.
         cmd = ''
           sh -c 'p=$(brightnessctl -m | cut -d, -f6 | tr -d "%"); p=''${p%.*}; if [ "$p" -le 60 ]; then brightnessctl set 50%; else brightnessctl set 10%-; fi'
         '';
-      })
+      }
     ];
   };
 
@@ -171,32 +181,32 @@ with lib; let
         {
           key = "p";
           desc = "Power";
-        submenu =
-          [
-            {
-              key = "s";
-              desc = "Shutdown";
-              cmd = "shutdown -h 0";
-            }
-            {
-              key = "r";
-              desc = "Reboot";
-              cmd = "reboot";
-            }
-            {
-              key = "l";
-              desc = "Lock";
-              cmd = "hyprlock";
-            }
-          ]
-          ++ lib.optionals isBlade [
-            {
-              key = "t";
-              desc = "Toggle On/Off";
-              cmd = "toggle-laptop-display.sh";
-            }
-          ];
-      }
+          submenu =
+            [
+              {
+                key = "s";
+                desc = "Shutdown";
+                cmd = "shutdown -h 0";
+              }
+              {
+                key = "r";
+                desc = "Reboot";
+                cmd = "reboot";
+              }
+              {
+                key = "l";
+                desc = "Lock";
+                cmd = "hyprlock";
+              }
+            ]
+            ++ lib.optionals isBlade [
+              {
+                key = "t";
+                desc = "Toggle On/Off";
+                cmd = "toggle-laptop-display.sh";
+              }
+            ];
+        }
         # Brightness menu (harmless on desktops; brightnessctl no-ops w/o backlight).
       ]
       ++ [brightnessMenu]
@@ -204,168 +214,168 @@ with lib; let
         {
           key = "s";
           desc = "System";
-        submenu = let
-          profileEntries =
-            map (p: let
-              toggle =
-                if cfg.${p.name}
-                then "-"
-                else "+";
-              toggleDesc =
-                if cfg.${p.name}
-                then "Disable"
-                else "Enable";
-            in {
-              key = p.key;
-              desc = "${toggleDesc} ${p.desc}";
-              cmd = "foot --title foot_install -e sh -c '$HOME/.config/flake/update-system -s ${host} -p ${toggle}${p.name} && echo \"Done — press Enter to close\" && read _'";
-            }) [
+          submenu = let
+            profileEntries =
+              map (p: let
+                toggle =
+                  if cfg.${p.name}
+                  then "-"
+                  else "+";
+                toggleDesc =
+                  if cfg.${p.name}
+                  then "Disable"
+                  else "Enable";
+              in {
+                key = p.key;
+                desc = "${toggleDesc} ${p.desc}";
+                cmd = "foot --title foot_install -e sh -c '$HOME/.config/flake/update-system -s ${host} -p ${toggle}${p.name} && echo \"Done — press Enter to close\" && read _'";
+              }) [
+                {
+                  key = "l";
+                  name = "llm";
+                  desc = "LLM Tools";
+                }
+                {
+                  key = "c";
+                  name = "creative";
+                  desc = "Creative Apps";
+                }
+                {
+                  key = "g";
+                  name = "gaming";
+                  desc = "Gaming";
+                }
+                {
+                  key = "a";
+                  name = "audio";
+                  desc = "Audio Tools";
+                }
+              ];
+            appEntries =
+              imap0 (i: app: {
+                key = toString (i + 1);
+                desc = "Remove ${app}";
+                cmd = "foot --title foot_install -e sh -c '$HOME/.config/flake/update-system -s ${host} -a -${app} && echo \"Done — press Enter to close\" && read _'";
+              })
+              standaloneApps;
+          in
+            profileEntries
+            ++ optionals (standaloneApps != []) [
               {
-                key = "l";
-                name = "llm";
-                desc = "LLM Tools";
+                key = "r";
+                desc = "Remove standalone apps";
+                submenu = appEntries;
+              }
+            ];
+        }
+        {
+          key = ["e"];
+          desc = "Open Applications";
+          submenu = let
+            alwaysApps = [
+              {
+                key = "t";
+                desc = "Terminal";
+                cmd = "herdr-launch Terminal";
               }
               {
                 key = "c";
-                name = "creative";
-                desc = "Creative Apps";
+                desc = "Browser";
+                cmd = "firefox";
+              }
+              {
+                key = "e";
+                desc = "Neovim Screen";
+                cmd = "herdr-launch Neovim";
+              }
+              {
+                key = "y";
+                desc = "Youtube Music";
+                cmd = "pear-desktop";
+              }
+              {
+                key = "m";
+                desc = "Stremio";
+                cmd = "stremio-linux-shell";
               }
               {
                 key = "g";
-                name = "gaming";
-                desc = "Gaming";
+                desc = "Gaming Mode";
+                cmd = "herdr-launch Gaming";
               }
               {
-                key = "a";
-                name = "audio";
-                desc = "Audio Tools";
+                key = ["w"];
+                desc = "Open Work Applications";
+                submenu = [
+                  {
+                    key = "t";
+                    desc = "Microsoft Teams";
+                    cmd = "teams-for-linux";
+                  }
+                  {
+                    key = "s";
+                    desc = "Slack";
+                    cmd = "slack";
+                  }
+                  {
+                    key = "r";
+                    desc = "RustDesk";
+                    cmd = "rustdesk";
+                  }
+                ];
               }
             ];
-          appEntries =
-            imap0 (i: app: {
-              key = toString (i + 1);
-              desc = "Remove ${app}";
-              cmd = "foot --title foot_install -e sh -c '$HOME/.config/flake/update-system -s ${host} -a -${app} && echo \"Done — press Enter to close\" && read _'";
-            })
-            standaloneApps;
-        in
-          profileEntries
-          ++ optionals (standaloneApps != []) [
-            {
-              key = "r";
-              desc = "Remove standalone apps";
-              submenu = appEntries;
-            }
-          ];
-      }
-      {
-        key = ["e"];
-        desc = "Open Applications";
-        submenu = let
-          alwaysApps = [
+            allEnabled = builtins.sort (a: b: (a.cmd or "") < (b.cmd or "")) (alwaysApps ++ enabledGated);
+          in
+            allEnabled
+            ++ optionals (disabledGated != []) [
+              {
+                key = "i";
+                desc = "Install apps";
+                submenu = disabledGated;
+              }
+            ];
+        }
+        {
+          key = ["v"];
+          desc = "VPN";
+          submenu = [
             {
               key = "t";
-              desc = "Terminal";
-              cmd = "herdr-launch Terminal";
+              desc = "Toggle Tailscale";
+              # Toggle the tailnet via a sudo foot prompt (no polkit agent on
+              # Hyprland, so use sudo with a TTY). Stopping tailscaled fully
+              # disconnects + parks the daemon (battery); starting it brings the node
+              # back with `tailscale up`. Notifications are keyed off the actual
+              # command exit status, not notify-send's own return value.
+              cmd = ''
+                foot --title 'Tailscale toggle' -e sh -c '
+                  if sudo systemctl is-active --quiet tailscaled && sudo tailscale status >/dev/null 2>&1; then
+                    sudo systemctl stop tailscaled && notify-send "Tailscale" "VPN disconnected" || notify-send -u critical "Tailscale" "Failed to stop daemon"
+                  else
+                    sudo systemctl start tailscaled && sudo tailscale up && notify-send "Tailscale" "VPN connected" || notify-send -u critical "Tailscale" "Failed to bring up Tailscale"
+                  fi
+                '
+              '';
             }
             {
-              key = "c";
-              desc = "Browser";
-              cmd = "firefox";
+              key = "l";
+              desc = "Launch VPN";
+              cmd = "foot --title 'VPN Launcher' vpn-launch";
             }
             {
-              key = "e";
-              desc = "Neovim Screen";
-              cmd = "herdr-launch Neovim";
-            }
-            {
-              key = "y";
-              desc = "Youtube Music";
-              cmd = "pear-desktop";
-            }
-            {
-              key = "m";
-              desc = "Stremio";
-              cmd = "stremio-linux-shell";
-            }
-            {
-              key = "g";
-              desc = "Gaming Mode";
-              cmd = "herdr-launch Gaming";
-            }
-            {
-              key = ["w"];
-              desc = "Open Work Applications";
-              submenu = [
-                {
-                  key = "t";
-                  desc = "Microsoft Teams";
-                  cmd = "teams-for-linux";
-                }
-                {
-                  key = "s";
-                  desc = "Slack";
-                  cmd = "slack";
-                }
-                {
-                  key = "r";
-                  desc = "RustDesk";
-                  cmd = "rustdesk";
-                }
-              ];
+              key = "k";
+              desc = "Kill all VPNs";
+              cmd = "foot --title 'VPN Kill' sh -c 'sudo pkill -f openvpn && ${pkgs.libnotify}/bin/notify-send \"VPN\" \"All VPN connections closed\"'";
             }
           ];
-          allEnabled = builtins.sort (a: b: (a.cmd or "") < (b.cmd or "")) (alwaysApps ++ enabledGated);
-        in
-          allEnabled
-          ++ optionals (disabledGated != []) [
-            {
-              key = "i";
-              desc = "Install apps";
-              submenu = disabledGated;
-            }
-          ];
-      }
-      {
-        key = ["v"];
-        desc = "VPN";
-        submenu = [
-          {
-            key = "t";
-            desc = "Toggle Tailscale";
-            # Toggle the tailnet via a sudo foot prompt (no polkit agent on
-            # Hyprland, so use sudo with a TTY). Stopping tailscaled fully
-            # disconnects + parks the daemon (battery); starting it brings the node
-            # back with `tailscale up`. Notifications are keyed off the actual
-            # command exit status, not notify-send's own return value.
-            cmd = ''
-              foot --title 'Tailscale toggle' -e sh -c '
-                if sudo systemctl is-active --quiet tailscaled && sudo tailscale status >/dev/null 2>&1; then
-                  sudo systemctl stop tailscaled && notify-send "Tailscale" "VPN disconnected" || notify-send -u critical "Tailscale" "Failed to stop daemon"
-                else
-                  sudo systemctl start tailscaled && sudo tailscale up && notify-send "Tailscale" "VPN connected" || notify-send -u critical "Tailscale" "Failed to bring up Tailscale"
-                fi
-              '
-            '';
-          }
-          {
-            key = "l";
-            desc = "Launch VPN";
-            cmd = "foot --title 'VPN Launcher' vpn-launch";
-          }
-          {
-            key = "k";
-            desc = "Kill all VPNs";
-            cmd = "foot --title 'VPN Kill' sh -c 'sudo pkill -f openvpn && ${pkgs.libnotify}/bin/notify-send \"VPN\" \"All VPN connections closed\"'";
-          }
-        ];
-      }
-      {
-        key = ["r"];
-        desc = "Remote Desktop";
-        cmd = "foot --title 'RDP Launcher' rdp-launch";
-      }
-    ];
+        }
+        {
+          key = ["r"];
+          desc = "Remote Desktop";
+          cmd = "foot --title 'RDP Launcher' rdp-launch";
+        }
+      ];
   };
 in {
   home.file.".config/wlr-which-key/config.yaml".source = yaml.generate "wlr-which-key-config.yaml" configData;

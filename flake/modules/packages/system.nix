@@ -62,8 +62,8 @@
     mcaselector
     v4l-utils
     android-tools
-    adb-sync
+    better-adb-sync
     scrcpy
-    pinentry-gtk2
+    pinentry-gnome3
   ];
 }

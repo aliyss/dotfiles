@@ -1,0 +1,20 @@
+[package]
+name = "intent-router"
+version = "0.1.0"
+edition = "2021"
+description = "Local intent router: static text embeddings + an HTTP API for registering intents"
+license = "MIT"
+
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tiny_http = "0.12"
+# default-features off on purpose: `hf-hub` would let the model be pulled from
+# the network at runtime (the flake ships it in the store instead) and `onig`
+# needs the oniguruma C library. fancy-regex is pure Rust and does the same job.
+model2vec-rs = { version = "0.2", default-features = false, features = ["fancy-regex", "local-only"] }
+
+[profile.release]
+lto = true
+strip = true

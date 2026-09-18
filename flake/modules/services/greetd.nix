@@ -13,6 +13,13 @@
     };
   };
 
+  # GNOME Keyring for NetworkManager secrets (VPN + 802.1X WiFi like eduroam)
+  # Provides org.freedesktop.secrets for nm-applet / nm-openconnect-auth-dialog
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;
+  security.pam.services.hyprlock.enableGnomeKeyring = true;
+  security.pam.services.login.enableGnomeKeyring = true;
+
   systemd.services.greetd.serviceConfig = {
     Type = "idle";
     StandardInput = "tty";

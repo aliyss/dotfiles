@@ -16,6 +16,18 @@
       default = [ ];
       description = "Apps installed individually without enabling the full profile";
     };
+    adobeFonts = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Enable Adobe Fonts (Typekit) Auto Pro extractor – also syncs to Wine for Affinity";
+      };
+      kitId = lib.mkOption {
+        type = lib.types.str;
+        default = "whl2slc";
+        description = "Adobe Fonts kit ID";
+      };
+    };
     tailscaleSocks5Port = lib.mkOption {
       type = lib.types.str;
       default = "23008";

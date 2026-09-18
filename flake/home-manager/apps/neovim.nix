@@ -669,4 +669,47 @@ in {
       (#set! injection.language "json")
     )
   '';};
+
+  # Hotfix for copilot.lua race: blink-cmp-copilot calls api.get_completions with nil client
+  # See .../copilot.lua/lua/copilot/api/init.lua:23
+  xdg.configFile."nvim/after/plugin/copilot-fix.lua" = lib.mkIf (!isPhone) {text = ''
+    -- Generated from home-manager/apps/neovim.nix - do not edit directly
+    pcall(function()
+      local api = require("copilot.api")
+      if api._patched_for_nil_client then return end
+      api._patched_for_nil_client = true
+      local orig_request = api.request
+      function api.request(client, method, params, callback)
+        if not client then
+          if callback then vim.schedule(function() callback("copilot client not ready", nil) end) return nil end
+          return "copilot client not ready", nil, nil
+        end
+        return orig_request(client, method, params, callback)
+      end
+      local orig_notify = api.notify
+      function api.notify(client, method, params)
+        if not client then return false end
+        return orig_notify(client, method, params)
+      end
+    end)
+    pcall(function()
+      local bc = require("blink-cmp-copilot")
+      if bc._patched_for_nil_client then return end
+      bc._patched_for_nil_client = true
+      local orig = bc.get_completions
+      if orig then
+        bc.get_completions = function(self, context, callback)
+          if not self.client then self.client = vim.lsp.get_clients({ name = "copilot" })[1] end
+          if not self.client then
+            return callback({ is_incomplete_forward = true, is_incomplete_backward = true, items = {} })
+          end
+          local ok, err = pcall(orig, self, context, callback)
+          if not ok then
+            return callback({ is_incomplete_forward = true, is_incomplete_backward = true, items = {} })
+          end
+          return err
+        end
+      end
+    end)
+  '';};
 }

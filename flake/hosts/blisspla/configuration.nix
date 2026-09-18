@@ -1,14 +1,45 @@
-{ lib, pkgs, ... }: {
+{
+  lib,
+  pkgs,
+  ...
+}: let
+  # TEMPORARY shutdown-wake test: set to false to disable TLP and restore
+  # NixOS-managed power management, then `nixos-rebuild switch` and test
+  # `shutdown -h 0`. Flip back to true (or delete this flag) to revert.
+  enableTlp = false;
+in {
+  imports = [./services/local-llm.nix];
+
   networking.hostName = "aliyss-blisspla";
+
+  # The Vulkan device smoke check helper is added to the host profile in
+  # flake.nix's blisspla NixOS config, where the flakeside package is directly
+  # available. Nothing to do here.
 
   services.xserver = {
     enable = true;
     videoDrivers = ["intel" "modesetting"];
   };
 
+  # --- Intel Arc (Meteor Lake) GPU ---
+  # DaVinci Resolve ships only the OpenCL *loader* (ocl-icd) and finds no
+  # physical GPU unless the vendor ICD is present. intel-compute-runtime is the
+  # Intel NEO OpenCL driver that makes the Arc iGPU show up as an OpenCL device.
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-compute-runtime # OpenCL (NEO) + Level Zero for Arc/Xe — required by Resolve
+      intel-media-driver # VA-API (iHD) hardware video decode/encode
+    ];
+  };
+  # Prefer the modern iHD VA-API backend on the Xe iGPU. The shared
+  # modules/core/env.nix sets LIBVA_DRIVER_NAME="nvidia" (for the NVIDIA
+  # desktop); this Intel-only laptop needs iHD, so force it.
+  environment.variables.LIBVA_DRIVER_NAME = lib.mkForce "iHD";
+
   # --- Battery / power optimization (laptop) ---
   # TLP handles adaptive CPU governor, NVMe APST, USB autosuspend, charge thresholds.
-  services.tlp = {
+  services.tlp = lib.mkIf enableTlp {
     enable = true;
     settings = {
       CPU_SCALING_GOVERNOR_ON_AC = "powersave";
@@ -22,7 +53,8 @@
   };
   # TLP manages the CPU governor/EPP; NixOS's powerManagement.enable boots a
   # cpufreq.service that pins the governor and fights TLP. Let TLP own it.
-  powerManagement.enable = lib.mkForce false;
+  # (With TLP off, powerManagement falls back to its NixOS default = enabled.)
+  powerManagement.enable = lib.mkIf enableTlp (lib.mkForce false);
 
   # Allow the video group to control backlight so brightnessctl works from
   # wlr-which-key without root.

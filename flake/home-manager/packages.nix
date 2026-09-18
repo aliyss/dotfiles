@@ -21,6 +21,7 @@ let
     yarn-berry
     qbittorrent
   ];
+  eciIcc = pkgs.callPackage ../packages/eci-icc-profiles { };
 in {
   home.packages =
     isaac
@@ -28,8 +29,9 @@ in {
     ++ lowe
     ++ work
     ++ other
-    # Creative
+    # Creative — ICC profiles + Affinity
     ++ optionals (cfg.creative || elem "affinity" standalone) (with pkgs; [ affinity-v3 ])
+    ++ optionals cfg.creative [ eciIcc ]
     ++ optionals (cfg.creative || elem "blender" standalone) (with pkgs; [ blender ])
     ++ optionals (cfg.creative || elem "davinci" standalone) (with pkgs; [ davinci-resolve ])
     # Gaming - individual

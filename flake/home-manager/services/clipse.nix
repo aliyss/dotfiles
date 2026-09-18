@@ -6,6 +6,7 @@
   listener = pkgs.writeShellScript "clipse-listen" ''
     ${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.clipse}/bin/clipse --wl-store &
     ${pkgs.wl-clipboard}/bin/wl-paste --type image/png --watch ${pkgs.clipse}/bin/clipse --wl-store &
+    ${pkgs.wl-clipboard}/bin/wl-paste --type image/jpeg --watch ${pkgs.clipse}/bin/clipse --wl-store &
     wait
   '';
 in {

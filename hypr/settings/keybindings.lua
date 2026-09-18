@@ -22,6 +22,7 @@ hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd('grim -g "$(slurp)" - | wl-co
 -- Application Launch
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("wlr-which-key -k e"))
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("foot --title clipse_clipboard -e clipse"))
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("/home/aliyss/.local/bin/prompt-orchestration gui show"))
 
 -- Window Actions
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
