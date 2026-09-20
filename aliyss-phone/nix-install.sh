@@ -222,7 +222,20 @@ mkdir -p \
   "$ROOTFS/nix" "$ROOTFS/etc" "$ROOTFS/tmp" "$ROOTFS/src" \
   "$ROOTFS/dev/shm" "$ROOTFS/proc" "$ROOTFS/dev" "$ROOTFS/sys" \
   "$ROOTFS/system" "$ROOTFS/apex" "$ROOTFS/vendor" "$ROOTFS/product" \
-  "$ROOTFS/system_ext" "$ROOTFS/linkerconfig" "$ROOTFS/data/data/com.termux"
+  "$ROOTFS/system_ext" "$ROOTFS/linkerconfig" "$ROOTFS/lib" \
+  "$ROOTFS/data/data/com.termux"
+
+# Self-downloaded glibc-dynamic binaries (e.g. the freebuff launcher's
+# bun-compiled aarch64 binary, INTERP /lib/ld-linux-aarch64.so.1) look for the
+# loader in /lib, which the chroot rootfs doesn't have. Bind-mount the nixpkgs
+# glibc lib dir there — the aarch64 equivalent of the desktop's nix-ld. The
+# store path is resolved at run time (herdr's own interpreter lives in the same
+# glibc, so this only runs when it exists); failures are non-fatal so a store
+# without glibc still boots fine.
+GLIBC_LIB="$(ls -d "$STORE"/store/*-glibc-*/lib 2>/dev/null | grep -v locales | sort | tail -1)"
+if [ -n "$GLIBC_LIB" ] && [ -e "$GLIBC_LIB/ld-linux-aarch64.so.1" ]; then
+  "$B" mount -o bind  "$GLIBC_LIB" "$ROOTFS/lib"
+fi
 
 # --bind for plain directories on /data (no submounts); --rbind for the
 # Android partitions that are themselves mounts with submounts (e.g. /apex

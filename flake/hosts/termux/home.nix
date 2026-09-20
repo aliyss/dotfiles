@@ -7,6 +7,13 @@
 let
   sshKeys = import ../../lib/ssh-keys.nix;
   authorizedKeysFile = pkgs.writeText "authorized_keys" (lib.concatStringsSep "\n" sshKeys);
+  # Same package as the desktop (flake/packages/freebuff): npm launcher shim +
+  # herdr lifecycle watcher. On first run the launcher downloads the real
+  # bun-compiled aarch64 binary into ~/.config/manicode/freebuff (a real file,
+  # visible to native Termux) — it is glibc-dynamic, so it only runs inside the
+  # chroot once nix-chroot-run bind-mounts glibc's lib at /lib (see
+  # aliyss-phone/nix-install.sh).
+  freebuff = pkgs.callPackage ../../packages/freebuff { };
 in
 {
   imports = [
@@ -64,18 +71,23 @@ in
   # re-enabled, but the phone has no need for manpages.
   manual.manpages.enable = false;
 
-  home.packages = with pkgs; [
-    bat
-    btop
-    connect
-    eza
-    fd
-    htop
-    jq
-    ripgrep
-    git
-    zoxide
-  ];
+  home.packages =
+    with pkgs;
+    [
+      bat
+      btop
+      connect
+      eza
+      fd
+      htop
+      jq
+      ripgrep
+      git
+      zoxide
+    ]
+    ++ [
+      freebuff
+    ];
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
