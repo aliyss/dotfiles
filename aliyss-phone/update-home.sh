@@ -34,9 +34,22 @@ fi
 
 log "Switching home-manager config: aliyss-termux"
 # Nix runs with `sandbox = false`, where builders without an explicit HOME get
-# the shared /homeless-shelter (created inside the chroot rootfs); Nix refuses
-# to build if it already exists (purity check), so clear it before each switch.
-rm -rf "$HOME/.nix/rootfs/homeless-shelter" 2>/dev/null || true
+# the shared /homeless-shelter (created inside the chroot rootfs at
+# $HOME/.nix/rootfs/homeless-shelter on the host); Nix refuses to build if it
+# already exists (purity check), so clear it before each switch. Builders may
+# leave read-only trees (Go module caches) that need chmod first; if that still
+# fails, try a root cleanup via su (chroot path is /homeless-shelter).
+for p in "$HOME/.nix/rootfs/homeless-shelter" "/homeless-shelter"; do
+  chmod -R u+w "$p" 2>/dev/null || true
+  rm -rf "$p" 2>/dev/null || true
+done
+if [ -d "$HOME/.nix/rootfs/homeless-shelter" ]; then
+  su -c "chmod -R u+w /homeless-shelter 2>/dev/null; rm -rf /homeless-shelter 2>/dev/null || true" 2>/dev/null || true
+  chmod -R u+w "$HOME/.nix/rootfs/homeless-shelter" 2>/dev/null || true
+  rm -rf "$HOME/.nix/rootfs/homeless-shelter" 2>/dev/null || true
+fi
+# Also ensure the chroot view is clean (post-build-hook does the same after each derivation)
+"$HOME/.nix/bin/nix-chroot" /bin/sh -c "chmod -R u+w /homeless-shelter 2>/dev/null; rm -rf /homeless-shelter 2>/dev/null || true" 2>/dev/null || true
 if [ -x "$HOME/.nix-profile/bin/home-manager" ]; then
   (
     cd "$REPO_DIR/flake"
