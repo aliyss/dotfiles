@@ -95,8 +95,8 @@
 
     lib = nixpkgs.lib;
 
-    # Vulkan device smoke check helper for blisspla is added to the host profile
-    # via the blisspla NixOS config's profile module. No flakeside export needed.
+    # LLM (llama-cpp) is unified in modules/profiles/llm.nix — CUDA on bequitta, Vulkan on blisspla
+    # Vulkan helper is added conditionally via the profile module; no per-host flakeside export needed.
 
     sharedConfigurationModules = [
       ./modules/default.nix
@@ -148,7 +148,6 @@
           [
             ./hosts/blisspla/hardware-configuration.nix
             ./hosts/blisspla/configuration.nix
-            ./hosts/blisspla/services/llama-vulkan-devices-profile.nix
           ]
           ++ sharedConfigurationModules;
       };

@@ -1,3 +1,5 @@
+# DEPRECATED: unified in modules/profiles/llm.nix (CUDA on bequitta, Vulkan on blisspla)
+# Kept for reference — not imported. That module uses services.llama-cpp with HF models-preset.
 {pkgs, ...}: let
   qwen2-7b-model = pkgs.fetchurl {
     name = "qwen2.5-coder-7b-instruct-q5_k_m.gguf";

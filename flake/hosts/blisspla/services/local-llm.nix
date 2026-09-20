@@ -1,3 +1,5 @@
+# DEPRECATED: unified into modules/profiles/llm.nix (same models-preset, CUDA on bequitta / Vulkan on blisspla)
+# This file retained for reference — not imported from hosts/blisspla/configuration.nix anymore.
 {
   lib,
   pkgs,

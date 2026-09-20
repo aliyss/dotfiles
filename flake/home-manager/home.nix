@@ -72,6 +72,7 @@ in {
     ./services/mako.nix
     ./services/activity-watcher.nix
     ./services/clipse.nix
+    ./services/hypridle.nix
 
     ./profiles/creative.nix
     ./profiles/adobe-fonts.nix

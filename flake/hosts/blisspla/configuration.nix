@@ -8,7 +8,8 @@
   # `shutdown -h 0`. Flip back to true (or delete this flag) to revert.
   enableTlp = false;
 in {
-  imports = [./services/local-llm.nix];
+  # LLM now unified in modules/profiles/llm.nix (CUDA on bequitta, Vulkan on blisspla)
+  # hosts/blisspla/services/local-llm.nix is deprecated — kept for reference but not imported
 
   networking.hostName = "aliyss-blisspla";
 
