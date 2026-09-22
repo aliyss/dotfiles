@@ -137,6 +137,36 @@ termux-api`, fish as default shell, sshd. Tailscale is fully declarative now
 - optionally pass `SSH_AUTHORIZED_KEYS='ssh-ed25519 AAAA...'` to
   `nix-install.sh` to add your desktop's key (default: no key is added).
 
+## Android settings + hooks (aliyss-android-settings)
+
+A sibling repo to android-pkgs, [aliyss/aliyss-android-settings](https://github.com/aliyss/aliyss-android-settings)
+(currently consumed as a **local path** on the phone:
+`~/Projects/aliyss-android-settings`), provides declarative Android settings
+and hook services via `aliyss.androidSettings` in
+`flake/hosts/termux/home.nix` (module: `apps/android-settings.nix`):
+
+```nix
+aliyss.androidSettings = {
+  enable = true;
+  props = {                                   # `settings put` on every switch
+    "global.window_animation_scale" = "0.75";
+  };
+  hooks = [ "battery-low" "night-dnd" "night-dark" ];   # runit services
+  hookConfig."battery-low".THRESHOLD = "10"; # per-hook env overrides
+};
+```
+
+The engine (`android-settings` CLI, also wrapped into `~/.local/bin`) applies
+props idempotently and manages one termux-services (runit) service per hook
+(`android-settings-<hook>`, autostarting at Termux boot). Hooks removed from
+the list are uninstalled on the next switch (state:
+`~/.local/state/aliyss-android-settings/hooks`); hook logs land in
+`~/.local/state/aliyss-android-settings/logs/`. Authoring new hooks: see the
+repo's README.
+
+The engine is consumed as the `aliyss-android-settings` flake input (pinned in
+`flake.lock`), exactly like `aliyss-android-pkgs` — no `--impure` switch needed.
+
 ## SSH Shortcuts
 
 The phone is accessible via Tailscale at:

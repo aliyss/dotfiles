@@ -60,6 +60,9 @@
     # Android APK packages (used on the Termux phone): thousands of apps pinned
     # by app-id, e.g. `nix build .#com-darkempire78-opencalculator`.
     aliyss-android-pkgs.url = "github:aliyss/aliyss-android-pkgs";
+    # Declarative Android settings + hook services engine (used on the
+    # Termux phone, same pattern as android-pkgs).
+    aliyss-android-settings.url = "github:aliyss/aliyss-android-settings";
   };
 
   outputs = {

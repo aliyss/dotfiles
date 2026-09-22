@@ -267,6 +267,16 @@ fi
 # user, not root.
 exec "$B" chroot "$ROOTFS" /bin/sh -c '
   cd "${NIX_CWD:-/}" 2>/dev/null || cd /
+  # Name resolution needs the supplementary group inet (3003): bionic resolves
+  # through the DNS proxy of netd (/dev/socket/dnsproxyd, mode 660 root:inet)
+  # and busybox setuidgid clears every supplementary group, so every lookup
+  # inside the chroot died with "No address associated with hostname".
+  # setpriv restores the group and still drops to the Termux user.
+  # (chroot-dns fix - guarded by the chroot-dns hook in aliyss-android-settings)
+  SP="$(ls -d /nix/store/*util-linux-*/bin/setpriv 2>/dev/null | sort | tail -n 1)"
+  if [ -n "$SP" ]; then
+    exec "$SP" --groups 3003 --reuid u0_a393 --regid u0_a393 "$@"
+  fi
   exec /bin/busybox setuidgid u0_a393 "$@"
 ' sh "$@"
 SCRIPT

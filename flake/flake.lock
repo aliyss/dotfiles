@@ -62,16 +62,34 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1787549691,
-        "narHash": "sha256-sjAD+2/Ztd3YrrWrrKQlVlit34OAwGH4qCe5U3fle5Y=",
+        "lastModified": 1790107727,
+        "narHash": "sha256-rd7LBBYKaibK/8IApH+y1jci+WrMLRrqLGYvon6zQxs=",
         "owner": "aliyss",
         "repo": "aliyss-android-pkgs",
-        "rev": "bd293a48b07ca634efeab900e6d9d624e3ba4b29",
+        "rev": "5c402d0cdfee4b34e30561adb7c20b8477560264",
         "type": "github"
       },
       "original": {
         "owner": "aliyss",
         "repo": "aliyss-android-pkgs",
+        "type": "github"
+      }
+    },
+    "aliyss-android-settings": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_5"
+      },
+      "locked": {
+        "lastModified": 1790107223,
+        "narHash": "sha256-fN0ezEqHlsYdL8UoKsQgkqtK+TjsSyiMwlTMrpjfIOE=",
+        "owner": "aliyss",
+        "repo": "aliyss-android-settings",
+        "rev": "d7364d6239c4db49fd8d132591f9f62e6a5950ac",
+        "type": "github"
+      },
+      "original": {
+        "owner": "aliyss",
+        "repo": "aliyss-android-settings",
         "type": "github"
       }
     },
@@ -300,7 +318,7 @@
     },
     "forticlient-nixos": {
       "inputs": {
-        "nixpkgs": "nixpkgs_5"
+        "nixpkgs": "nixpkgs_6"
       },
       "locked": {
         "lastModified": 1781855918,
@@ -490,7 +508,7 @@
         "hyprutils": "hyprutils",
         "hyprwayland-scanner": "hyprwayland-scanner",
         "hyprwire": "hyprwire",
-        "nixpkgs": "nixpkgs_6",
+        "nixpkgs": "nixpkgs_7",
         "pre-commit-hooks": "pre-commit-hooks",
         "systems": "systems",
         "xdph": "xdph"
@@ -514,7 +532,7 @@
         "hyprland": [
           "hyprland"
         ],
-        "nixpkgs": "nixpkgs_7"
+        "nixpkgs": "nixpkgs_8"
       },
       "locked": {
         "lastModified": 1788508268,
@@ -868,6 +886,19 @@
         "type": "github"
       }
     },
+    "nixpkgs_10": {
+      "locked": {
+        "lastModified": 1774709303,
+        "narHash": "sha256-D4ely1FsBcvtj/qSrNhSWpq+CUZKNiKwJIxpxnfy9o4=",
+        "rev": "8110df5ad7abf5d4c0f6fb0f8f978390e77f9685",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.05pre971119.8110df5ad7ab/nixexprs.tar.xz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1788752844,
@@ -918,6 +949,22 @@
     },
     "nixpkgs_5": {
       "locked": {
+        "lastModified": 1789785513,
+        "narHash": "sha256-B44WL6h0XoLjJ41bUPJk0X5SDinLCII//6EcBLXKiJ0=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "20b1ddd1aa5ace70c9468305030aa4f9ef79671b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_6": {
+      "locked": {
         "lastModified": 1735563628,
         "narHash": "sha256-OnSAY7XDSx7CtDoqNh8jwVwh4xNL/2HaJxGjryLWzX8=",
         "owner": "NixOS",
@@ -932,7 +979,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_6": {
+    "nixpkgs_7": {
       "locked": {
         "lastModified": 1788404924,
         "narHash": "sha256-lhEhY8X5EgkQ/eg6IFz4cc8jRuSYSvnxx1al7d1dvZ0=",
@@ -948,7 +995,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_7": {
+    "nixpkgs_8": {
       "locked": {
         "lastModified": 1768127708,
         "narHash": "sha256-1Sm77VfZh3mU0F5OqKABNLWxOuDeHIlcFjsXeeiPazs=",
@@ -964,7 +1011,7 @@
         "type": "github"
       }
     },
-    "nixpkgs_8": {
+    "nixpkgs_9": {
       "locked": {
         "lastModified": 1789149629,
         "narHash": "sha256-H6GwaZzZf+4npqv0tph94w9tZddSjFjmQrVsW0z78uk=",
@@ -978,19 +1025,6 @@
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
-      }
-    },
-    "nixpkgs_9": {
-      "locked": {
-        "lastModified": 1774709303,
-        "narHash": "sha256-D4ely1FsBcvtj/qSrNhSWpq+CUZKNiKwJIxpxnfy9o4=",
-        "rev": "8110df5ad7abf5d4c0f6fb0f8f978390e77f9685",
-        "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/unstable/nixos-26.05pre971119.8110df5ad7ab/nixexprs.tar.xz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
       }
     },
     "nur": {
@@ -1072,7 +1106,7 @@
     "prismlauncher": {
       "inputs": {
         "libnbtplusplus": "libnbtplusplus",
-        "nixpkgs": "nixpkgs_9"
+        "nixpkgs": "nixpkgs_10"
       },
       "locked": {
         "lastModified": 1784295107,
@@ -1092,6 +1126,7 @@
       "inputs": {
         "affinity-nix": "affinity-nix",
         "aliyss-android-pkgs": "aliyss-android-pkgs",
+        "aliyss-android-settings": "aliyss-android-settings",
         "anyconnect-webauth": "anyconnect-webauth",
         "forticlient-nixos": "forticlient-nixos",
         "herdr": "herdr",
@@ -1099,7 +1134,7 @@
         "hyprland": "hyprland",
         "hyprland-dynamic-cursors": "hyprland-dynamic-cursors",
         "hyprland-plugins": "hyprland-plugins",
-        "nixpkgs": "nixpkgs_8",
+        "nixpkgs": "nixpkgs_9",
         "nur": "nur",
         "prismlauncher": "prismlauncher",
         "tidalcycles-nix": "tidalcycles-nix",
