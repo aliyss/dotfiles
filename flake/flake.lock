@@ -62,11 +62,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1790107727,
-        "narHash": "sha256-rd7LBBYKaibK/8IApH+y1jci+WrMLRrqLGYvon6zQxs=",
+        "lastModified": 1790109833,
+        "narHash": "sha256-FKeA8+DvahnFoz+EAxXJW8nb8QcN2zkjDMWVLHux7xQ=",
         "owner": "aliyss",
         "repo": "aliyss-android-pkgs",
-        "rev": "5c402d0cdfee4b34e30561adb7c20b8477560264",
+        "rev": "de73646db29d58ce9ae62f741c7e12d96073ebd8",
         "type": "github"
       },
       "original": {

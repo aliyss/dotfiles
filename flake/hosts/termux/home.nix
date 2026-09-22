@@ -39,22 +39,138 @@ in
     # Tailscale, fully declarative: nix-built binaries + the runit service
     # definition written by home.activation (see apps/tailscale.nix).
     ../../home-manager/apps/tailscale.nix
-    # Declarative Android app installs from the aliyss-android-pkgs flake
-    # input (defines aliyss.androidPkgs, see apps/android-pkgs.nix).
-    ../../home-manager/apps/android-pkgs.nix
-    # Declarative Android settings + hook services from the LOCAL
-    # aliyss-android-settings repo (~/Projects; defines aliyss.androidSettings,
-    # see apps/android-settings.nix). Swap the module to a flake input once the
-    # repo is pushed.
+    # aliyss.androidPkgs (declarative Android app installs) comes from the
+    # aliyss-android-pkgs flake home-manager module — see flake.nix, which
+    # adds it for this host.
+    # Declarative Android settings + hook services (defines
+    # aliyss.androidSettings, see apps/android-settings.nix). The engine comes
+    # from the aliyss-android-settings flake input.
     ../../home-manager/apps/android-settings.nix
   ];
 
-  # Android apps installed declaratively from aliyss-android-pkgs: built +
-  # pm-installed (as root) on every switch. Add app-ids here to install them;
-  # remove an id to stop (re)installing it. See aliyss-phone/README.md.
-  aliyss.androidPkgs = [
-    "com.darkempire78.opencalculator"
-  ];
+  # Android apps installed declaratively from aliyss-android-pkgs (the module
+  # comes from that flake homeManagerModules). Every third-party app on the
+  # phone that the flake can build, by app-id: an app already installed is
+  # left alone (no rebuild, no reinstall), a removed id gets uninstalled.
+  aliyss.androidPkgs = {
+    enable = true;
+
+    apps = [
+      "ani.aayush262.dartotsu"
+      "app.linear"
+      "app.revanced.manager.flutter"
+      "ch.agrisano.agrisano"
+      "ch.bk.voteinfo"
+      "ch.medgate.threesixty.app"
+      "ch.migros.app"
+      "ch.pocketpc.nearbyglasses"
+      "ch.sbb.mobile.android.preview"
+      "ch.stadt.sg.moapp"
+      "ch.threema.app"
+      "ch.viac.vorsorge3a"
+      "com.Slack"
+      "com.Splitwise.SplitwiseMobile"
+      "com.abdurazaaqmohammed.AntiSplit"
+      "com.app.tgtg"
+      "com.bitwarden.authenticator"
+      "com.chair.infinityblade"
+      "com.darkempire78.opencalculator"
+      "com.deniscerri.ytdl"
+      "com.dergoogler.mmrl"
+      "com.discord"
+      "com.emanuelef.remote_capture"
+      "com.eveningoutpost.dexdrip"
+      "com.facebook.katana"
+      "com.facebook.pages.app"
+      "com.gamma.scan"
+      "com.ghisler.android.TotalCommander"
+      "com.github.android"
+      "com.goodreads"
+      "com.google.android.apps.adm"
+      "com.google.android.apps.books"
+      "com.google.android.apps.chromecast.app"
+      "com.google.android.apps.docs.editors.docs"
+      "com.google.android.apps.docs.editors.sheets"
+      "com.google.android.apps.fitness"
+      "com.google.android.apps.healthdata"
+      "com.google.android.apps.magazines"
+      "com.google.android.apps.tasks"
+      "com.google.android.apps.translate"
+      "com.google.android.apps.walletnfcrel"
+      "com.google.android.apps.youtube.creator"
+      "com.google.android.contactkeys"
+      "com.google.android.safetycore"
+      "com.google.android.verifier"
+      "com.google.ar.lens"
+      "com.instagram.android"
+      "com.jndapp.cartoon.crayon.iconpack"
+      "com.knudge.me"
+      "com.linkedin.android"
+      "com.marsvard.stickermakerforwhatsapp"
+      "com.mcdonalds.mobileapp"
+      "com.microsoft.office.excel"
+      "com.microsoft.office.outlook"
+      "com.microsoft.teams"
+      "com.niksoftware.snapseed"
+      "com.nuvio.app"
+      "com.orailnoor.privatelm"
+      "com.pcapdroid.mitm"
+      "com.remarkable.mobile"
+      "com.revolut.revolut"
+      "com.rubenmayayo.lemmy"
+      "com.snapchat.android"
+      "com.ssaurel.nfcreader"
+      "com.stremio.one"
+      "com.sukisu.ultra"
+      "com.tailscale.ipn"
+      "com.termux"
+      "com.termux.api"
+      "com.ubs.Paymit.android"
+      "com.urbandroid.sleep"
+      "com.valvesoftware.android.steam.community"
+      "com.wakdev.wdnfc"
+      "com.watchguard.authpoint"
+      "com.whatsapp"
+      "com.x8bit.bitwarden"
+      "com.xda.sa2ration"
+      "dantotsu.downloadAddon"
+      "dantotsu.torrentAddon"
+      "de.komoot.android"
+      "de.mm20.launcher2.release"
+      "droom.sleepIfUCan"
+      "eu.kanade.tachiyomi.animeextension.en.allanime"
+      "eu.kanade.tachiyomi.animeextension.en.allanimechi"
+      "eu.kanade.tachiyomi.animeextension.en.anikage"
+      "eu.kanade.tachiyomi.animeextension.en.anilist"
+      "eu.kanade.tachiyomi.animeextension.en.animenosub"
+      "eu.kanade.tachiyomi.animeextension.en.animepahe"
+      "eu.kanade.tachiyomi.animeextension.en.aniwatch"
+      "eu.kanade.tachiyomi.animeextension.en.aniwave"
+      "eu.kanade.tachiyomi.animeextension.en.kaido"
+      "eu.kanade.tachiyomi.animeextension.en.miruro"
+      "eu.kanade.tachiyomi.animeextension.en.nineanimetv"
+      "gr.nikolasspyr.integritycheck"
+      "io.element.android.x"
+      "io.ente.auth"
+      "io.keybase.ossifrage"
+      "me.kavishdevar.librepods"
+      "neth.iecal.curbox"
+      "org.adaway"
+      "org.mozilla.firefox"
+      "org.proninyaroslav.libretorrent"
+      "org.telegram.messenger"
+      "org.thoughtcrime.securesms"
+      "org.torproject.android"
+      "org.videolan.vlc"
+      "tk.glucodata"
+      "za.co.lukestonehm.logicaldefence"
+    ];
+
+    # Runtime permissions + notification access of those apps, as they are
+    # on the device now (`android-enforce --dump`, generated file). Edit an
+    # entry there and the next switch applies it.
+    inherit (import ./android-app-state.nix) permissions notifications;
+  };
 
   # Declarative Android settings + hook services (repo:
   # ~/Projects/aliyss-android-settings). Props apply via `settings put` on
