@@ -175,6 +175,11 @@
         pkgs = pkgsPhone;
         modules = [
           ./hosts/termux/home.nix
+          # Declarative Android app installs, shipped by the
+          # aliyss-android-pkgs flake (the phone aliyss.androidPkgs option).
+          # Added here, not in the host module: an `imports` entry cannot
+          # depend on `pkgs`, whose value comes from `config`.
+          inputs.aliyss-android-pkgs.homeManagerModules.${phoneSystem}.default
         ];
         extraSpecialArgs = inputs;
       };

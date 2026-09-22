@@ -101,18 +101,23 @@ installer reports it and exits — allow the app in Play Protect on the phone
 
 ### Declarative installs (`aliyss.androidPkgs`)
 
-Apps can be **declared in the home-manager config** —
-`flake/hosts/termux/home.nix` (module: `apps/android-pkgs.nix`):
+Apps are **declared in the home-manager config** —
+`flake/hosts/termux/home.nix`. The module behind the option ships with
+aliyss-android-pkgs (`homeManagerModules.<system>.default`), so the
+install logic lives in that repo:
 
 ```nix
-aliyss.androidPkgs = [
-  "com.darkempire78.opencalculator"
-  "org.videolan.vlc"
-];
+aliyss.androidPkgs = {
+  enable = true;
+  apps = [
+    "com.darkempire78.opencalculator"
+    "org.videolan.vlc"
+  ];
+};
 ```
 
 Every `update-home` (home-manager switch) runs the repo installer in
-on-device mode for the declared apps (chroot store-path mapping, root
+on-device mode for the declared apps (APK staged under `$HOME`, root
 `pm install -r`, bounded 60s Play Protect poll). A blocked/failed app fails
 the switch loudly — allow it in Play Protect (or remove the id) and re-run.
 **Removing an app-id uninstalls it**: the previous declaration is tracked in
