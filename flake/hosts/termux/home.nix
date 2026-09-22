@@ -55,6 +55,12 @@ in
   aliyss.androidPkgs = {
     enable = true;
 
+    # Managed: this config is the whole intent for every declared app, so a
+    # grant that is not listed anywhere is taken away on the next switch.
+    # The mirror below is generated with `--dump-all`, i.e. it records the
+    # phone as it is rather than only the prompts you answered.
+    mode = "managed";
+
     apps = [
       "ai.polycam"
       "ani.aayush262.dartotsu"
@@ -187,7 +193,7 @@ in
     # Runtime permissions + notification access of those apps, as they are
     # on the device now (`android-enforce --dump`, generated file). Edit an
     # entry there and the next switch applies it.
-    inherit (import ./android-app-state.nix) permissions notifications links;
+    inherit (import ./android-app-state.nix) permissions notifications links appops;
   };
 
   # Declarative Android settings + hook services (repo:
