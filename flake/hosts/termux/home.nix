@@ -56,9 +56,15 @@ in
     enable = true;
 
     apps = [
+      "ai.polycam"
       "ani.aayush262.dartotsu"
+      "app.deglaze.prod"
       "app.linear"
       "app.revanced.manager.flutter"
+      "app.sabre.wzsabre"
+      "app.secanda.www"
+      "ch.admin.swisstopo"
+      "ch.agov.accessapp"
       "ch.agrisano.agrisano"
       "ch.bk.voteinfo"
       "ch.medgate.threesixty.app"
@@ -68,12 +74,15 @@ in
       "ch.stadt.sg.moapp"
       "ch.threema.app"
       "ch.viac.vorsorge3a"
+      "ch.wohnungssuche.wohnungssuche_app"
       "com.Slack"
       "com.Splitwise.SplitwiseMobile"
       "com.abdurazaaqmohammed.AntiSplit"
       "com.app.tgtg"
       "com.bitwarden.authenticator"
+      "com.cashyou"
       "com.chair.infinityblade"
+      "com.citypop.app"
       "com.darkempire78.opencalculator"
       "com.deniscerri.ytdl"
       "com.dergoogler.mmrl"
@@ -103,14 +112,19 @@ in
       "com.google.android.verifier"
       "com.google.ar.lens"
       "com.instagram.android"
+      "com.instagram.barcelona"
       "com.jndapp.cartoon.crayon.iconpack"
       "com.knudge.me"
+      "com.lemon.lvoverseas"
       "com.linkedin.android"
       "com.marsvard.stickermakerforwhatsapp"
       "com.mcdonalds.mobileapp"
+      "com.metrolist.music"
       "com.microsoft.office.excel"
       "com.microsoft.office.outlook"
+      "com.microsoft.office.word"
       "com.microsoft.teams"
+      "com.nianticlabs.scaniverse"
       "com.niksoftware.snapseed"
       "com.nuvio.app"
       "com.orailnoor.privatelm"
@@ -122,10 +136,13 @@ in
       "com.ssaurel.nfcreader"
       "com.stremio.one"
       "com.sukisu.ultra"
+      "com.suno.android"
       "com.tailscale.ipn"
       "com.termux"
       "com.termux.api"
+      "com.tsng.hidemyapplist"
       "com.ubs.Paymit.android"
+      "com.ubs.swidK2Y.android"
       "com.urbandroid.sleep"
       "com.valvesoftware.android.steam.community"
       "com.wakdev.wdnfc"
@@ -137,6 +154,7 @@ in
       "dantotsu.torrentAddon"
       "de.komoot.android"
       "de.mm20.launcher2.release"
+      "dev.imranr.obtainium"
       "droom.sleepIfUCan"
       "eu.kanade.tachiyomi.animeextension.en.allanime"
       "eu.kanade.tachiyomi.animeextension.en.allanimechi"
@@ -169,7 +187,7 @@ in
     # Runtime permissions + notification access of those apps, as they are
     # on the device now (`android-enforce --dump`, generated file). Edit an
     # entry there and the next switch applies it.
-    inherit (import ./android-app-state.nix) permissions notifications;
+    inherit (import ./android-app-state.nix) permissions notifications links;
   };
 
   # Declarative Android settings + hook services (repo:
