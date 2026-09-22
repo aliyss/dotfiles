@@ -57,143 +57,23 @@ in
 
     # Managed: this config is the whole intent for every declared app, so a
     # grant that is not listed anywhere is taken away on the next switch.
-    # The mirror below is generated with `--dump-all`, i.e. it records the
-    # phone as it is rather than only the prompts you answered.
     mode = "managed";
 
-    apps = [
-      "ai.polycam"
-      "ani.aayush262.dartotsu"
-      "app.deglaze.prod"
-      "app.linear"
-      "app.revanced.manager.flutter"
-      "app.sabre.wzsabre"
-      "app.secanda.www"
-      "ch.admin.swisstopo"
-      "ch.agov.accessapp"
-      "ch.agrisano.agrisano"
-      "ch.bk.voteinfo"
-      "ch.medgate.threesixty.app"
-      "ch.migros.app"
-      "ch.pocketpc.nearbyglasses"
-      "ch.sbb.mobile.android.preview"
-      "ch.stadt.sg.moapp"
-      "ch.threema.app"
-      "ch.viac.vorsorge3a"
-      "ch.wohnungssuche.wohnungssuche_app"
-      "com.Slack"
-      "com.Splitwise.SplitwiseMobile"
-      "com.abdurazaaqmohammed.AntiSplit"
-      "com.app.tgtg"
-      "com.bitwarden.authenticator"
-      "com.cashyou"
-      "com.chair.infinityblade"
-      "com.citypop.app"
-      "com.darkempire78.opencalculator"
-      "com.deniscerri.ytdl"
-      "com.dergoogler.mmrl"
-      "com.discord"
-      "com.emanuelef.remote_capture"
-      "com.eveningoutpost.dexdrip"
-      "com.facebook.katana"
-      "com.facebook.pages.app"
-      "com.gamma.scan"
-      "com.ghisler.android.TotalCommander"
-      "com.github.android"
-      "com.goodreads"
-      "com.google.android.apps.adm"
-      "com.google.android.apps.books"
-      "com.google.android.apps.chromecast.app"
-      "com.google.android.apps.docs.editors.docs"
-      "com.google.android.apps.docs.editors.sheets"
-      "com.google.android.apps.fitness"
-      "com.google.android.apps.healthdata"
-      "com.google.android.apps.magazines"
-      "com.google.android.apps.tasks"
-      "com.google.android.apps.translate"
-      "com.google.android.apps.walletnfcrel"
-      "com.google.android.apps.youtube.creator"
-      "com.google.android.contactkeys"
-      "com.google.android.safetycore"
-      "com.google.android.verifier"
-      "com.google.ar.lens"
-      "com.instagram.android"
-      "com.instagram.barcelona"
-      "com.jndapp.cartoon.crayon.iconpack"
-      "com.knudge.me"
-      "com.lemon.lvoverseas"
-      "com.linkedin.android"
-      "com.marsvard.stickermakerforwhatsapp"
-      "com.mcdonalds.mobileapp"
-      "com.metrolist.music"
-      "com.microsoft.office.excel"
-      "com.microsoft.office.outlook"
-      "com.microsoft.office.word"
-      "com.microsoft.teams"
-      "com.nianticlabs.scaniverse"
-      "com.niksoftware.snapseed"
-      "com.nuvio.app"
-      "com.orailnoor.privatelm"
-      "com.pcapdroid.mitm"
-      "com.remarkable.mobile"
-      "com.revolut.revolut"
-      "com.rubenmayayo.lemmy"
-      "com.snapchat.android"
-      "com.ssaurel.nfcreader"
-      "com.stremio.one"
-      "com.sukisu.ultra"
-      "com.suno.android"
-      "com.tailscale.ipn"
-      "com.termux"
-      "com.termux.api"
-      "com.tsng.hidemyapplist"
-      "com.ubs.Paymit.android"
-      "com.ubs.swidK2Y.android"
-      "com.urbandroid.sleep"
-      "com.valvesoftware.android.steam.community"
-      "com.wakdev.wdnfc"
-      "com.watchguard.authpoint"
-      "com.whatsapp"
-      "com.x8bit.bitwarden"
-      "com.xda.sa2ration"
-      "dantotsu.downloadAddon"
-      "dantotsu.torrentAddon"
-      "de.komoot.android"
-      "de.mm20.launcher2.release"
-      "dev.imranr.obtainium"
-      "droom.sleepIfUCan"
-      "eu.kanade.tachiyomi.animeextension.en.allanime"
-      "eu.kanade.tachiyomi.animeextension.en.allanimechi"
-      "eu.kanade.tachiyomi.animeextension.en.anikage"
-      "eu.kanade.tachiyomi.animeextension.en.anilist"
-      "eu.kanade.tachiyomi.animeextension.en.animenosub"
-      "eu.kanade.tachiyomi.animeextension.en.animepahe"
-      "eu.kanade.tachiyomi.animeextension.en.aniwatch"
-      "eu.kanade.tachiyomi.animeextension.en.aniwave"
-      "eu.kanade.tachiyomi.animeextension.en.kaido"
-      "eu.kanade.tachiyomi.animeextension.en.miruro"
-      "eu.kanade.tachiyomi.animeextension.en.nineanimetv"
-      "gr.nikolasspyr.integritycheck"
-      "io.element.android.x"
-      "io.ente.auth"
-      "io.keybase.ossifrage"
-      "me.kavishdevar.librepods"
-      "neth.iecal.curbox"
-      "org.adaway"
-      "org.mozilla.firefox"
-      "org.proninyaroslav.libretorrent"
-      "org.telegram.messenger"
-      "org.thoughtcrime.securesms"
-      "org.torproject.android"
-      "org.videolan.vlc"
-      "tk.glucodata"
-      "za.co.lukestonehm.logicaldefence"
-    ];
-
-    # Runtime permissions + notification access of those apps, as they are
-    # on the device now (`android-enforce --dump`, generated file). Edit an
-    # entry there and the next switch applies it.
-    inherit (import ./android-app-state.nix) permissions notifications links appops;
+    # One block per app: the app-id is the key, and everything declared about
+    # that app (permissions, notifications, app ops, links) lives inside that
+    # block, so an app that leaves the phone is one deletion. The mirror lists
+    # every installed app — an app with nothing declared is an empty block —
+    # so feeding it back declares exactly these apps, which is what keeps a
+    # dump from uninstalling the apps it does not mention. It is generated
+    # with `--dump-all` (the phone as it is, not only the prompts answered):
+    #
+    #   android-enforce --config <config.json> --dump --dump-all \
+    #     > flake/hosts/termux/android-app-state.nix
+    apps = lib.recursiveUpdate (import ./android-app-state.nix) {
+      # Per-app rollout: this one takes its curated block from the packages
+      # (`recommended.json` next to its pin) as the baseline.
+      "com.darkempire78.opencalculator".mode = "recommended";
+    };
   };
 
   # Declarative Android settings + hook services (repo:
