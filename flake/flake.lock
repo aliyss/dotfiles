@@ -80,11 +80,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1790107223,
-        "narHash": "sha256-fN0ezEqHlsYdL8UoKsQgkqtK+TjsSyiMwlTMrpjfIOE=",
+        "lastModified": 1790408749,
+        "narHash": "sha256-SL6fJuocx9FkkyW4sf5Hh/CO3SxfHTEXvSeW+PBHTFA=",
         "owner": "aliyss",
         "repo": "aliyss-android-settings",
-        "rev": "d7364d6239c4db49fd8d132591f9f62e6a5950ac",
+        "rev": "94dc43d1e7286adf1f8ed7879577ef7fa1a97542",
         "type": "github"
       },
       "original": {
